@@ -1,0 +1,252 @@
+
+
+★VRAM
+slVRAMMode -- 関数
+    slVRAMMode - VRAMの分割方法の設定。
+【書  式】
+    #include "sgl.h"
+
+    Uint16 type;
+
+    void slVRAMMode( type );
+【引  数】
+    Uint16 type - VRAMの分割方法(後述)。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    VRAMの分割方法を設定します。
+    typeには、
+        Div_A、Div_B
+    を分割するものだけ指定します。
+    分割をやめたい場合にはNULLを指定します。
+【用  例】
+    VDP2のVRAMの内、VRAM Bのみを分割する(Aは分割しない)。
+    slVRAMMode( Div_B);
+【参  照】
+    slScrAutoDisp, slScrCycleSet, slScrDisp, slCharNbg0
+    slCharNbg1, slCharNbg2, slCharNbg3, slPageNbg0
+    slPageNbg1, slPageNbg2, slPageNbg3, slPageRbg0
+    slMapNbg0, slMapNbg1, slMapNbg2, slMapNbg3
+    sl1MapRA, sl1MapRB, sl16MapRA, sl16MapRB
+    VDP2_RAMCTL
+
+
+★VRAMアクセス
+slScrCycleSet -- 関数
+    slScrCycleSet - サイクルパターンを設定。
+【書  式】
+    #include "sgl.h"
+
+    Uint32 a0;
+    Uint32 a1;
+    Uint32 b0;
+    Uint32 b1;
+
+    void slScrCycleSet( a0, a1, b0, b1 );
+【引  数】
+    Uint32 a0 - バンク a0 のサイクルパターン。
+    Uint32 a1 - バンク a1 のサイクルパターン。
+    Uint32 b0 - バンク b0 のサイクルパターン。
+    Uint32 b1 - バンク b1 のサイクルパターン。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    各バンクのサイクルパターンを設定します。各バンクが分割されている場合には
+    a0,a1,b0,b1 にサイクルパターンを設定することができます。バンクが分割されて
+    いない時には、a0,b0 にサイクルパターンを設定することができます。
+【用  例】
+    Uint32 a0 = 0xfffffeee;
+    Uint32 a1 = 0x4455feee;
+    Uint32 b0 = 0x01feeeee;
+    Uint32 b1 = 0xfffeeeee;
+
+    slScrCycleSet( a0, a1, b0, b1 );
+    slScrDisp( NBG0ON| NBG1ON| NBG2OFF| NBG3OFF); 
+【注  意】
+    slScrAutoDispを使わずこの関数を使ってサイクルパタンのセットを
+    行なった場合、slScrDispで描画する面の指定をしなければなりません。
+    本関数を実行すると、各設定値は直ちにVDP2のレジスタにセットされます。
+【参  照】
+    slScrAutoDisp, slScrDisp, VDP2_CYCA0L, VDP2_CYCA0U
+    VDP2_CYCA1L, VDP2_CYCA1U, VDP2_CYCB0L, VDP2_CYCB0U
+    VDP2_CYCB1L, VDP2_CYCB1U
+
+
+slScrAutoDisp -- 関数
+    slScrAutoDisp - 機能設定を終了したスクロール面のシステム登録。
+【書  式】
+    #include "sgl.h"
+
+    Uint32 mode;
+
+    Bool slScrAutoDisp( mode );
+【引  数】
+    Uint32 mode - 機能設定したい面('|'で複数指定可能)(後述)。
+【返  数】
+    Bool - エラーステータス(後述)
+【機  能】
+    機能設定を終了したスクロール面のシステム登録を行ないます。
+    関数は、パラメータとして指定されたスクロール画面の、VRAMへのアクセス指定
+    (サイクルパターンレジスタ)を自動的に設定し、同時に、登録されたスクロールの
+    描画設定をオンにします。
+    modeには、
+    NBG0ON、NBG1ON、NBG2ON、NBG3ON、RBG0ON
+    が入ります。 
+    サイクルパターンが作成できない設定の場合はNGが返ります。
+    複数のスクロール面の描画設定を同時に行なう場合は、各面のモードを "|"
+    でつないで指定してください。
+    エラーステータスは、サイクルパターンの設定が出来なかった場合 NG を、
+    設定が問題なく終了した場合、 OK を返します。
+【用  例】
+    デバッグ文字列表示(NBG0)面以外にNBG1を使用する。
+
+    slCharNbg1( ... );
+    slPageNbg1( ... );
+    slPlaneNbg1( ... );
+    slMapNbg1( ... );
+
+    slScrAutoDisp( NBG0ON| NBG1ON);
+【注  意】
+    この関数は、VDP2のVRAMアクセスの全てのパターンをサポートしている訳では
+    ありません。又、この関数は処理にある程度の時間を要しますので、最終的には
+    slScrCycleSet、slScrDispの組合せで設定されることを強く
+    お勧めします。
+    尚、この関数は、以下の関数を予め実行した場合その結果が反映されます。
+    slCharNbg0
+    slCharNbg1
+    slCharNbg2
+    slCharNbg3
+    slCharRbg0
+    slPageNbg0
+    slPageNbg1
+    slPageNbg2
+    slPageNbg3
+    slPageRbg0
+    slMapNbg0
+    slMapNbg1
+    slMapNbg2
+    slMapNbg3
+    sl1MapRA
+    sl1MapRB
+    但し、これらの関数の設定であっても、以下のような場合はサポートして
+    いません。
+    その場合、slScrDisp、slScrCycleSetを用いて手動で
+    設定する必要があります。
+    ・NBG0、NBG1に対して縮小設定を行なった場合。
+    ・キャラクタデータやマップデータが複数のVRAM領域にまたがる場合。
+      例えば、キャラクタデータがVRAM A0とA1を占有するといった場合。
+【参  照】
+    slScrCycleSet, slScrDisp, slCharNbg0, slCharNbg1
+    slCharNbg2, slCharNbg3, slCharRbg0, slPageNbg0
+    slPageNbg1, slPageNbg2, slPageNbg3, slPageRbg0
+    slPlaneNbg0, slPlaneNbg1, slPlaneNbg2, slPlaneNbg3
+    slPlaneRA, slPlaneRB, slMapNbg0, slMapNbg1
+    slMapNbg2, slMapNbg3, sl1MapRA, sl1MapRB
+    sl16MapRA, sl16MapRB, Resolution, VDP2_CYCA0L
+    VDP2_CYCA0U, VDP2_CYCA1L, VDP2_CYCA1U, VDP2_CYCB0L
+    VDP2_CYCB0U, VDP2_CYCB1L, VDP2_CYCB1U, VDP2_BGON
+    VDP2_CHCTLA, VDP2_CHCTLB, VDP2_ZMCTL, VDP2_SCRCTL
+    VDP2_VCSTA, nbg0_char_adr, nbg1_char_adr, nbg2_char_adr
+    nbg3_char_adr, nbg0_page_adr, nbg1_page_adr, nbg2_page_adr
+    ★描画イネーブル
+slScrDisp -- 関数
+    slScrDisp - スクロール面の描画設定。
+【書  式】
+    #include "sgl.h"
+
+    Uint32 mode;
+
+    void slScrDisp( mode );
+【引  数】
+    Uint32 mode - 描画する面('|'で複数指定可能)(後述)。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    パラメータとして指定されたスクロール面の描画設定を行ないます。
+    modeには、以下の定義済みマクロが入ります。
+            NBG0ON| NBG0OFF
+            NBG1ON| NBG1OFF
+            NBG2ON| NBG2OFF
+            NBG3ON| NBG3OFF
+            RBG0ON| RBG0OFF
+    複数のスクロール面の描画設定を同時に行なう場合は、各面のモードを "|"で
+    つないで指定してください。
+    指定されなかったスクロール面の設定は変わりません。
+【用  例】
+    NBG0～2を表示し、NBG3を表示しない。
+    slScrDisp( NBG0ON| NBG1ON| NBG2ON| NBG3OFF);
+【注  意】
+    この関数で、BGのイネーブル指定のみを行なった場合、他のBG面が既に
+    イネーブル設定ざれていた場合、その設定が継続されます。
+    もし、特定のBG面のみを出したい場合、明示的に他の面のディセーブル設定
+    を行なう必要があります。
+    (サイクルパターンを設定していなくても、BG面の表示指定をしているとそのBG
+     を表示してしまいます。)
+【参  照】
+    slScrAutoDisp, slScrCycleSet, VDP2_BGON
+
+
+★カラーRAM
+slColRAMMode -- 関数
+    slColRAMMode - カラーRAMモードを決定。
+【書  式】
+    #include "sgl.h"
+
+    Uint16 mode;
+
+    void slColRAMMode( mode );
+【引  数】
+    Uint16 mode - カラーRAMのモード名(後述)。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    カラーRAMモードを決定します。
+    カラーRAMへのカラーデータの格納は、必ずカラーRAMモードを決定してから
+    行なってください。
+    modeには、カラーRAMモードに対応した次の値を代入してください。
+    CRM16_1024: カラーRAMモード0(16ビットカラー1024色×2バンク)
+    CRM16_2048: カラーRAMモード1(16ビットカラー2048色)
+    CRM32_1024: カラーRAMモード2(24ビットカラー1024色)
+【用  例】
+    カラーRAMモードを16ビットカラー2048色にします。
+    slColRAMMode( CRM16_2048);
+【参  照】
+    slGradationOn, VDP2_RAMCTL
+
+
+slColRAMOffsetNbg0 -- 関数
+slColRAMOffsetNbg1 -- 関数
+slColRAMOffsetNbg2 -- 関数
+slColRAMOffsetNbg3 -- 関数
+slColRAMOffsetRbg0 -- 関数
+slColRAMOffsetSpr  -- 関数
+    slColRAMOffsetNbg0, slColRAMOffsetNbg1, slColRAMOffsetNbg2, 
+    slColRAMOffsetNbg3,slColRAMOffsetRbg0, slColRAMOffsetSpr
+             - カラーRAMの先頭アドレスをセット。
+【書  式】
+    #include "sgl.h"
+
+    Uint16 offset;
+
+    void slColRAMOffsetNbg0( offset );
+    void slColRAMOffsetNbg1( offset );
+    void slColRAMOffsetNbg2( offset );
+    void slColRAMOffsetNbg3( offset );
+    void slColRAMOffsetRbg0( offset );
+    void slColRAMOffsetSpr( offset );
+【引  数】
+    Uint16 offset -カラーRAMの先頭アドレス。 
+【返  数】
+    void - 何も返しません。
+【機  能】
+    各画面で使用するカラーRAMの先頭アドレスを256色バウンダリでオフセットを
+                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    掛けます。
+    オフセットは0から7(ただし、カラーRAMモードが0または2の場合には3
+    まで)で指定します。
+【用  例】
+    NBG1をカラーRAMアドレス25F00200Hをオフセット0として使う。
+    slColRAMOffsetNbg1( 1 );
+【参  照】
+    slPageNbg0, slPageNbg1, slPageNbg2, slPageNbg3
+    slPageRbg0, VDP2_CRAOFA, VDP2_CRAOFB

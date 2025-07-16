@@ -1,0 +1,72 @@
+;=======================================================================
+;  sample script for XBLD
+;
+;  File    : sample.scr
+;  Date    : 1997-03-28
+;  System  : XBLD
+;  Version : 1.80
+;
+;  Note    : 
+;   CD tracks = [mode1 * 1] + [mode2 * 1] + [CD-DA * 1]
+;
+;=======================================================================
+
+Disc SAMPLE.DSK
+Session SEMIXA
+LeadIn MODE1
+EndLeadIn
+;
+SystemArea IP.BIN
+;
+    ; 第１トラック
+    Track MODE1
+        Volume ISO9660 SAMPLE.PVD
+            PrimaryVolume    0:2:16
+                SystemIdentifier    "SAMPLE"
+            EndPrimaryVolume
+        EndVolume
+
+        File FILE1.DAT;1
+            FileSource FILE1.DAT
+            EndFileSource
+        EndFile
+        Directory DIR1
+            File FILE2.DAT;1
+                FileSource FILE2.DAT
+                EndFileSource
+            EndFile
+        EndDirectory
+
+        PostGap 75
+    EndTrack
+;
+    ; 第２トラック
+    Track MODE2
+        PreGap 150
+
+        File FILE3.DAT;1
+            FileSource FILE3.DAT
+                DataType FORM1
+            EndFileSource
+        EndFile
+
+        PostGap 75
+    EndTrack
+;
+    ; 第３トラック
+    Track CDDA
+        Pause 150
+
+        File SOUND.DAT;1
+            FileSource SOUND.DAT
+            EndFileSource
+        EndFile
+    EndTrack
+;
+LeadOut CDDA
+    Empty 300
+EndLeadOut
+EndSession
+EndDisc
+
+

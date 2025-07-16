@@ -1,0 +1,594 @@
+
+
+★列挙定数
+FALSE -- 定数
+TRUE  -- 定数
+    BooleanLogic - 論理定数1(偽、真)
+【書  式】
+    enum BooleanLogic {
+      FALSE = 0,
+      TRUE  = 1
+    };
+【機  能】
+    FALSE :偽
+    TRUE  :真
+
+
+OFF -- 定数
+ON  -- 定数
+    BooleanSwitch - 論理定数2(スイッチ)
+【書  式】
+    enum BooleanSwitch {
+      OFF = 0,
+      ON  = 1
+    };
+【機  能】
+    OFF :無効
+    ON  :有効
+
+
+OK  -- 定数
+NG  -- 定数
+    Judgement - 結果判定の定数(成功、失敗)
+【書  式】
+    enum Judgement {
+      OK = 0,
+      NG = -1
+    };
+【機  能】
+      OK :成功
+      NG :失敗
+
+X     -- 定数
+Y     -- 定数
+Z     -- 定数
+S     -- 定数
+Sh    -- 定数
+Sv    -- 定数
+XY    -- 定数
+XYZ   -- 定数
+XYZS  -- 定数
+XYZSS -- 定数
+    ps - 配列宣言時の簡易表現。
+【書  式】
+    enum ps {
+      X,
+      Y,
+      Z,
+      XYZ,
+      XYZS,
+      XYZSS,
+      XY = Z,
+      S = XYZ,
+      Sh = S,
+      Sv = XYZS
+    };
+【機  能】
+    X     : 配列の最初の要素
+    Y     : 配列の2番目の要素
+    Z     : 配列の3番目の要素
+    S     : 配列の4番目の要素
+    Sh    : 配列の4番目の要素
+    Sv    : 配列の5番目の要素
+    XY    : 2次元情報の配列用
+    XYZ   : 3次元情報の配列用
+    XYZS  : 3次元情報プラス1次のスケールを持つ配列用
+    XYZSS : 3次元情報プラス2次のスケールを持つ配列用
+
+
+M00  -- 定数
+M01  -- 定数
+M02  -- 定数
+M10  -- 定数
+M11  -- 定数
+M12  -- 定数
+M20  -- 定数
+M21  -- 定数
+M22  -- 定数
+M30  -- 定数
+M31  -- 定数
+M32  -- 定数
+MTRX -- 定数
+mtrx -- 定数
+    mtrx - マトリクスの要素番号
+【書  式】
+    enum mtrx {
+      M00, M01, M02,
+      M10, M11, M12,
+      M20, M21, M22,
+      M30, M31, M32,
+      MTRX
+    };
+
+TV_320x224 -- 定数
+TV_320x240 -- 定数
+TV_320x256 -- 定数
+TV_352x224 -- 定数
+TV_352x240 -- 定数
+TV_352x256 -- 定数
+TV_640x224 -- 定数
+TV_640x240 -- 定数
+TV_640x256 -- 定数
+TV_704x224 -- 定数
+TV_704x240 -- 定数
+TV_704x256 -- 定数
+TV_320x448 -- 定数
+TV_320x480 -- 定数
+TV_320x512 -- 定数
+TV_352x448 -- 定数
+TV_352x480 -- 定数
+TV_352x512 -- 定数
+TV_640x448 -- 定数
+TV_640x480 -- 定数
+TV_640x512 -- 定数
+TV_704x448 -- 定数
+TV_704x480 -- 定数
+TV_704x512 -- 定数
+TV_dummy1  -- 定数
+TV_dummy2  -- 定数
+TV_dummy3  -- 定数
+TV_dummy4  -- 定数
+tvsz       -- 定数
+    tvsz - TV画面モード
+【書  式】
+    enum tvsz {
+      TV_320x224, TV_320x240, TV_320x256, TV_dummy1,
+      TV_352x224, TV_352x240, TV_352x256, TV_dummy2,
+      TV_640x224, TV_640x240, TV_640x256, TV_dummy3,
+      TV_704x224, TV_704x240, TV_704x256, TV_dummy4,
+
+      TV_320x448, TV_320x480, TV_320x512, TV_dummy5,
+      TV_352x448, TV_352x480, TV_352x512, TV_dummy6,
+      TV_640x448, TV_640x480, TV_640x512, TV_dummy7,
+      TV_704x448, TV_704x480, TV_704x512, TV_dummy8
+    };
+【参  照】
+    slInitSystem, slSetTVMode, slSetScrTVMode, slSetSprTVMode
+    SORT_BFR -- 定数
+SORT_MIN -- 定数
+SORT_MAX -- 定数
+SORT_CEN -- 定数
+    base - ソート基準の種類
+【書  式】
+    enum base {
+      SORT_BFR,
+      SORT_MIN,
+      SORT_MAX,
+      SORT_CEN
+    };
+【機  能】
+    SORT_BFR - 直前に表示したポリゴンの位置を使う
+    SORT_MIN - 4点の内、一番手前の点を使う
+    SORT_MAX - 4点の内一番遠い点を使う
+    SORT_CEN - 4点の平均位置を使う
+
+
+Single_Plane -- 定数
+Dual_Plane   -- 定数
+    pln - 表裏判定フラグ
+【書  式】
+    enum pln {
+      Single_Plane,
+      Dual_Plane
+    };
+【機  能】
+    Single_Plane - 片面ポリゴン
+    Dual_Plane   - 両面ポリゴン(表裏判定の結果を見ない)
+
+
+CLRate31_1  -- 定数
+CLRate30_2  -- 定数
+CLRate29_3  -- 定数
+CLRate28_4  -- 定数
+CLRate27_5  -- 定数
+CLRate26_6  -- 定数
+CLRate25_7  -- 定数
+CLRate24_8  -- 定数
+CLRate23_9  -- 定数
+CLRate22_10 -- 定数
+CLRate21_11 -- 定数
+CLRate20_12 -- 定数
+CLRate19_13 -- 定数
+CLRate18_14 -- 定数
+CLRate17_15 -- 定数
+CLRate16_16 -- 定数
+CLRate15_17 -- 定数
+CLRate14_18 -- 定数
+CLRate13_19 -- 定数
+CLRate12_20 -- 定数
+CLRate11_21 -- 定数
+CLRate10_22 -- 定数
+CLRate9_23  -- 定数
+CLRate8_24  -- 定数
+CLRate7_25  -- 定数
+CLRate6_26  -- 定数
+CLRate5_27  -- 定数
+CLRate4_28  -- 定数
+CLRate3_29  -- 定数
+CLRate2_30  -- 定数
+CLRate1_31  -- 定数
+CLRate0_32  -- 定数
+    color_rate - カラー演算割合
+【書  式】
+    enum color_rate{
+      CLRate31_1,
+      CLRate30_2,
+      CLRate29_3,
+      CLRate28_4,
+      CLRate27_5,
+      CLRate26_6,
+      CLRate25_7,
+      CLRate24_8,
+      CLRate23_9,
+      CLRate22_10,
+      CLRate21_11,
+      CLRate20_12,
+      CLRate19_13,
+      CLRate18_14,
+      CLRate17_15,
+      CLRate16_16,
+      CLRate15_17,
+      CLRate14_18,
+      CLRate13_19,
+      CLRate12_20,
+      CLRate11_21,
+      CLRate10_22,
+      CLRate9_23,
+      CLRate8_24,
+      CLRate7_25,
+      CLRate6_26,
+      CLRate5_27,
+      CLRate4_28,
+      CLRate3_29,
+      CLRate2_30,
+      CLRate1_31,
+      CLRate0_32
+    };
+
+
+SMPC_SH2_DIRECT -- 定数
+SMPC_CONTROL    -- 定数
+    SmpcSelect - SMPC入出力セレクトモード
+【書  式】
+    enum SmpcSelect {
+      SMPC_SH2_DIRECT,
+      SMPC_CONTROL
+    };
+【機  能】
+    SMPC_SH2_DIRECT -- SH2ダイレクト
+    SMPC_CONTROL    -- SMPCコントロール
+【参  照】
+    slGetPortSelect1, slGetPortSelect2, slSetPortSelect1, slSetPortSelect2
+    slGetStatus
+
+
+SMPC_EXL_ENA -- 定数
+SMPC_EXL_DIS -- 定数
+    SmpcExtLatch - SMPC外部ラッチ入力モード
+【書  式】
+    enum SmpcExtLatch {
+      SMPC_EXL_ENA,
+      SMPC_EXL_DIS
+    };
+【機  能】
+    SMPC_EXL_ENA -- 外部ラッチ入力許可
+    SMPC_EXL_DIS -- 外部ラッチ入力禁止
+【参  照】
+    slGetPortExt1, slGetPortExt2, slSetPortExt1, slSetPortExt2
+    slGetStatus
+
+
+SMPC_RES_ON  -- 定数
+SMPC_RES_OFF -- 定数
+    SmpcResetButton - SMPCリセットボタン状態
+【書  式】
+    enum SmpcResetButton {
+      SMPC_RES_ON,
+      SMPC_RES_OFF
+    };
+【機  能】
+    SMPC_RES_ON  -- リセットボタンON
+    SMPC_RES_OFF -- リセットボタンOFF
+【参  照】
+    slCheckReset, slGetStatus
+
+
+SMPC_AREA_RSV_0   -- 定数
+SMPC_AREA_JP      -- 定数
+SMPC_AREA_AJ_NTSC -- 定数
+SMPC_AREA_RSV_3   -- 定数
+SMPC_AREA_NA      -- 定数
+SMPC_AREA_SA_NTSC -- 定数
+SMPC_AREA_KO      -- 定数
+SMPC_AREA_RSV_7   -- 定数
+SMPC_AREA_RSV_8   -- 定数
+SMPC_AREA_RSV_9   -- 定数
+SMPC_AREA_AJ_PAL  -- 定数
+SMPC_AREA_RSV_B   -- 定数
+SMPC_AREA_EU_PAL  -- 定数
+SMPC_AREA_SA_PAL  -- 定数
+SMPC_AREA_RSV_E   -- 定数
+SMPC_AREA_RSV_F   -- 定数
+    SmpcAreaCode - エリアコード
+【書  式】
+    enum SmpcAreaCode {
+      SMPC_AREA_RSV_0,
+      SMPC_AREA_JP,
+      SMPC_AREA_AJ_NTSC,
+      SMPC_AREA_RSV_3,
+      SMPC_AREA_NA,
+      SMPC_AREA_SA_NTSC,
+      SMPC_AREA_KO,
+      SMPC_AREA_RSV_7,
+      SMPC_AREA_RSV_8,
+      SMPC_AREA_RSV_9,
+      SMPC_AREA_AJ_PAL,
+      SMPC_AREA_RSV_B,
+      SMPC_AREA_EU_PAL,
+      SMPC_AREA_SA_PAL,
+      SMPC_AREA_RSV_E,
+      SMPC_AREA_RSV_F
+    };
+【機  能】
+    SMPC_AREA_RSV_0,  -- 使用禁止
+    SMPC_AREA_JP,     -- 日本地域
+    SMPC_AREA_AJ_NTSC -- アジアNTSC地域
+    SMPC_AREA_RSV_3   -- 使用禁止
+    SMPC_AREA_NA      -- 北米地域
+    SMPC_AREA_SA_NTSC -- 中南米NTSC地域
+    SMPC_AREA_KO      -- 韓国地域
+    SMPC_AREA_RSV_7   -- 使用禁止
+    SMPC_AREA_RSV_8   -- 使用禁止
+    SMPC_AREA_RSV_9   -- 使用禁止
+    SMPC_AREA_AJ_PAL  -- アジアPAL地域
+    SMPC_AREA_RSV_B   -- 使用禁止
+    SMPC_AREA_EU_PAL  -- ヨーロッパPAL地域
+    SMPC_AREA_SA_PAL  -- 中南米PAL地域
+    SMPC_AREA_RSV_E   -- 使用禁止
+    SMPC_AREA_RSV_F   -- 使用禁止
+【参  照】
+    slGetStatus
+
+
+SMPC_OPT_DIS -- 定数
+SMPC_OPT_ENA -- 定数
+    SmpcOptimize - 取得時間最適化モード
+【書  式】
+    enum SmpcOptimize {
+      SMPC_OPT_DIS,
+      SMPC_OPT_ENA
+    };
+【機  能】
+    SMPC_OPT_DIS -- 取得時間最適化禁止
+    SMPC_OPT_ENA -- 取得時間最適化許可
+【参  照】
+    slGetOptimize, slSetOptimize, slGetStatus
+
+
+SMPC_PORT_15   -- 定数
+SMPC_PORT_255  -- 定数
+SMPC_PORT_RSV  -- 定数
+SMPC_PORT_ZERO -- 定数
+    SmpcPortMode - SMPCポートモード
+【書  式】
+    enum SmpcPortMode {
+      SMPC_PORT_15,
+      SMPC_PORT_255,
+      SMPC_PORT_RSV,
+      SMPC_PORT_ZERO
+    };
+【機  能】
+    SMPC_PORT_15   -- 15バイトモード
+    SMPC_PORT_255  -- 255バイトモード
+    SMPC_PORT_RSV  -- 設定禁止
+    SMPC_PORT_ZERO -- 0バイトモード
+【参  照】
+    slGetPortMode1, slGetPortMode2, slSetPortMode1, slSetPortMode2
+    slGetStatus
+
+
+SMPC_ENGLISH  -- 定数
+SMPC_DEUTSCH  -- 定数
+SMPC_FRANCAIS -- 定数
+SMPC_ESPANOL  -- 定数
+SMPC_ITALIANO -- 定数
+SMPC_JAPAN    -- 定数
+    SmpcLanguage - SMPCメモリ言語番号
+【書  式】
+    enum SmpcLanguage {
+      SMPC_ENGLISH,
+      SMPC_DEUTSCH,
+      SMPC_FRANCAIS,
+      SMPC_ESPANOL,
+      SMPC_ITALIANO,
+      SMPC_JAPAN
+    };
+【機  能】
+    SMPC_ENGLISH  -- 英語
+    SMPC_DEUTSCH  -- ドイツ語
+    SMPC_FRANCAIS -- フランス語
+    SMPC_ESPANOL  -- スペイン語
+    SMPC_ITALIANO -- イタリア語
+    SMPC_JAPAN    -- 日本語
+【参  照】
+    slGetLanguage, slSetLanguage, slGetStatus
+
+
+SMPC_EFFECT_OFF -- 定数
+SMPC_EFFECT_ON  -- 定数
+    SmpcSoundEffect - SMPCメモリ効果音モード
+【書  式】
+    enum SmpcSoundEffect {
+      SMPC_EFFECT_OFF,
+      SMPC_EFFECT_ON
+    }; 
+【機  能】
+    SMPC_EFFECT_OFF -- 効果音OFF
+    SMPC_EFFECT_ON  -- 効果音ON
+【参  照】
+    slGetSoundEffect, slSetSoundEffect, slGetStatus
+
+
+SMPC_SOUND_MONO   -- 定数
+SMPC_SOUND_STEREO -- 定数
+    SmpcSoundOutput - SMPCメモリ音声出力モード
+【書  式】
+    enum SmpcSoundOutput {
+      SMPC_SOUND_MONO,
+      SMPC_SOUND_STEREO
+    };
+【機  能】
+    SMPC_SOUND_MONO   -- モノラル
+    SMPC_SOUND_STEREO -- ステレオ
+【参  照】
+    slGetSoundOutput, slSetSoundOutput, slGetStatus
+
+
+SMPC_HELP_DIS -- 定数
+SMPC_HELP_ENA -- 定数
+    SmpcHelpWindow - SMPCメモリヘルプウィンドウモード
+【書  式】
+    enum SmpcHelpWindow {
+      SMPC_HELP_DIS,
+      SMPC_HELP_ENA
+    };
+【機  能】
+    SMPC_HELP_DIS -- 表示しない
+    SMPC_HELP_ENA -- 表示する
+【参  照】
+    slGetHelpWindow, slSetHelpWindow, slGetStatus
+
+
+SMPC_DMY -- 定数
+SMPC_JAN -- 定数
+SMPC_FEB -- 定数
+SMPC_MRA -- 定数
+SMPC_APR -- 定数
+SMPC_MAY -- 定数
+SMPC_JUN -- 定数
+SMPC_JUL -- 定数
+SMPC_AUG -- 定数
+SMPC_SEP -- 定数
+SMPC_OCT -- 定数
+SMPC_NOV -- 定数
+SMPC_DEC -- 定数
+    SmpcMonth - RTC月番号
+【書  式】
+    enum SmpcMonth {
+      SMPC_DMY,
+      SMPC_JAN,
+      SMPC_FEB,
+      SMPC_MAR,
+      SMPC_APR,
+      SMPC_MAY,
+      SMPC_JUN,
+      SMPC_JUL,
+      SMPC_AUG,
+      SMPC_SEP,
+      SMPC_OCT,
+      SMPC_NOV,
+      SMPC_DEC
+    };
+【機  能】
+    SMPC_DMY -- ダミー
+    SMPC_JAN -- 1月
+    SMPC_FEB -- 2月
+    SMPC_MAR -- 3月
+    SMPC_APR -- 4月
+    SMPC_MAY -- 5月
+    SMPC_JUN -- 6月
+    SMPC_JUL -- 7月
+    SMPC_AUG -- 8月
+    SMPC_SEP -- 9月
+    SMPC_OCT -- 10月
+    SMPC_NOV -- 11月
+    SMPC_DEC -- 12月
+【参  照】
+    slGetStatus
+
+
+SMPC_MSHON  -- 定数
+SMPC_SSHON  -- 定数
+SMPC_SSHOFF -- 定数
+SMPC_SNDON  -- 定数
+SMPC_SNDOFF -- 定数
+SMPC_CDON   -- 定数
+SMPC_CDOFF  -- 定数
+SMPC_SYSRES -- 定数
+SMPC_CKC352 -- 定数
+SMPC_CKC320 -- 定数
+SMPC_NMIREQ -- 定数
+SMPC_RESENA -- 定数
+SMPC_RESDIS -- 定数
+SMPC_GETSTS -- 定数
+SMPC_GETPER -- 定数
+SMPC_SETMEM -- 定数
+SMPC_SETTIM -- 定数
+SMPC_CMDMAX -- 定数
+    SmpcCommand - SMPCコマンド番号
+【書  式】
+    enum SmpcCommand {
+      SMPC_MSHON,
+      SMPC_SSHON,
+      SMPC_SSHOFF,
+      SMPC_SNDON,
+      SMPC_SNDOFF,
+      SMPC_CDON,
+      SMPC_CDOFF,
+      SMPC_SYSRES,
+      SMPC_CKC352,
+      SMPC_CKC320,
+      SMPC_NMIREQ,
+      SMPC_RESENA,
+      SMPC_RESDIS,
+      SMPC_GETSTS,
+      SMPC_GETPER,
+      SMPC_SETMEM,
+      SMPC_SETTIM,
+      SMPC_CMDMAX
+    };
+【機  能】
+  SMPC_MSHON  -- マスタ SH2-ON
+  SMPC_SSHON  -- スレーブ SH2-ON
+  SMPC_SSHOFF -- スレーブ SH2-OFF
+  SMPC_SNDON  -- サウンド-ON
+  SMPC_SNDOFF -- サウンド-OFF
+  SMPC_CDON   -- CD-ON
+  SMPC_CDOFF  -- CD-OFF
+  SMPC_SYSRES -- システム全体リセット
+  SMPC_CKC352 -- クロックチェンジ352モード
+  SMPC_CKC320 -- クロックチェンジ320モード
+  SMPC_NMIREQ -- NMIリクエスト
+  SMPC_RESENA -- リセットイネーブル
+  SMPC_RESDIS -- リセットディスエーブル
+  SMPC_GETSTS -- ステータス取得
+  SMPC_GETPER -- ペリフェラル取得
+  SMPC_SETMEM -- SMPCメモリ設定
+  SMPC_SETTIM -- 時刻設定
+  SMPC_CMDMAX -- コマンド番号最大値
+
+
+SMPC_NO_WAIT -- 定数
+SMPC_WAIT    -- 定数
+    SmpcWaitMode - SMPCコマンド実行モード
+【書  式】
+    enum SmpcWaitMode {
+      SMPC_NO_WAIT,
+      SMPC_WAIT
+    };
+【機  能】
+  SMPC_NO_WAIT -- コマンド実行終了待ち無し
+  SMPC_WAIT    -- コマンド実行終了待ち有り
+
+
+winFar  -- 定数
+winNear -- 定数
+    winFar、winNear - ウインドウの切替え
+【書  式】
+    enum {
+      winFar,
+      winNear
+    };
+【機  能】
+    winFar  -- 奥のウインドウ
+    winNear -- 手前のウインドウ

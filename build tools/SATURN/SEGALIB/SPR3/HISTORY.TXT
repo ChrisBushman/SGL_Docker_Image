@@ -1,0 +1,34 @@
+1995-09-11 T.T sega_spr.h
+           領域確保に失敗した、あるいは確保されている領域のサイズよりもセット
+           しようとするデータのサイズが大きい場合にはエラーコードを返すように
+           する。
+1995-09-14 H.O sega_spr.h SPR_2Initial2()を追加。
+1995-09-19 T.T sega_spr.h 一部をvolatile宣言として割り込みでの問題を回避
+1995-07-27 H.O spr_2c.c #ifdef _SH #include <strings.h>追加
+1995-07-27 H.O spr_2c.c freeBlock()での未使用local変数宣言を削除
+1995-07-27 H.O spr_2c.c SPR_2FlushDray{rtyBlock()での未使用local変数
+           宣言を削除。
+1995-08-28 T.T spr_2c.c SPR_2SetGourTbl()内のメモリブロックコピーを
+           memcpy()での処理へ変更。
+1995-08-28 T.T spr_2c.c SPR_2FlushDrayPrty()内部での構造体へのポインタ
+           アクセスをメンバでのアクセスへ変更。
+1995-08-28 T.T spr_2c.c SPR_2LocalCoord()内部での構造体へのポインタ
+           アクセスをメンバでのアクセスへ変更。
+1995-08-28 T.T spr_2c.c SPR_2SysClip()内部での構造体へのポインタアクセス
+           をメンバでのアクセスへ変更。
+1995-08-28 T.T spr_2c.c SPR_2UserClip()内部での構造体へのアクセスを
+           メンバでのアクセスへ変更。
+1995-08-28 T.T spr_2c.c SPR_2Line()内部での構造体アクセスをメンバでの
+           アクセスへ変更。
+1995-08-28 T.T spr_2c.c SPR_2ScaleSpr()内部での構造体アクセスをメンバでの
+           アクセスへ変更。
+1995-09-11 T.T spr_2c.c Block()において、空きエリアが存在するのに
+           NULLを返してしまう不具合を変更。
+1995-11-14 H.O spr_2c.c SPR_2InitSlaveSH()をSPR_2Initial2()新設に伴い削除
+1995-02-09 H.O spr_2c.c allocBlock()内のポインタ計算部を変更。
+1996-02-14 H.O spr_2c.c SPR_2UserClip() 引数のxyはXyInt型構造体要素2個の
+           配列である。
+1996-09-25 K.K spr_2c.c 1byte カナコード殲滅作戦
+1997-05-26 A.H Ver 1.23
+           3D表示ライブラリの動作安定性に問題あり。(キャッシュおよび SCU割込み)
+           本バージョンでは、3D処理は未サポート扱いとする。

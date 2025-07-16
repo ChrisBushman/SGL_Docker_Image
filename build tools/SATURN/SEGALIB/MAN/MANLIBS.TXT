@@ -1,0 +1,87 @@
+
+SEGA Basic Library Rel.6.21 ライブラリ依存関係一覧
+
+  SBLの各ライブラリがどのライブラリに依存しているかを確認するための一覧
+  です。
+  本ドキュメントに記載の依存関係を満たすような MAKEFILE 作成を支援する為、
+  SATURN\SEGASMP\LIB ディレクトリに、LIBS.LST というファイルを作成しました。
+  MAKEFILE 中からインクルードするか、カット＆ペーストする等にてご利用下さい。
+
+
+  以下の規則で表記しています。
+ 1)字下げ無し大文字:
+   ライブラリファイル名です。GCCならば「.a」SHCならば「.lib」の拡張子が
+   付きます。
+ 2)4文字分字下げ大文字:
+   そのライブラリが依存しているライブラリです。
+
+
+SEGA_BPL
+    SEGA_STM
+
+SEGA_DBG
+    SEGA_SCL
+
+SEGA_DMA
+    SEGA_INT
+    SEGA_CSH
+
+SEGA_GFS
+    SEGA_CDC
+    SEGA_CSH
+    SEGA_DMA
+
+SEGA_INT
+    SEGA_SYS
+
+SEGA_MPG
+    SEGA_CDC
+    SEGA_STM
+    SEGA_DMA
+    SEGA_CSH
+
+SEGA_PCM
+    SEGA_GFS
+    SEGA_CSH
+    SEGA_DMA
+    SEGA_STM
+    SEGA_SND
+    SEGA_ADP
+
+SEGA_SCL
+    SEGA_MTH
+    SEGA_SPR
+
+SEGA_SPR
+    SEGA_DMA
+    SEGA_SCL
+    SEGA_MTH
+    SEGA_CSH
+    SEGA_DSP
+
+SEGA_STM
+    SEGA_CDC
+    SEGA_GFS
+
+SEGA_PER
+    SEGA_SYS
+
+SEGA_SYS
+    SEGA_CDC
+
+SEGA_CDC
+    特になし
+SEGA_SHC
+    特になし
+SEGA_SND
+    特になし
+SEGA_MEM
+    特になし
+SEGA_MTH
+    特になし
+SEGA_CMP
+    特になし
+SEGA_DSP
+    特になし
+
+以上

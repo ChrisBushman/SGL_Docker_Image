@@ -1,0 +1,584 @@
+CURRENT --  定数マクロ
+    CURRENT - カレントマトリクスへのインデックス
+【機  能】
+    #define  CURRENT   0
+
+
+ORIGINAL -- 定数マクロ
+    ORIGINAL - スプライトデータのスケール補正用
+【機  能】
+    #define  ORIGINAL  (0.99999)
+
+
+_SysPause -- 定数マクロ
+_SprPause -- 定数マクロ
+_ScrPause -- 定数マクロ
+    _SysPause, _SprPause, _ScrPause
+        - システム変数PauseFlagのステータス指定用定数
+【機  能】
+    #define  _SysPause  64
+    #define  _SprPause  2
+    #define  _ScrPause  1
+【用  例】
+    スプライトの描画のみを中止する。
+    extern Uint8 PauseFlag;
+
+    PauseFlag = _SprPause;
+【参  照】
+    PauseFlag
+
+
+FUNC_Sprite -- 定数マクロ
+    FUNC_Sprite - VDP1コマンドテーブル用定型スプライト描画コマンド
+【機  能】
+    #define  FUNC_Sprite  1
+【参  照】
+    slSetSprite
+
+
+FUNC_Texture -- 定数マクロ
+    FUNC_Texture - VDP1コマンドテーブル用テクスチャ描画コマンド
+【機  能】
+    #define  FUNC_Texture  2
+【参  照】
+    slSetSprite
+
+
+FUNC_Polygon -- 定数マクロ
+    FUNC_Polygon - VDP1コマンドテーブル用ポリゴン描画コマンド
+【機  能】
+    #define  FUNC_Polygon  4
+【参  照】
+    slSetSprite
+
+
+FUNC_PolyLine -- 定数マクロ
+    FUNC_PolyLine - VDP1コマンドテーブル用ポリライン描画コマンド
+【機  能】
+    #define  FUNC_PolyLine  5
+【参  照】
+    slSetSprite
+
+
+FUNC_Line -- 定数マクロ
+    FUNC_Line - VDP1コマンドテーブル用ライン描画コマンド
+【機  能】
+    #define  FUNC_Line    6
+【参  照】
+    slSetSprite
+
+
+FUNC_SystemClip -- 定数マクロ
+    FUNC_SystemClip - VDP1コマンドテーブル用システムクリッピングコマンド
+【機  能】
+    #define  FUNC_SystemClip  9
+【参  照】
+    slSetSprite
+
+
+FUNC_UserClip -- 定数マクロ
+    FUNC_UserClip - VDP1コマンドテーブル用ユーザークリップコマンド
+【機  能】
+    #define  FUNC_UserClip  8
+【参  照】
+    slSetSprite
+
+
+FUNC_BasePosition -- 定数マクロ
+    FUNC_BasePosition - VDP1コマンドテーブル用相対座標コマンド
+【機  能】
+    #define  FUNC_BasePosition  10
+【参  照】
+    slSetSprite
+
+
+FUNC_End -- 定数マクロ
+    FUNC_End - VDP1コマンドテーブル用描画終了コマンド
+【機  能】
+    #define  FUNC_End  -1
+【参  照】
+    slSetSprite
+
+
+_ZmLT -- 定数マクロ
+    _ZmLT - スプライトの拡大中心を左上に
+【機  能】
+    #define  _ZmLT  (0x05 << 8)
+【参  照】
+    SPR_ATTRIBUTE
+
+
+_ZmLC -- 定数マクロ
+    _ZmLC - スプライトの拡大中心を左中央に
+【機  能】
+    #define  _ZmLC  (0x09 << 8)
+【参  照】
+    SPR_ATTRIBUTE
+
+
+_ZmLB -- 定数マクロ
+    _ZmLB - スプライトの拡大中心を左下に
+【機  能】
+    #define  _ZmLB  (0x0d << 8)
+【参  照】
+    SPR_ATTRIBUTE
+
+
+_ZmCT -- 定数マクロ
+    _ZmCT - スプライトの拡大中心を中央上部に
+【機  能】
+    #define  _ZmCT  (0x06 << 8)
+【参  照】
+    SPR_ATTRIBUTE
+
+
+_ZmCC -- 定数マクロ
+    _ZmCC - スプライトの拡大中心を中央に
+【機  能】
+    #define  _ZmCC  (0x0a << 8)
+【参  照】
+    SPR_ATTRIBUTE
+
+
+_ZmCB -- 定数マクロ
+    _ZmCB - スプライトの拡大中心を中央下部に
+【機  能】
+    #define  _ZmCB  (0x0e << 8)
+【参  照】
+    SPR_ATTRIBUTE
+
+
+_ZmRT -- 定数マクロ
+    _ZmRT - スプライトの拡大中心を右上に
+【機  能】
+    #define  _ZmRT  (0x07 << 8)
+【参  照】
+    SPR_ATTRIBUTE
+
+
+_ZmRC -- 定数マクロ
+    _ZmRC - スプライトの拡大中心を右中央に
+【機  能】
+    #define  _ZmRC  (0x0b << 8)
+【参  照】
+    SPR_ATTRIBUTE
+
+
+_ZmRB -- 定数マクロ
+    _ZmRB - スプライトの拡大中心を右下に
+【機  能】
+    #define  _ZmRB  (0x0f << 8)
+【参  照】
+    SPR_ATTRIBUTE
+
+
+MSBon -- 定数マクロ
+    MSBon - フレームバッファに書き込むMSBを1にする
+【機  能】
+    #define  MSBon  (1 << 15)
+【参  照】
+    ATTRIBUTE, SPR_ATTRIBUTE
+
+
+MSBoff -- 定数マクロ
+    MSBoff - フレームバッファに書き込むMSBを0にする
+【機  能】
+    #define  MSBoff  (0 << 15)
+【参  照】
+    ATTRIBUTE, SPR_ATTRIBUTE
+
+
+HSSon -- 定数マクロ
+    HSSon - ハイスピードシュリンク有効
+【機  能】
+    #define  HSSon  (1 << 12)
+【参  照】
+    ATTRIBUTE, SPR_ATTRIBUTE
+
+
+HSSoff -- 定数マクロ
+    HSSoff - ハイスピードシュリンク無効
+【機  能】
+    #define  HSSoff  (0 << 12)
+【参  照】
+    ATTRIBUTE, SPR_ATTRIBUTE
+
+
+No_Window -- 定数マクロ
+    No_Window - ウィンドウの制限を受けない
+【機  能】
+    #define  No_Window  (0 << 9)
+【参  照】
+    ATTRIBUTE, SPR_ATTRIBUTE
+
+
+Window_In -- 定数マクロ
+    Window_In - ウィンドウの内側に表示
+【機  能】
+    #define  Window_In  (2 << 9)
+【参  照】
+    ATTRIBUTE, SPR_ATTRIBUTE
+
+
+Window_Out -- 定数マクロ
+    Window_Out - ウィンドウの外側に表示
+【機  能】
+    #define  Window_Out  (3 << 9)
+【参  照】
+    ATTRIBUTE, SPR_ATTRIBUTE
+
+
+MESHoff -- 定数マクロ
+    MESHoff - メッシュをかけない
+【機  能】
+    #define  MESHoff  (0 << 8)
+【参  照】
+    ATTRIBUTE, SPR_ATTRIBUTE
+
+
+MESHon -- 定数マクロ
+    MESHon - メッシュで表示
+【機  能】
+    #define  MESHon  (1 << 8)
+【参  照】
+    ATTRIBUTE, SPR_ATTRIBUTE
+
+
+ECdis -- 定数マクロ
+    ECdis - エンドコードをパレットのひとつとして使用
+【機  能】
+    #define  ECdis  (1 << 7)
+【参  照】
+    ATTRIBUTE, SPR_ATTRIBUTE
+
+
+ECenb -- 定数マクロ
+    ECenb - エンドコード有効
+【機  能】
+    #define  ECenb  (0 << 7)
+【参  照】
+    ATTRIBUTE, SPR_ATTRIBUTE
+
+
+SPdis -- 定数マクロ
+    SPdis - スペースコードをパレットのひとつとして使用
+【機  能】
+    #define  SPdis  (1 << 6)
+【参  照】
+    ATTRIBUTE, SPR_ATTRIBUTE
+
+
+SPenb -- 定数マクロ
+    SPenb - スペースは表示しない
+【機  能】
+    #define  SPenb  (0 << 6)
+【参  照】
+    ATTRIBUTE, SPR_ATTRIBUTE
+
+
+CL16Bnk -- 定数マクロ
+    CL16Bnk - カラーバンク16色モード
+【機  能】
+    #define  CL16Bnk  (0 << 3)
+【参  照】
+    ATTRIBUTE, SPR_ATTRIBUTE
+
+
+CL16Look -- 定数マクロ
+    CL16Look - カラールックアップ16色モード
+【機  能】
+    #define  CL16Look  (1 << 3)
+【参  照】
+    ATTRIBUTE, SPR_ATTRIBUTE
+
+
+CL64Bnk -- 定数マクロ
+    CL64Bnk - カラーバンク64色モード
+【機  能】
+    #define  CL64Bnk  (2 << 3)
+【参  照】
+    ATTRIBUTE, SPR_ATTRIBUTE
+
+
+CL128Bnk -- 定数マクロ
+    CL128Bnk - カラーバンク128色モード
+【機  能】
+    #define  CL128Bnk  (3 << 3)
+【参  照】
+    ATTRIBUTE, SPR_ATTRIBUTE
+
+
+CL256Bnk -- 定数マクロ
+    CL256Bnk - カラーバンク256色モード
+【機  能】
+    #define  CL256Bnk  (4 << 3)
+【参  照】
+    ATTRIBUTE, SPR_ATTRIBUTE
+
+
+CL32KRGB -- 定数マクロ
+    CL32KRGB - RGB 32000色モード
+【機  能】
+    #define  CL32KRGB  (5 << 3)
+【参  照】
+    ATTRIBUTE, SPR_ATTRIBUTE
+
+
+CL_Replace -- 定数マクロ
+    CL_Replace - 重ね書き(上書き)モード
+【機  能】
+    #define  CL_Replace  0
+【参  照】
+    ATTRIBUTE, SPR_ATTRIBUTE
+
+
+CL_Shadow -- 定数マクロ
+    CL_Shadow - 影モード
+【機  能】
+    #define  CL_Shadow  1
+【参  照】
+    ATTRIBUTE, SPR_ATTRIBUTE
+
+
+CL_Half -- 定数マクロ
+    CL_Half - 半輝度モード
+【機  能】
+    #define  CL_Half  2
+【参  照】
+    ATTRIBUTE, SPR_ATTRIBUTE
+
+
+CL_Trans -- 定数マクロ
+    CL_Trans - 半透明モード
+【機  能】
+    #define  CL_Trans  3
+【参  照】
+    ATTRIBUTE, SPR_ATTRIBUTE
+
+
+CL_Gouraud -- 定数マクロ
+    CL_Gouraud - ユーザグーローシェーディングモード
+【機  能】
+    #define  CL_Gouraud  4
+【参  照】
+    ATTRIBUTE, SPR_ATTRIBUTE
+
+
+UseTexture -- 定数マクロ
+    UseTexture - ポリゴンにテクスチャを貼る
+【機  能】
+    #define  UseTexture  (1 << 2)
+【参  照】
+    ATTRIBUTE
+
+
+UseLight -- 定数マクロ
+    UseLight - ポリゴンは光源の影響を受ける
+【機  能】
+    #define  UseLight  (1 << 3)
+【参  照】
+    ATTRIBUTE
+
+
+UsePalette -- 定数マクロ
+    UsePalette - ポリゴンのカラーをパレットにする
+【機  能】
+    #define  UsePalette  (1 << 5)
+【参  照】
+    ATTRIBUTE
+
+
+UseNearClip -- 定数マクロ
+    UseNearClip - ニア・クリッピングをする
+【機  能】
+    #define  UseNearClip  (1 << 6)
+【参  照】
+    ATTRIBUTE
+
+
+UseGouraud -- 定数マクロ
+    UseGouraud - リアルタイムグーローをかける。
+【機  能】
+    #define  UseGouraud  (1 << 7)
+【参  照】
+    ATTRIBUTE
+
+
+UseDepth -- 定数マクロ
+    UseDepth - デプスキューを使う。
+【機  能】
+    #define  UseDepth  (1 << 4)
+【参  照】
+    ATTRIBUTE
+
+
+UseClip -- 定数マクロ
+    UseClip - ニア・クリッピングをする
+【機  能】
+    #define  UseClip  UseNearClip
+【参  照】
+    ATTRIBUTE
+
+
+sprHflip -- 定数マクロ
+    sprHflip - 左右反転のスプライト描画コマンド
+【機  能】
+    #define  sprHflip  ((1 << 4) | FUNC_Texture | (UseTexture << 16))
+【参  照】
+    ATTRIBUTE, SPR_ATTRIBUTE
+
+
+sprVflip -- 定数マクロ
+    sprVflip - 上下反転のスプライト描画コマンド
+【機  能】
+    #define  sprVflip  ((1 << 5) | FUNC_Texture | (UseTexture << 16))
+【参  照】
+    ATTRIBUTE, SPR_ATTRIBUTE
+
+
+sprHVflip -- 定数マクロ
+    sprHVflip - 上下左右反転のスプライト描画コマンド
+【機  能】
+    #define  sprHVflip  ((3 << 4) | FUNC_Texture | (UseTexture << 16))
+【参  照】
+    ATTRIBUTE, SPR_ATTRIBUTE
+
+
+sprNoflip -- 定数マクロ
+    sprNoflip - 反転を加えないスプライト描画コマンド
+【機  能】
+    #define  sprNoflip  ((0) | FUNC_Texture | (UseTexture << 16))
+【参  照】
+    ATTRIBUTE, SPR_ATTRIBUTE
+
+
+sprPolygon -- 定数マクロ
+    sprPolygon - 単色スプライト描画コマンド
+【機  能】
+    #define  sprPolygon  (FUNC_Polygon | ((ECdis | SPdis) << 24))
+【参  照】
+    ATTRIBUTE, SPR_ATTRIBUTE
+
+
+sprPolyLine -- 定数マクロ
+    sprPolyLine - ポリライン描画コマンド
+【機  能】
+    #define  sprPolyLine  (FUNC_PolyLine | ((ECdis | SPdis) << 24))
+【参  照】
+    ATTRIBUTE, SPR_ATTRIBUTE
+
+
+sprLine -- 定数マクロ
+    sprLine -ライン描画コマンド
+【機  能】
+    #define  sprLine  (FUNC_Line | ((ECdis | SPdis) << 24))
+【参  照】
+    ATTRIBUTE, SPR_ATTRIBUTE
+
+
+No_Texture -- 定数マクロ
+    No_Texture - テクスチャを使用しない
+【機  能】
+    #define  No_Texture  0
+【参  照】
+    ATTRIBUTE
+
+
+No_Option -- 定数マクロ
+    No_Option - オプションを使用しない
+【機  能】
+    #define  No_Option  0
+【参  照】
+    ATTRIBUTE
+
+
+No_Gouraud -- 定数マクロ
+    No_Gouraud - グーローシェーディングを使用しない
+【機  能】
+    #define  No_Gouraud  0
+【参  照】
+    ATTRIBUTE
+
+
+No_Palet -- 定数マクロ
+    No_Palet - カラーパレットの指定をしない
+【機  能】
+    #define  No_Palet  0
+【参  照】
+    ATTRIBUTE
+
+
+GouraudRAM -- 定数マクロ
+    GouraudRAM - 光源の影響用のグーローバッファ
+【機  能】
+    #define  GouraudRAM  (0x00080000 - (32*8))
+
+
+COL_16 -- 定数マクロ
+    COL_16 - カラーバンク16色モード
+【機  能】
+    #define  COL_16  (2+1)
+【参  照】
+    AdjCG, PICTBL, PICDEF
+
+
+COL_64 -- 定数マクロ
+    COL_64 - カラーバンク64色モード
+【機  能】
+    #define  COL_64  (2+0)
+【参  照】
+    AdjCG, PICTBL, PICDEF
+
+
+COL_128 -- 定数マクロ
+    COL_128 - カラーバンク128色モード
+【機  能】
+    #define  COL_128  (2+0)
+【参  照】
+    AdjCG, PICTBL, PICDEF
+
+
+COL_256 -- 定数マクロ
+    COL_256 - カラーバンク256色モード
+【機  能】
+    #define  COL_256  (2+0)
+【参  照】
+    AdjCG, PICTBL, PICDEF
+
+
+COL_32K -- 定数マクロ
+    COL_32K - RGB 32000色モード
+【機  能】
+    #define  COL_32K  (2-1)
+【参  照】
+    AdjCG, PICTBL, PICDEF
+
+
+cgaddress -- マクロ定数
+    cgaddress - SGLのデフォルトのテクスチャデータTOPアドレス
+【機  能】
+    #define  cgaddress  0x10000
+
+
+CGADDRESS -- マクロ定数
+    CGADDRESS - SGLのデフォルトのテクスチャデータTOPアドレス
+【機  能】
+    #define  CGADDRESS  0x10000
+
+
+pal -- マクロ定数
+    pal - SGLデフォルトのテクスチャカラーモード
+【機  能】
+    #define pal COL_32K
+
+
+SpriteVRAM -- 定数マクロ
+    SpriteVRAM - VDP1のVRAM先頭アドレス
+【機  能】
+    #define  SpriteVRAM  0x25c00000
+
+
+RGB_Flag -- 定数マクロ
+    RGB_Flag - カラーデータがRGBコードであることを示す。(VDP1用)
+【機  能】
+    #define  RGB_Flag  0x8000

@@ -1,0 +1,69 @@
+[snmake]
+
+CC = gcc
+CFLAGS = -g -m2 -O3
+
+AS = snasmsh2
+ASFLAGS = /dmax 32 /l /sdb
+
+LD = snasmsh2
+LDFLAGS = /sdb
+
+
+INCLUDES = -Iincludes
+AINCLUDES = -j includes
+
+
+OBJS =  master.cof \
+        mirq.cof \
+        vdp1.cof \
+        vdp2.cof \
+        matrix.cof \
+        pad.cof \
+        poly.cof \
+        rand.cof \
+        shapes.cof \
+        print.cof \
+	bfsonic.cof \
+        globals.cof \
+        main.o \
+	dsp.o
+
+.o,.c
+	$(CC) $(CFLAGS) $(INCLUDES) -c $+
+
+.cof,.asm
+	$(AS) $(ASFLAGS) $(AINCLUDES) $+,$-
+
+
+main.cof;	$(OBJS)
+	snasmsh2 /sdb main.lnk,main
+
+
+master.cof;	master.asm includes\globals.h includes\equ.h
+
+vdp1.cof;	vdp1.asm includes\globals.h includes\equ.h
+
+vdp2.cof;	vdp2.asm includes\globals.h includes\equ.h
+
+rand.cof;	rand.asm includes\globals.h includes\equ.h
+
+matrix.cof;	matrix.asm includes\matrix.h includes\globals.h includes\equ.h
+
+mirq.cof;	mirq.asm includes\globals.h includes\equ.h
+
+globals.cof;	globals.asm includes\equ.h
+
+pad.cof;	pad.asm includes\globals.h includes\equ.h
+
+poly.cof;	poly.asm includes\matrix.h includes\globals.h includes\equ.h
+
+print.cof;	print.asm includes\globals.h includes\equ.h
+
+shapes.cof;	shapes.asm includes\globals.h includes\equ.h
+
+bfsonic.cof;	bfsonic.asm includes\globals.h includes\equ.h
+
+main.o;		main.c includes\structs.h
+
+dsp.o;		dsp.c includes\dsp.h includes\structs.h

@@ -1,0 +1,16 @@
+
+	regs	pc=Master_Start
+
+.text	section.l org $6004000
+
+.data	section.l
+.bss	section.l
+
+	include master.cof
+	include globals.cof
+	include mirq.cof
+	include pad.cof
+	include vdp1.cof
+	include test.o
+
+	end

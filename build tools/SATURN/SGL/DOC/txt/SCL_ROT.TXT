@@ -1,0 +1,181 @@
+slRparaInitSet -- 関数
+    slRparaInitSet - 回転パラメータテーブルをVRAM領域に格納。
+【書  式】
+    #include "sgl.h"
+
+    ROTSCROLL *addr_A;
+
+    void slRparaInitSet( addr_A );
+【引  数】
+    ROTSCROLL *addr_A -回転パラメータテーブルを格納するVRAM先頭アドレス
+【返  数】
+    void - 何も返しません。
+【機  能】
+    回転スクロールに使用する回転パラメータテーブル(サイズ: 60H)をVRAM
+    領域中に格納します。パラメータBは、パラメータA+20Hの位置から格納される
+    ので、パラメータA・Bで、合わせてE0H必要となります。
+    本関数を使用しない場合のデフォルトの格納アドレスは25E3FF00Hとなっています。
+    addr_Aは、必ず絶対アドレスを指定するようにしてください。
+【用  例】
+    slRparaInitSet( ( void * )( 0x25e5fe00 ) );
+【参  照】
+    slMakeKtable, slKtableRA, slKtableRB, slRparaReadCtrlRA
+    slRparaReadCtrlRB, MsScreenSizeX, MsScreenSizeY, Resolution
+    VDP2_RPTA, ScrRotPtr, rpara_vram_adr, RotScrParA
+    RotScrParB
+
+
+slCurRpara -- 関数
+    slCurRpara - 回転パラメータの操作するパラメータを指定。
+【書  式】
+    #include "sgl.h"
+
+    Uint16 mode;
+
+    void slCurRpara( mode );
+【引  数】
+    Uint16 mode - 回転パラメータ
+【返  数】
+    void - 何も返しません。
+【機  能】
+    回転パラメータA・Bのうち、操作するパラメータを指定します。
+    modeには以下のパラメータが入ります。
+        RA: 回転パラメータA
+        RB: 回転パラメータB
+【用  例】
+    /* 回転係数Aの操作 */
+    slCurRpara( RA);
+    slUnitMatrix( CURRENT);
+    slTranslate( toFIXED( 10.0 ), toFIXED( 20.0 ), toFIXED( 15.0 ) );
+    slRotZ( DEGtoANG( 10.0 ) );
+    slScrMatSet();
+
+    /* 回転係数Bの操作 */
+    slCurRpara( RB);
+    slUnitMatrix( CURRENT);
+    slTranslate( toFIXED( 100.0 ), toFIXED( -100.0 ), toFIXED( 15.0 ) );
+    slRotZ( DEGtoANG( 10.0 ) );
+    slScrMatSet();
+【参  照】
+    slRparaMode, slScrMatSet, slScrMatConv, ScrRotPtr
+    RotScrParA, RotScrParB
+
+
+slRparaMode -- 関数
+    slRparaMode - 回転パラメータの使用モードを指定。
+【書  式】
+    #include "sgl.h"
+
+    Uint16 mode;
+
+    void slRparaMode( mode );
+【引  数】
+    Uint16 mode - 回転パラメータモード(後述)。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    回転パラメータA・Bの使用モードを指定します。
+    modeには、以下のパラメータが入ります。
+        RA      : 回転パラメータAのみ使用
+        RB      : 回転パラメータBのみ使用
+        K_CHANGE: 回転パラメータAの係数データによって画像切替え
+        W_CHANGE: 回転パラメータウィンドウで画像切替え
+【用  例】
+    slRparaMode( RA);
+【参  照】
+    slCurRpara, slRparaMode, slRparaReadCtrlRA, slRparaReadCtrlRB
+    VDP2_RPMD
+
+
+slMakeKtable -- 関数
+    slMakeKtable - 係数のテーブルを作成。
+【書  式】
+    #include "sgl.h"
+
+    void *addr_A;
+
+    void slMakeKtable( *addr_A );
+【引  数】
+    void *addr_A - 係数テーブルのVRAM上アドレス
+【返  数】
+    void - 何も返しません。
+【機  能】
+    3次元回転で使用する係数のテーブルを作成します。
+    2 Wordサイズのデータを1バンク分作成します。本関数を使用する場合には、
+    関数
+      slKtableRA( K_2WORD| K_ON| K_DOT| K_FIX )
+      slKtableRB( K_2WORD| K_ON| K_DOT| K_FIX)
+    を併用してください。
+【用  例】
+    slRparaInitSet( ( void * )( 0x25e5fe00 ) );
+    slKtableRA( ( void * )( 0x25e40000 ), K_2WORD| K_ON| K_DOT| K_FIX);
+    slMakeKtable( ( void * )( 0x25e40000 ) );
+
+    slRparaMode( K_CHANGE);
+【参  照】
+    slRparaInitSet, slKtableRA, slKtableRB, slRparaReadCtrlRA
+    slRparaReadCtrlRB, VDP2_KTAOF, k_table_adr
+
+
+slKtableRA -- 関数
+slKtableRB -- 関数
+    slKtableRA, slKtableRB - 係数テーブルのアドレスの設定。
+【書  式】
+    #include "sgl.h"
+
+    void   *addr_A;
+    Uint16 mode;
+
+    void slKtableRA( addr_A, mode );
+    void slKtableRB( addr_A, mode );
+【引  数】
+    void   *addr_A - 係数テーブルのVRAM上アドレス
+    Uint16 mode    - 係数テーブルコントロールモード(後述)
+【返  数】
+    void - 何も返しません。
+【機  能】
+    係数テーブルのアドレスをレジスタに設定し、同時に、係数テーブルの使用法、
+    構成を指定します。
+    modeには以下のパラメータが入ります。 
+        K_OFF | K_ON                         : テーブル使用
+        K_2WORD | K_1WORD                    : 係数データサイズ
+        K_MODE0 | K_MODE1 | K_MODE2 | K_MODE3: 係数モード
+        K_LINECOL                            : ラインカラー
+        K_DOT | K_LINE                       : 変形単位
+        K_FIX                                : 係数固定
+    使用する機能に応じて上記の値を "|" でつないで指定してください。
+【用  例】
+    モード0(係数テーブルから、x、yの拡大係数を拾ってくる)を使用し、
+    係数を2 Wordモード、ドット毎に使う場合。
+    #define RBG0RA_RPARA_ADR ( void * )VDP2_VRAM_A0
+    void slKtableRA( RBG0RA_RPARA_ADR, K_ON| K_2WORD| K_MODE0| K_DOT);
+【参  照】
+    slRparaInitSet, slRparaReadCtrlRA, VDP2_KTCTL, slRparaReadCtrlRB
+    VDP2_KTAOF, RotScrParA, RotScrParB
+
+
+slRparaReadCtrlRA -- 関数
+slRparaReadCtrlRB -- 関数
+    slRparaReadCtrlRA, slRparaReadCtrlRB - 回転パラメータを読み出す方法の指定。
+【書  式】
+    #include "sgl.h"
+
+    Uint16 type;
+
+    void slRparaReadCtrlRA( type );
+    void slRparaReadCtrlRB( type );
+【引  数】
+    Uint16 type - 回転パラメータを読み出す方法(後述)。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    回転パラメータの内 Xst、Yst、KAstを各ラインごとに読み直すか
+    どうかを指定します。
+    typeには、
+        LnRd_Xst、LnRd_Yst、LnRd_KAst
+    を '|' でつないで指定します。
+【用  例】
+    slRparaReadCtrlRB( LnRd_Yst);
+【参  照】
+    slRparaInitSet, slKtableRA, slKtableRB, VDP2_RPRCTL
+    

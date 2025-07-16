@@ -1,0 +1,19 @@
+create	sega_pcm.lib
+add	pcm_lib.obj
+add	pcm_gfs.obj
+add	pcm_stm.obj
+add	pcm_mp.obj
+add	pcm_time.obj
+add	pcm_audi.obj
+add	pcm_aif.obj
+add	pcm_aif2.obj
+add	pcm_drv.obj
+add	pcm_etc.obj
+add	pcm_adp.obj
+add	pcm_xaud.obj
+add	pcm_xcmn.obj
+add	pcm_xgfs.obj
+add	pcm_xmp.obj
+add	pcm_xstm.obj
+exit
+

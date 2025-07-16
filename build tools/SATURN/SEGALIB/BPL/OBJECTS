@@ -1,0 +1,9 @@
+#
+#■このファイルは makefile から include されます。
+#  TARGET にはライブラリのファイル名を指定してください。
+#  OBJS にはライブラリを作るための dependencies を指定してください。
+#
+TARGET=	sega_bpl.a
+
+OBJS=	$(OBJDIR)/bpl_main.o
+

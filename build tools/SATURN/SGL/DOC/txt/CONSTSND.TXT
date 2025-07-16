@@ -1,0 +1,222 @@
+_Stereo -- マクロ定数
+    _Stereo - ステレオモード
+【機  能】
+    #define  _Stereo  0x80
+【参  照】
+    PCM
+
+
+_Mono -- マクロ定数
+    _Mono - モノラルモード
+【機  能】
+    #define  _Mono  0x00
+【参  照】
+    PCM
+
+
+_PCM16Bit -- マクロ定数
+    _PCM16Bit - PCMを16ビットサンプルで
+【機  能】
+    #define  _PCM16Bit  0x00
+【参  照】
+    PCM
+
+
+_PCM8Bit -- マクロ定数
+    _PCM8Bit - PCMを8ビットサンプルで
+【機  能】
+    #define  _PCM8Bit  0x10
+【参  照】
+    PCM
+
+
+SND_SEQ_START -- マクロ定数
+    SND_SEQ_START - シーケンスの開始
+【機  能】
+    #define  SND_SEQ_START  0x01
+【参  照】
+    slSoundRequest
+
+
+SND_SEQ_STOP -- マクロ定数
+    SND_SEQ_STOP - シーケンスの終了
+【機  能】
+    #define  SND_SEQ_STOP  0x02
+【参  照】
+    slSoundRequest
+
+
+SND_SEQ_PAUSE -- マクロ定数
+    SND_SEQ_PAUSE - シーケンスの一時中断
+【機  能】
+    #define  SND_SEQ_PAUSE  0x03
+【参  照】
+    slSoundRequest
+
+
+SND_SEQ_CONT -- マクロ定数
+    SND_SEQ_CONT - シーケンスの再開
+【機  能】
+    #define  SND_SEQ_CONT  0x04
+【参  照】
+    slSoundRequest
+
+
+SND_SEQ_VOL -- マクロ定数
+    SND_SEQ_VOL - シーケンスボリウム
+【機  能】
+    #define  SND_SEQ_VOL  0x05
+【参  照】
+    slSoundRequest
+
+
+SND_TEMPO_CHG -- マクロ定数
+    SND_TEMPO_CHG - テンポの変更
+【機  能】
+    #define  SND_TEMPO_CHG  0x07
+【参  照】
+    slSoundRequest
+
+
+SND_MAP_CHG -- マクロ定数
+    SND_MAP_CHG - マップチェンジ
+【機  能】
+    #define  SND_MAP_CHG  0x08
+【参  照】
+    slSoundRequest
+
+
+SND_MIDI_CTRL_DIR -- マクロ定数
+    SND_MIDI_CTRL_DIR - MIDIダイレクトコントロール
+【機  能】
+    #define  SND_MIDI_CTRL_DIR  0x09
+【参  照】
+    slSoundRequest
+
+
+SND_VOL_ANL_START -- マクロ定数
+    SND_VOL_ANL_START - 音量解析開始
+【機  能】
+    #define  SND_VOL_ANL_START  0x0a
+【参  照】
+    slSoundRequest
+
+
+SND_VOL_ANL_STOP -- マクロ定数
+    SND_VOL_ANL_STOP - 音量解析中止
+【機  能】
+    #define  SND_VOL_ANL_STOP  0x0b
+【参  照】
+    slSoundRequest
+
+
+SND_DSP_STOP -- マクロ定数
+    SND_DSP_STOP - DSPの終了
+【機  能】
+    #define  SND_DSP_STOP  0x0c
+【参  照】
+    slSoundRequest
+
+
+SND_ALL_OFF -- マクロ定数
+    SND_ALL_OFF - 全ての発音を停止
+【機  能】
+    #define  SND_ALL_OFF  0x0d
+【参  照】
+    slSoundRequest
+
+
+SND_SEQ_PAN -- マクロ定数
+    SND_SEQ_PAN - シーケンスのPAN
+【機  能】
+    #define  SND_SEQ_PAN  0x0e
+【参  照】
+    slSoundRequest
+
+
+SND_CDDA_LEV -- マクロ定数
+    SND_CDDA_LEV - CDDAのレベル
+【機  能】
+    #define  SND_CDDA_LEV  0x80
+【参  照】
+    slSoundRequest
+
+
+SND_CDDA_PAN -- マクロ定数
+    SND_CDDA_PAN - CDDAのPAN
+【機  能】
+    #define  SND_CDDA_PAN  0x81
+【参  照】
+    slSoundRequest
+
+
+SND_TTL_VOL -- マクロ定数
+    SND_TTL_VOL - 全体の音量
+【機  能】
+    #define  SND_TTL_VOL  0x82
+【参  照】
+    slSoundRequest
+
+
+SND_EFCT_CHG -- マクロ定数
+    SND_EFCT_CHG - エフェクトの変更
+【機  能】
+    #define  SND_EFCT_CHG  0x83
+【参  照】
+    slSoundRequest
+
+
+SND_PCM_START -- マクロ定数
+    SND_PCM_START - PCMの開始
+【機  能】
+    #define  SND_PCM_START  0x85
+【参  照】
+    slSoundRequest
+
+
+SND_PCM_START -- マクロ定数
+    SND_PCM_START - PCMの終了
+【機  能】
+    #define  SND_PCM_STOP  0x86
+【参  照】
+    slSoundRequest
+
+
+SND_MIX_CHG -- マクロ定数
+    SND_MIX_CHG - ミキサの変更
+【機  能】
+    #define  SND_MIX_CHG  0x87
+【参  照】
+    slSoundRequest
+
+
+SND_MIX_PRM_CHG -- マクロ定数
+    SND_MIX_PRM_CHG - ミキサのパラメータ変更
+【機  能】
+    #define  SND_MIX_PRM_CHG  0x88
+【参  照】
+    slSoundRequest
+
+
+SND_HARD_CHK -- マクロ定数
+    SND_HARD_CHK - ハードウェアチェック
+【機  能】
+    #define  SND_HARD_CHK  0x89
+【参  照】
+    slSoundRequest
+
+
+SND_PCM_PRM_CHG -- マクロ定数
+    SND_PCM_PRM_CHG - PCMパラメータの変更
+【機  能】
+    #define  SND_PCM_PRM_CHG  0x8a
+【参  照】
+    slSoundRequest
+
+
+SoundRAM -- マクロ定数
+    SoundRAM - サウンドRAMの先頭アドレス
+【機  能】
+    #define  SoundRAM  0x25a00000
+
+

@@ -1,0 +1,504 @@
+MAX -- マクロ
+    MAX - 2者のうち大きい方を返す。
+【書  式】
+    #include "sl_def.h"
+
+    MAX( a, b );
+【引  数】
+    a, b : 任意の型の数
+【返  数】
+    a, bのうち大きい方
+【機  能】
+    以下のように宣言されています。
+    #define MAX(x, y)  ((x) > (y) ? (x) : (y))
+
+
+MIN -- マクロ
+    MAX - 2者のうち小さい方を返す。
+【書  式】
+    #include "sl_def.h"
+
+    MIN( a, b );
+【引  数】
+    a, b : 任意の型の数
+【返  数】
+    a, bのうち小さい方
+【機  能】
+    以下のように宣言されています。
+    #define MIN(x, y)  ((x) < (y) ? (x) : (y))
+
+ABS -- マクロ
+    ABS - 絶対値をとる。
+【書  式】
+    #include "sl_def.h"
+
+    ABS( a );
+【引  数】
+    a : 任意の型の数
+【返  数】
+    aの絶対値。
+【機  能】
+    #define ABS(x)  ((x) < 0 ? -(x) : (x))
+
+
+toFIXED -- マクロ
+    toFIXED [macro] - 整数を固定小数に変換。
+【書  式】
+    #include "sl_def.h"
+
+    toFIXED( a );
+【引  数】
+    a : 整数型の数(変数/定数/数字どれでも可。)
+【返  数】
+    SGL固定小数型(FIXED)の数値
+【機  能】
+    #define  toFIXED(a)   ((FIXED)(65536.0 * (a)))
+
+
+POStoFIXED -- マクロ
+    POStoFIXED - 整数を固定小数に変換。
+【書  式】
+    #include "sl_def.h"
+
+    POStoFIXED( a, b, c );
+【引  数】
+    a, b, c : 整数型の数(変数/定数/数字どれでも可。)
+【返  数】
+    SGL固定小数型(FIXED)の数値の配列(POINT型等。)
+【機  能】
+    #define  POStoFIXED(x,y,z)  {toFIXED(x),toFIXED(y),toFIXED(z)}
+
+
+ATTRIBUTE -- マクロ
+    ATTRIBUTE [a] - ポリゴンデータの属性設定。(ATTR [a]構造体への変換)
+【書  式】
+    #include "sl_def.h"
+
+    ATTRIBUTE( plane, sort, tex, col, gouraud, mode, dir, opt );
+【引  数】
+    plane   - 両面表示か片面表示か(後述。)
+    sort    - ソートの基準点(後述。)
+    tex     - テクスチャ番号(後述。)
+    col     - カラーパレットナンバ(後述。)
+    gouraud - ユーザグーロー用グーローシェーディングテーブル(後述。)
+    mode    - ポリゴン属性(後述。)
+    dir     - ポリゴンの描画方法(後述。)
+    opt     - オプション(後述。)
+【機  能】
+    #define  ATTRIBUTE(f,s,t,c,g,a,d,o)  \
+          {f,(s)|(((d)>>16)&0x1c)|(o),t,(a)|(((d)>>24)&0xc0),c,g,(d)&0x3f}
+    引数の値リストは以下の通りです。
+    plane 
+      Single_Plane :片面(法線ベクトルの方向)表示。
+      Dual_Plane   :両面表示。
+    sort
+      SORT_MIN : 一番近い頂点を基準。
+      SORT_CEN : 4頂点の平均値を基準。
+      SORT_MAX : 一番遠い頂点を基準。
+      SORT_BFR : 前のポリゴンの手前に表示。
+    tex
+      No_Texture : テクスチャを貼らない。
+      Uint16の値 : テクスチャ番号。
+    col
+      No_Palet   : パレットを使用しない。(テクスチャがRGBモードの場合。)
+      Uint16の値 : texがNo_Textureの時、カラーコード。
+                   それ以外の時、パレット番号。
+    gouraud
+      No_Gouraud : ユーザグーローシェーディングを使用しない。
+      Uint16の値 : グーローシェーディングテーブルのアドレス
+                   VDP1のVRAMの先頭からの8バイトバウンダリで表現。
+    mode
+      以下のそれぞれのグループから0又は一つのエントリを"|"して指定します。
+      グループ1
+        MSBoff : フレームバッファに書き込む際MSBをたてない(default)。
+        MSBon  : フレームバッファに書き込む際MSBをたてる。
+      グループ2
+        No_Window  : ウインドウの制約を受けない。(default)
+        Window_In  : ウインドウの内側に表示。
+        Window_Out : ウインドウの外側に表示。
+      グループ3
+        HSSoff : ハイスピードシュリンクを掛けない。(default)
+        HSSon  : ハイスピードシュリンクを掛ける。
+      グループ4
+        MESHoff : メッシュをかけない。(default)
+        MESHon  : メッシュをかける。
+      グループ5
+        ECdis : エンドコードを無効。(default)
+        ECenb : エンドコードを有効。
+      グループ6
+        SPdis : 透明ピクセル表示。(default)
+        SPenb : 透明ピクセル無効。
+      グループ7
+        CL16Bnk  : 16色カラーバンクモード。(default)
+        CL16Look : カラールックアップモード。
+        CL64Bnk  : 64色カラーバンクモード。
+        CL128Bnk : 128色カラーバンクモード。
+        CL256Bnk : 256色カラーバンクモード。
+        CL32KRGB : RGBモード。
+      グループ8
+        CL_Replace : 通常描画モード。(default)
+        CL_Shadow  : 影モード。
+        CL_Half    : 半輝度モード。
+        CL_Trans   : 半透明モード。
+        CL_Gouraud : ユーザグーローシェーディングモード。
+    dir
+      sprNoflip   : 通常表示。
+      sprHflip    : 左右反転表示。
+      sprVflip    : 上下反転表示。
+      sprHVflip   : 上下左右反転表示。
+      sprPolygon  : テクスチャなし。
+      sprPolyLine : ポリライン表示。
+    opt
+      UseLight    : フラットシェーディングを行なう。
+      UseNearClip : ニアクリッピング処理を行なう。
+      UsePalette  : パレット表示。
+      UseDepth    : デプスキューイングを行なう。
+      UseGouraud  : リアルタイムグーロー処理を行なう。
+      No_Option   : 特別な処理は行なわない。
+【用  例】
+    ATTR attr;
+    attr = ATTRIBUTE( Single_Plane, 5, 0, No_Gouraud, CL16Bnk,
+                      sprNoflip, UseNearClip );
+
+
+SPR_ATTRIBUTE -- マクロ
+    SPR_ATTRIBUTE - スプライトデータの属性設定。(SPR_ATTR [a]構造体への変換)
+【書  式】
+    #include "sl_def.h"
+
+    SPR_ATTRIBUTE( tex, col, gouraud, mode, dir );
+【引  数】
+    tex     - パターン番号(後述。)
+    col     - カラーパレットナンバ(後述。)
+    gouraud - ユーザグーロー用グーローシェーディングテーブル(後述。)
+    mode    - スプライト属性(後述。)
+    dir     - スプライトの描画方法(後述。)
+【機  能】
+    #define  SPR_ATTRIBUTE(t,c,g,a,d)  {t,(a)|(((d)>>24)&0xc0),c,g,(d)&0x0f3f}
+
+    引数の値リストは以下の通りです。
+    tex
+      No_Texture : 単色スプライト。
+      Uint16の値 : パターン番号。
+    col
+      No_Palet   : パレットを使用しない。(RGBモードの場合。)
+      Uint16の値 : texがNo_Textureの時、カラーコード。
+                   それ以外の時、パレット番号。
+    gouraud
+      No_Gouraud : ユーザグーローシェーディングを使用しない。
+      Uint16の値 : グーローシェーディングテーブルのアドレス
+                   VDP1のVRAMの先頭からの8バイトバウンダリで表現。
+    mode
+      以下のそれぞれのグループから0又は一つのエントリを"|"して指定します。
+      グループ1
+        MSBoff : フレームバッファに書き込む際MSBをたてない(default)。
+        MSBon  : フレームバッファに書き込む際MSBをたてる。
+      グループ2
+        No_Window  : ウインドウの制約を受けない。(default)
+        Window_In  : ウインドウの内側に表示。
+        Window_Out : ウインドウの外側に表示。
+      グループ3
+        HSSoff : ハイスピードシュリンクを掛けない。(default)
+        HSSon  : ハイスピードシュリンクを掛ける。
+      グループ4
+        MESHoff : メッシュをかけない。(default)
+        MESHon  : メッシュをかける。
+      グループ5
+        ECdis : エンドコードを無効。(default)
+        ECenb : エンドコードを有効。
+      グループ6
+        SPdis : 透明ピクセル表示。(default)
+        SPenb : 透明ピクセル無効。
+      グループ7
+        CL16Bnk  : 16色カラーバンクモード。(default)
+        CL16Look : カラールックアップモード。
+        CL64Bnk  : 64色カラーバンクモード。
+        CL128Bnk : 128色カラーバンクモード。
+        CL256Bnk : 256色カラーバンクモード。
+        CL32KRGB : RGBモード。
+      グループ8
+        CL_Replace : 通常描画モード。(default)
+        CL_Shadow  : 影モード。
+        CL_Half    : 半輝度モード。
+        CL_Trans   : 半透明モード。
+        CL_Gouraud : ユーザグーローシェーディングモード。
+    dir
+      以下の2つのグループからそれぞれ1つずつ選んで"|"で指定します。
+      グループ1
+        sprNoflip   : 通常表示。
+        sprHflip    : 左右反転表示。
+        sprVflip    : 上下反転表示。
+        sprHVflip   : 上下左右反転表示。
+        sprPolygon  : 単色スプライト。
+        sprPolyLine : ポリライン表示。
+      グループ2
+        _ZmLT :拡大時の中心点を左上にする。
+        _ZmLC :拡大時の中心点を左中央にする。
+        _ZmLB :拡大時の中心点を左下にする。
+        _ZmCT :拡大時の中心点を中央上にする。
+        _ZmCC :拡大時の中心点を中央にする。
+        _ZmCB :拡大時の中心点を中央下にする。
+        _ZmRT :拡大時の中心点を右上にする。
+        _ZmRC :拡大時の中心点を右中央にする。
+        _ZmRB :拡大時の中心点を右下にする。
+
+
+DEGtoANG -- マクロ
+    DEGtoANG - 角度をANGLE [a]型に変換
+【書  式】
+    #include "sl_def.h"
+
+    DEGtoANG( a );
+【引  数】
+    a : 整数型の数(変数/定数/数字どれでも可。)
+【返  数】
+    SGLの角度型(ANGLE)の数値
+【機  能】
+    #define  DEGtoANG(d)  ((ANGLE)((65536.0 * (d)) / 360.0))
+
+
+RADtoANG -- マクロ
+    RADtoANG - 角度(ラディアン)をANGLE [a]型に変換
+【書  式】
+    #include "sl_def.h"
+
+    RADtoANG( a );
+【引  数】
+    a : 整数型の数(変数/定数/数字どれでも可。)
+【返  数】
+    SGLの角度型(ANGLE)の数値
+【機  能】
+    #define  RADtoANG(d)  ((ANGLE)((65536.0 * (d)) / (2*M_PI)))
+
+
+RGB -- マクロ
+    RGB - R、G、B個別の数値をサターン用カラーコード(15ビット)に変換。
+【書  式】
+    #include "sl_def.h"
+
+    RGB( r, g, b );
+【引  数】
+    r : 赤の整数値
+    g : 緑の整数値
+    b : 青の整数値
+【返  数】
+    15ビットのサターン用カラーコード。
+【機  能】
+    #define  RGB(r,g,b)  (0x8000|((b)<<10)|((g)<<5)|(r))
+
+
+DGTtoRGB -- マクロ
+    DGTtoRGB - SEGA DGTフォーマットRGBデータをサターン用RGBデータに変換
+【書  式】
+    #include "sl_def.h"
+
+    DGTtoRGB( a );
+【引  数】
+    a : SEGA DGTフォーマットのRGB値。
+【返  数】
+    15ビットのサターン用カラーコード。
+【機  能】
+    #define  DGTtoRGB(c)  (0x8000|(((c)&0x0f00)<<3)|(((c)&0x4000)>>4)|\
+                           (((c)&0x00f0)<<2)|(((c)&0x2000)>>8)|(((c)&0x000f)\
+                           <<1)|(((c)&0x1000)>>12))
+
+
+SLocate -- マクロ
+    SLocate - ページのセル位置アドレスを求める
+【書  式】
+    #include "sl_def.h"
+
+    SLocate( page, x, y );
+【引  数】
+    page : ページ番号。
+    x, y : セルのx,y位置。
+【返  数】
+    セルのアドレス
+【機  能】
+    #define  SLocate(SLocax,y,p)  ((p) * Page + (y) * Line + (x))
+
+NORMAL -- マクロ
+    NORMAL - 3つの数値を、FIXED [a]型配列にする。(法線データ記述用)
+【書  式】
+    #include "sgl.h"
+
+    NORMAL( x, y, z );
+【引  数】
+    x, y, z: 法線ベクトルを表す、任意の数値(整数/浮動小数)
+【返  数】
+    SGL固定小数型(FIXED)の数値の配列(POINT型等。)
+【機  能】
+    #define  NORMAL(x,y,z)    {POStoFIXED(x,y,z)}
+
+
+VERTICES -- マクロ
+    VERTICES - 4つの頂点インデックスデータを配列にする(頂点データ記述用)
+【書  式】
+    #include "sgl.h"
+
+    VERTICES( a, b, c, d );
+【引  数】
+    a, b, c, d :POINT型などで表される3次元頂点データテーブルでのインデックス
+【返  数】
+    インデックスの4次の配列
+【機  能】
+    #define  VERTICES(v0,v1,v2,v3)  {v0 , v1 , v2 , v3}}
+
+
+C_RGB -- マクロ
+    C_RGB - R,G,BのデータをVDP1用のRGBデータに変換する
+【書  式】
+    #include "sgl.h"
+
+    C_RGB( r, g, b );
+【引  数】
+    r :任意の型の赤色を表すデータ。
+    g :任意の型の緑色を表すデータ。
+    b :任意の型の青色を表すデータ。
+【返  数】
+    VDP1のRGB形式のダイレクトカラーデータ。
+【機  能】
+    #define  C_RGB(r,g,b)  (((b)&0x1f)<<10|((g)&0x1f)<<5|((r)&0x1f)|0x8000)
+
+
+TEXDEF -- マクロ
+    TEXDEF - TEXTURE [types]データへのデータコンバート
+【書  式】
+    #include "sgl.h"
+
+    TEXDEF( h_size, v_size, addr );
+【引  数】
+    h_size :テクスチャの横方向サイズ(ドット)
+    v_size :テクスチャの縦方向サイズ(ドット)
+    addr   :テクスチャデータのあるVRAMアドレス
+【返  数】
+    TEXTURE型構造体データ
+【機  能】
+    #define  TEXDEF(h,v,presize)  {h,v,(cgaddress+(((presize)*4)>>(pal)))/8,\
+                                   (((h)&0x1f8)<<5 | (v))}
+【注  意】
+    このマクロは古いバージョンとの互換性のために残してあるものです。
+    このマクロと同等の機能を果たす、TEXTBLの方を使うようにしてください。
+
+
+PICDEF -- マクロ
+    PICDEF - PICTURE [types]データへのデータコンバート
+【書  式】
+    #include "sgl.h"
+
+    PICDEF( tex_no, col_mode, src )
+【引  数】
+    tex_no   :テクスチャ番号。
+    col_mode :カラーモード(COL_16,COL_256等)
+    src      :大元のテクスチャデータのあるアドレス。
+【返  数】
+    PICTURE型構造体データ
+【機  能】
+    #define  PICDEF  (texno,cmode,pcsrc){(Uint16)(texno),(Uint16)(cmode),\
+                      (void *)(pcsrc)}
+【注  意】
+    このマクロは古いバージョンとの互換性のために残してあるものです。
+    このマクロと同等の機能を果たす、PICTBLの方を使うようにしてください。
+
+
+AdjCG -- マクロ
+    AdjCG - VDP1に収めるテクスチャデータのアドレスを求める
+【書  式】
+    #include "sgl.h"
+
+    AdjCG( adr, h, v, col )
+【引  数】
+    adr  :前のキャラクタの先頭アドレス
+    h, v :前のキャラクタの、横縦サイズ(ドット)
+    col  :前のキャラクタのカラーモード(COL_16、COL_256等)
+【返  数】
+    そのキャラクタのトップアドレス
+【機  能】
+    #define  AdjCG(cga,hs,vs,col)  ((cga) +(((((hs)*(vs)*4)>>(col))+0x1f)\
+                                     &0x7ffe0))
+【用  例】
+    enum cga{
+       CG_Top = CGADDRESS,
+       CG_Second = AdjCG( CG_Top, 16, 8, COL_16 ),
+       CG_Third  = AdjCG( CG_Second, 32, 32, COL_256 )
+    };
+    CG_Secondには、
+    CGADDRESS + ( 16 / 2 ) * 8 = 0x25c00040
+                  ^  ^^^     ^
+           横サイズ  |       縦サイズ
+       カラーモード16色バンク
+    が入ります。
+
+
+TEXTBL -- マクロ
+    TEXTBL - TEXTURE [types]データ型への変換
+【書  式】
+    #include "sgl.h"
+
+    TEXTBL( h, v, addr );
+【引  数】
+    h, v :テクスチャの横縦サイズ
+    addr :テクスチャデータのあるVRAMアドレス
+【返  数】
+    TEXTURE型構造体
+【機  能】
+    #define  TEXTBL(hs,vs,cga)  {hs , vs , (cga)>>3 , ((hs)&0x1f8)<<5|(vs)}
+
+
+PICTBL -- マクロ
+    PICTBL - PICTURE [types]データ型への変換
+【書  式】
+    #include "sgl.h"
+
+    PICTBL( tex, col_mode, addr );
+【引  数】
+    tex_no   :テクスチャ番号
+    col_mode :テクスチャのカラーモード
+    src      :テクスチャデータの元アドレス(VDP1のVRAM上とは限らない。)
+【返  数】
+    PICTURE型構造体
+【機  能】
+    #define  PICTBL(texno,cmode,pcsrc)  {(Uint16)(texno),(Uint16)(cmode),\
+                                         (void *)(pcsrc)}
+
+
+TRANSLATION -- マクロ
+    TRANSLATION - 3つの数字をFIXED [a]型配列に変換(移動量記述用)
+【書  式】
+    #include "sgl.h"
+
+    TRANSLATION( x, y, z );
+【引  数】
+    x, y, z :オブジェクトなどの移動量を表す、任意の型(整数/浮動小数)の数値。
+【返  数】
+    FIXED型で表された、3次元の移動量配列
+【機  能】
+    #define TRANSLATION(x,y,z)  {toFIXED(x),toFIXED(y),toFIXED(z)}
+
+
+ROTATION -- マクロ
+    ROTATION - 3つの数値をANGLE [a]型配列に変換(回転量記述用)
+【書  式】
+    #include "sgl.h"
+
+    ROTATION( x, y, z );
+【引  数】
+    x, y, z :オブジェクトなどの回転量を表す、任意の型(整数/浮動小数)の数値。
+【返  数】
+    ANGLE型で表された、3次元の回転量配列
+【機  能】
+    #define ROTATION(x,y,z)    {DEGtoANG(x),DEGtoANG(y),DEGtoANG(z)}
+
+
+SCALING -- マクロ
+    SCALING - 3つの数値をFIXED [a]型配列に変換(スケール記述用)
+【書  式】
+    #include "sgl.h"
+
+    SCALING( x, y, z );
+【引  数】
+    x, y, z :オブジェクトなどのスケール量を表す任意の型(整数/浮動小数)の数値。
+【返  数】
+    FIXED型で表された、3次元のスケール量配列
+【機  能】
+    #define SCALING(x,y,z)    {toFIXED(x),toFIXED(y),toFIXED(z)}

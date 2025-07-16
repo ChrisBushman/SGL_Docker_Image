@@ -1,0 +1,225 @@
+*******************************************************************************
+●ドキュメント種別       :各サンプル説明ファイル
+●ファイル記号名称       :manpcm.txt
+●対象ライブラリ記号名称 :pcm
+●対象ライブラリ名称     :PCM・ADPCM再生ライブラリ
+●バージョン             :1.16
+●作成者                 :Y.T
+●作成日                 :1995-03-31
+●最終修正日             :
+●その他のメッセージ　   :なし
+*******************************************************************************
+
+1.サンプルの説明
+
+    ●ファイルのディレクトリ構造
+    PCM
+    |
+    +---SMPPCM2　　　　　　　　　ストリーム再生モード
+    |       SMPPCM2.C
+    |       SMPPCM2.SUB
+    |       SMPPCM2.BAT
+    |       
+    +---SMPPCM3　　　　　　　　　メモリ再生モード
+    |       SMPPCM3.C
+    |       SMPPCM3.SUB
+    |       SMPPCM3.BAT
+    |       
+    +---SMPPCM4　　　　　　　　　ファイル再生モード
+    |       SMPPCM4.C            （ループ再生）
+    |       SMPPCM4.SUB
+    |       SMPPCM4.BAT
+    |       
+    +---SMPPCM5　　　　　　　　　ストリーム再生モード
+    |       SMPPCM5.C　　　　　　（各機能使用法，CD-ROM XA Audio 再生）
+    |       SMPPCM5.SUB
+    |       SMPPCM5.BAT
+    |       
+    +---SMPPCM13 　　　　　　　　メモリ再生モード
+    |       SMPPCM13.C　　　　　 （マルチ再生，ループ再生）
+    |       SMPPCM13.SUB
+    |       SMPPCM13.BAT
+    |       
+    \---VCD
+            SMPPCM.PRM
+            SMPPCM.SCR
+            SMPPCM5.PRM
+            SMPPCM5.SCR
+
+
+2.サンプルの動作内容と使用方法
+
+    ●smppcm2.c
+        [タイトル]  ストリーム再生モードテスト
+        [動作内容]  CD-ROM上にあるAIFF形式,APCM形式のファイルを再生し
+                    ます。
+        [使用方法]
+　　　　　　バーチャルCDがインストールされている IBM PC-AT 上での作業:
+　　　　　　　　　　(1) サンプルプログラムは、ファイル名「SAMPLE.PCM」を
+                        処理するので、この名前のファイルを用意します。
+　　　　　　　　　　(2) バーチャルCDがインストールされている IBM PC-AT 上に
+　　　　　　　　　　　　提供ディスクに入っている次のファイルを複写します。
+　　　　　　　　　　　　「\SATURN\SEGASMP\PCM\VCD\SMPPCM.PRM」
+　　　　　　　　　　　　「\SATURN\SEGASMP\PCM\VCD\SMPPCM.SCR」
+　　　　　　　　　　(3) 次のバーチャルCD作成用コマンドがインストール
+　　　　　　　　　　　　されており、パスが設定されていることを確認します。
+　　　　　　　　　　　　「VCDPRE.EXE」,「VCDBUILD.EXE」,「VCDEMU.EXE」
+　　　　　　　　　　(4) バーチャルCDでCDイメージを作成します。
+　　　　　　　　　　　　C:> VCDPRE SMPPCM.PRM [RET]
+　　　　　　　　　　　　C:> VCDBUILD SMPPCM.PRM [RET]
+　　　　　　　　　　(5) バーチャルCDでCDをエミュレートします。
+                        C:> CHEV US [RET]         <- 英語モードにします
+　　　　　　　　　　　　C:> VCDEMU SMPPCM [RET]
+
+　　　　　　ICEが接続されている IBM PC-AT 上での作業:
+　　　　　　　　　　(6) IPI.EXE を起動後以下のコマンドでブートＲＯＭを初期化。
+                           RS [RET]
+                           GO [RET]
+                           [CTRL-C]
+　　　　　　　　　　(7) smppcm2.abs を以下のコマンドでロードします。
+　　　　　　　　　　　　　 L :SMPPCM2.ABS [RET]
+                           GO 6011000 [RET] で実行。
+　　　　　　　　　　　　PCMデータが再生されます。
+
+    ●smppcm3.c
+        [タイトル]  メモリ再生モードテスト
+        [動作内容]  メモリ上にあるAIFF形式,APCM形式のファイルを再生します。
+                    (16MBまでのファイルを再生可能)
+        [使用方法]
+　　　　　　ICEが接続されている IBM PC-AT 上での作業:
+　　　　　　　　　　(1) IPI.EXE を起動後以下のコマンドでブートＲＯＭを初期化。
+                           RS [RET]
+                           GO [RET]
+                           [CTRL-C]
+　　　　　　　　　　(2) PCMデータファイルをターゲットのメモリに
+　　　　　　　　　　　　次のコマンドでロードします。
+　　　　　　　　　　　　　 L 4000000;m:PCMデータファイル名 [RET]
+　　　　　　　　　　(3) smppcm3.abs を以下のコマンドでロードします。
+　　　　　　　　　　　　　 L :SMPPCM3.ABS [RET]
+　　　　　　　　　　　　　 GO 6011000 [RET] で実行。
+　　　　　　　　　　　　PCMデータが再生されます。
+
+    ●smppcm4.c
+        [タイトル]  ファイル再生モードテスト（ループ再生）
+        [動作内容]  CD-ROM上にあるAIFF形式,APCM形式のファイルを再生し
+                    ます。
+        [使用方法]
+　　　　　　バーチャルCDがインストールされている IBM PC-AT 上での作業:
+　　　　　　　　　　(1) サンプルプログラムは、ファイル名「SAMPLE.PCM」を
+                        処理するので、この名前のファイルを用意します。
+　　　　　　　　　　(2) バーチャルCDがインストールされている IBM PC-AT 上に
+　　　　　　　　　　　　提供ディスクに入っている次のファイルを複写します。
+　　　　　　　　　　　　「\SATURN\SEGASMP\PCM\VCD\SMPPCM.PRM」
+　　　　　　　　　　　　「\SATURN\SEGASMP\PCM\VCD\SMPPCM.SCR」
+　　　　　　　　　　(3) 次のバーチャルCD作成用コマンドがインストール
+　　　　　　　　　　　　されており、パスが設定されていることを確認します。
+　　　　　　　　　　　　「VCDPRE.EXE」,「VCDBUILD.EXE」,「VCDEMU.EXE」
+　　　　　　　　　　(4) バーチャルCDでCDイメージを作成します。
+　　　　　　　　　　　　C:> VCDPRE SMPPCM.PRM [RET]
+　　　　　　　　　　　　C:> VCDBUILD SMPPCM.PRM [RET]
+　　　　　　　　　　(5) バーチャルCDでCDをエミュレートします。
+                        C:> CHEV US [RET]         <- 英語モードにします
+　　　　　　　　　　　　C:> VCDEMU SMPPCM [RET]
+
+　　　　　　ICEが接続されている IBM PC-AT 上での作業:
+　　　　　　　　　　(6) IPI.EXE を起動後以下のコマンドでブートＲＯＭを初期化。
+                           RS [RET]
+                           GO [RET]
+                           [CTRL-C]
+　　　　　　　　　　(7) smppcm4.abs を以下のコマンドでロードします。
+　　　　　　　　　　　　　 L :SMPPCM4.ABS [RET]
+                           GO 6011000 [RET] で実行。
+　　　　　　　　　　　　PCMデータが再生されます。
+
+    ●smppcm5.c
+        [タイトル]  ストリーム再生モード（各機能使用法，CD-ROM XA Audio 再生）
+        [動作内容]  CD-ROM上にあるAIFF形式,APCM形式、または、CD-ROM XA
+                    Audio 形式のファイルを再生します。
+                    シームレス分岐、チェンジ、ポーズ機能をパッドで制御します。
+                    CD-ROM XA Audio 再生用は、
+                        /* #define CD_ROM_XA_AUDIO */
+                    をコメントでなく有効にしてコンパイルします。
+  　　　　　　　　　この場合は、Photo-CD デモディスクの音声を再生します。
+        [使用方法]
+　　　　　　バーチャルCDがインストールされている IBM PC-AT 上での作業:
+　　　　　　　　　　(1) サンプルプログラムは、ファイル名「SAMPLE1.PCM」、
+　　　　　　　　　　　　「SAMPLE1.PCM」を処理するので、この名前のファイルを
+　　　　　　　　　　　　用意します。
+　　　　　　　　　　(2) バーチャルCDがインストールされている IBM PC-AT 上に
+　　　　　　　　　　　　提供ディスクに入っている次のファイルを複写します。
+　　　　　　　　　　　　「\SATURN\SEGASMP\PCM\VCD\SMPPCM5.PRM」
+　　　　　　　　　　　　「\SATURN\SEGASMP\PCM\VCD\SMPPCM5.SCR」
+　　　　　　　　　　(3) 次のバーチャルCD作成用コマンドがインストール
+　　　　　　　　　　　　されており、パスが設定されていることを確認します。
+　　　　　　　　　　　　「VCDPRE.EXE」,「VCDBUILD.EXE」,「VCDEMU.EXE」
+　　　　　　　　　　(4) バーチャルCDでCDイメージを作成します。
+　　　　　　　　　　　　C:> VCDPRE SMPPCM5.PRM [RET]
+　　　　　　　　　　　　C:> VCDBUILD SMPPCM5.PRM [RET]
+　　　　　　　　　　(5) バーチャルCDでCDをエミュレートします。
+                        C:> CHEV US [RET]         <- 英語モードにします
+　　　　　　　　　　　　C:> VCDEMU SMPPCM [RET]
+
+　　　　　　ICEが接続されている IBM PC-AT 上での作業:
+　　　　　　　　　　(6) IPI.EXE を起動後以下のコマンドでブートＲＯＭを初期化。
+                           RS [RET]
+                           GO [RET]
+                           [CTRL-C]
+　　　　　　　　　　(7) smppcm5.abs を以下のコマンドでロードします。
+　　　　　　　　　　　　　 L :SMPPCM5.ABS [RET]
+                           GO 6011000 [RET] で実行。
+　　　　　　　　　　　　PCMデータが再生されます。
+　　　　　　　　　　(8) 再生中の操作。
+                    　　・SAMPLE1.AIF 再生中にＡボタンを押すと、スムーズに
+                    　　　SAMPLE2.AIFの再生を開始します。
+                    　　・ＳＴＡＲＴボタンを押すとポーズし、もう一度押すと
+                    　　　ポーズ解除します。
+
+    ●smppcm13.c
+        [タイトル]  メモリ再生モード（マルチ再生，ループ再生）
+        [動作内容]  メモリ上にあるAIFF形式,APCM形式のファイルを２本同時再生
+                    します。ただし、両方共にAPCM形式は不可。
+                    (それぞれ8MBまでのファイルを再生可能)
+        [使用方法]
+　　　　　　ICEが接続されている IBM PC-AT 上での作業:
+　　　　　　　　　　(1) IPI.EXE を起動後以下のコマンドでブートＲＯＭを初期化。
+                           RS [RET]
+                           GO [RET]
+                           [CTRL-C]
+　　　　　　　　　　(2) PCMデータファイルをターゲットのメモリに
+　　　　　　　　　　　　次のコマンドでロードします。
+　　　　　　　　　　　　　 L 4000000;m:PCMデータファイル名１ [RET]
+　　　　　　　　　　　　　 L 4800000;m:PCMデータファイル名２ [RET]
+　　　　　　　　　　(3) smppcm13.abs を以下のコマンドでロードします。
+　　　　　　　　　　　　　 L :SMPPCM13.ABS [RET]
+　　　　　　　　　　　　　 GO 6011000 [RET] で実行。
+　　　　　　　　　　　　PCMデータが再生されます。
+
+
+3.注意事項
+
+　PCMの再生を始める前に、次の方法でサウンドドライバの初期設定を行う必要
+があります。
+　◆サウンドＩ/Ｆライブラリによるサウンドドライバの初期設定
+　　　関数 sndInit が処理例です。
+　　　ここではＧＦＳを使って、SDDRVS.TSK, BOOTSND.MAP をファイルとして読み込み
+　　　サウンドＩ/Ｆライブラリで初期設定を行っています。
+　　　CD(VCD)上に SDDRVS.TSK, BOOTSND.MAP が用意されている必要があります。
+　◇ICEのコマンドによるサウンドドライバの初期設定について
+　　　以前は、ICEコマンドファイル s.cmd による初期設定が可能でしたが、
+　　　Ver1.16 以降は、PCM・ADPCM再生ライブラリがサウンドＩ/Ｆライブラ
+　　　リを使用しているので、ICEによる初期設定では再生できません。必ず、サウ
+　　　ンドＩ/Ｆライブラリによるサウンドドライバの初期設定を行ってください。
+　　　特に、メモリ再生のサンプルプログラムにおいても、ファイルシステムでCDか
+　　　らサウンドドライバの読み込みを行いますから、この場合もCD(VCD)上に 
+　　　SDDRVS.TSK, BOOTSND.MAP が必要であることに注意してください。
+
+4.修正履歴
+
+  1997/06/21  ・ソースコードのファイル名等をSGLのサンプルに準じた形とし、
+                統一しました。
+              ・SH-Cでのコンパイルオプションを見直し、除算器割り込み
+                オプションを -div=cpu  としました。
+
+
+********************************** end of file ********************************
+

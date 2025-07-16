@@ -1,0 +1,642 @@
+
+
+★ 初期化
+slInitPeripheral -- 関数
+    slInitPeripheral - ペリフェラル制御の初期化
+【書  式】
+    #include "sgl.h"
+
+    void slInitPeripheral( void );
+【引  数】
+    void - 何も与えません。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    ペリフェラル関連の関数のための初期化を行ないます。
+【注  意】
+    slInitSystemの中で呼び出しているのでユーザーが呼ぶ必要はありません。
+【参  照】
+    slInitSystem
+
+
+★ ペリフェラルポート入出力
+slGetPortDir1 -- 関数
+slGetPortDir2 -- 関数
+    slGetPortDir1, slGetPortDir2 - ペリフェラルポートの入出力方向を取得
+【書  式】
+    #include "sgl.h"
+
+    Uint8 slGetPortDir1( void );
+    Uint8 slGetPortDir2( void );
+【引  数】
+    void - 何も与えません。
+【返  数】
+    Uint8 - ペリフェラルポートの入出力方向(後述)。
+【機  能】
+    ペリフェラルポートの入出力方向を取得します。
+    関数の返す値の各ビットが0の時入力方向を、1の時に出力方向を意味しています。
+【注  意】
+    下位7ビットのみが有効です。
+【参  照】
+    slSetPortDir1, slSetPortDir2, slGetPortData1, slGetPortData2
+    slSetPortData1, slSetPortData2
+
+
+slSetPortDir1 -- 関数
+slSetPortDir2 -- 関数
+    slSetPortDir1, slSetPortDir2 - ペリフェラルポートの入出力方向を設定
+【書  式】
+    #include "sgl.h"
+
+    Uint8 dir;
+
+    Bool slSetPortDir1( dir );
+    Bool slSetPortDir2( dir );
+【引  数】
+    Uint8 dir - ペリフェラルポートの入出力方向(後述)。
+【返  数】
+    Bool - 処理が正常に終了したかを示すフラグ(後述)。
+【機  能】
+    ペリフェラルポートの入出力方向を設定します。
+    引数は各ビットが、0の時入力設定、1の時出力設定になります。
+    他プロセスでセマフォのロックが掛けられていたり、インタラプトバック設定が
+    されている場合、関数は戻り値として、 NGを返し、それ以外の場合は OKを
+    返します。
+【注  意】
+    下位7ビットのみが有効です。
+【参  照】
+    slGetPortDir1, slGetPortDir2, slGetPortData1, slGetPortData2
+    slSetPortData1, slSetPortData2, slGetStatus, slGetPeripheral
+    slGetPortData1 -- 関数
+slGetPortData2 -- 関数
+    slGetPortData1, slGetPortData1 - ペリフェラルポートのデータを取得
+【書  式】
+    #include "sgl.h"
+
+    Uint8 slGetPortData1( void );
+    Uint8 slGetPortData2( void );
+【引  数】
+    void - 何も与えません。
+【返  数】
+    Uint8 - ペリフェラルポートのデータ。
+【機  能】
+    slSetPortDir1、slSetPortDir2で入力設定した各ビットに対して、
+    ペリフェラルポートのデータを取得します。
+【注  意】
+    下位7ビットのみが有効です。また、slSetPortDir1、
+    slSetPortDir2で出力設定したビットについては、取得されません。
+【参  照】
+    slGetPortDir1, slGetPortDir2, slSetPortDir1, slGetPortDir2
+    slGetPortData1, slGetPortData2, slGetStatus, slGetPeripheral
+    slSetPortData1 -- 関数
+slSetPortData2 -- 関数
+    slSetPortData1, slSetPortData2 - ペリフェラルポートのデータを設定
+【書  式】
+    #include "sgl.h"
+
+    Uint8 data;
+
+    void slSetPortData1( data );
+    void slSetPortData2( data );
+【引  数】
+    Uint8 data - 設定したいデータ。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    slSetPortDir1、slSetPortDir2で出力設定した各ビットに対して、
+    ペリフェラルポートのデータを設定します。
+【注  意】
+    下位7ビットのみが有効となります。また、slSetPortDir1、
+    slSetPortDir2で入力設定したビットについては、設定されません。
+【参  照】
+    slGetPortDir1, slGetPortDir2, slSetPortDir1, slGetPortDir2
+    slSetPortData1, slSetPortData2, slGetStatus, slGetPeripheral
+    slGetPortSelect1 -- 関数
+slGetPortSelect2 -- 関数
+    slGetPortSelect1, slGetPortSelect2 - ペリフェラルポートの入出力セレクト
+                                         モードを取得
+【書  式】
+    #include "sgl.h"
+
+    Uint8 slGetPortSelect1( void );
+    Uint8 slGetPortSelect2( void );
+【引  数】
+    void - 何も与えません。
+【返  数】
+    Uint8 - ペリフェラルポートの入出力セレクトモード(後述)。
+【機  能】
+    ペリフェラルデータを、SMPCコントロールモードで取得しているか、SH2
+    ダイレクトモードで取得しているかを調べます。
+    関数は
+      SMPC_CONTROL   : SMPCコントロールモード(初期値)
+      SMPC_SH2_DIRECT: SH2ダイレクトモード
+    のいずれかを返します。
+【参  照】
+    slSetPortSelect1, slSetPortSelect2
+
+
+slSetPortSelect1 -- 関数
+slSetPortSelect2 -- 関数
+    slSetPortSelect1, slSetPortSelect2 - ペリフェラルポートの入出力セレクト
+                                         モードを設定
+【書  式】
+    #include "sgl.h"
+
+    Uint8 mode;
+
+    Bool slSetPortSelect1( mode );
+    Bool slSetPortSelect2( mode );
+【引  数】
+    Uint8 mode - ペリフェラルポートの入出力セレクトモード(後述)。
+【返  数】
+    Bool - 処理が正常に終了したかを示すフラグ(後述)。
+【機  能】
+    ペリフェラルデータを、SMPCコントロールモードで取得するか、SH2
+    ダイレクトモードで取得するかを設定します。
+    引数modeには、
+      SMPC_CONTROL   : SMPCコントロールモード(初期値)
+      SMPC_SH2_DIRECT: SH2ダイレクトモード
+    他プロセスでセマフォのロックが掛けられていたり、インタラプトバック設定が
+    されている場合、関数は戻り値として、 NGを返し、それ以外の場合は OKを
+    返します。
+【参  照】
+    slGetPortSelect1, slGetPortSelect2
+
+
+slGetPortExt1 -- 関数
+slGetPortExt2 -- 関数
+    slGetPortExt1, slGetPortExt2
+                           - ペリフェラルポートの外部ラッチ入力モードを取得
+【書  式】
+    #include "sgl.h"
+
+    Uint8 slGetPortExt1( void );
+    Uint8 slGetPortExt2( void );
+【引  数】
+    void - 何も与えません。
+【返  数】
+    Uint8 - 外部ラッチ入力モード(後述)。
+【機  能】
+    ペリフェラルポートの外部ラッチ入力モードを取得し、以下の値を返します。
+      SMPC_EXL_DIS: 外部ラッチ入力禁止(初期値)
+      SMPC_EXL_ENA: 外部ラッチ入力許可
+【参  照】
+    slSetPortExt1, slSetPortExt2
+
+
+slSetPortExt1 -- 関数
+slSetPortExt2 -- 関数
+    slSetPortExt1, slSetPortExt2
+                           - ペリフェラルポート1の外部ラッチ入力モードを設定
+【書  式】
+    #include "sgl.h"
+
+    Uint8 mode;
+
+    Bool slSetPortExt1( mode );
+    Bool slSetPortExt2( mode );
+【引  数】
+    Uint8 mode - 外部ラッチ入力モード(後述)。
+【返  数】
+    Bool - 処理が正常に終了したかを示すフラグ(後述)。
+【機  能】
+    ペリフェラルポートの外部ラッチ入力モードを設定します。
+    引数として与える、外部ラッチ入力モードは、
+      SMPC_EXL_DIS: 外部ラッチ入力禁止(初期値)
+      SMPC_EXL_ENA: 外部ラッチ入力許可
+    の2種類です。
+    他プロセスでセマフォのロックが掛けられていたり、インタラプトバック設定が
+    されている場合、関数は戻り値として、 NGを返し、それ以外の場合は OKを
+    返します。
+【注  意】
+    外部ラッチ入力許可モードに設定した場合、slSetPortDir1、
+    slSetPortDir2、でビット6を入力設定"0"にしなければなりません、
+【参  照】
+    slGetPortExt1, slGetPortExt2
+
+
+★ ペリフェラルコントロールモード
+slGetOptimize -- 関数
+    slGetOptimize - ペリフェラル取得時間最適化モードを取得
+【書  式】
+    #include "sgl.h"
+
+    Uint8 slGetOptimize( void );
+【引  数】
+    void - 何も与えません。
+【返  数】
+    Uint8 - ペリフェラル取得時間最適化モード(後述)。
+【機  能】
+    INTBACKコマンド発行時のペリフェラルデータ取得が最適化モードになっているか
+    を調べます。
+    関数は次の値を返します。
+      SMPC_OPT_ENA: 取得時間最適化許可(初期値)
+      SMPC_OPT_DIS: 取得時間最適化禁止
+【参  照】
+    slSetOptimize, slGetStatus
+
+
+slSetOptimize -- 関数
+    slSetOptimize - ペリフェラル取得時間最適化モードを設定
+【書  式】
+    #include "sgl.h"
+
+    Uint8 mode;
+
+    Bool slSetOptimize( mode );
+【引  数】
+    Uint8 mode - ペリフェラル取得時間最適化モード(後述)。
+【返  数】
+    Bool - 処理が正常に終了したかを示すフラグ(後述)。
+【機  能】
+    INTBACK時のペリフェラル取得時間最適化モードを設定します。
+    引数「mode」には、
+      SMPC_OPT_ENA: 取得時間最適化許可(初期値)
+      SMPC_OPT_DIS: 取得時間最適化禁止
+    のいずれかが入ります。
+    他のプロセスによって、セマフォがロック中である場合、エラーコードNGを、
+    成功した場合OKを返します。
+【注  意】
+    取得時間最適化禁止にした場合、ペリフェラルデータ取得後にペリフェラル
+    データが更新され、ペリフェラルの更新結果が1フレーム遅れる事があります。
+    SMPC割り込み処理関数での処理時間が短縮されているため、取得時間の最適化を
+    している時でもタイムオーバーが発生する事はあまりありません。
+【参  照】
+    slGetOptimize, slGetStatus
+
+
+slGetPortMode1 -- 関数
+slGetPortMode2 -- 関数
+    slGetPortMode1, slGetPortMode2 - ペリフェラルポートのポートモードを取得
+【書  式】
+    #include "sgl.h"
+
+    Uint8 slGetPortMode1( void );
+    Uint8 slGetPortMode2( void );
+【引  数】
+    void - 何も与えません。
+【返  数】
+    Uint8 - ペリフェラルポートのポートモード(後述)。
+【機  能】
+    ペリフェラルポートのポートモードを取得し、
+      SMPC_PORT_15  : 15バイトモード(初期値)
+      SMPC_PORT_255 : 255バイトモード
+      SMPC_PORT_ZERO: 0バイトモード
+    のいずれかを返します。
+【参  照】
+    slSetPortMode1, slSetPortMode2, slGetStatus
+
+
+slSetPortMode1 -- 関数
+slSetPortMode2 -- 関数
+    slSetPortMode1, slSetPortMode2 - ペリフェラルポートのポートモードを設定
+【書  式】
+    #include "sgl.h"
+
+    Uint8 mode;
+
+    Bool slSetPortMode1( mode );
+    Bool slSetPortMode2( mode );
+【引  数】
+    Uint8 mode - ペリフェラルポートのポートモード(後述)。
+【返  数】
+    Bool - 処理が正常に終了したかを示すフラグ(後述)。
+【機  能】
+    ペリフェラルポートのポートモードを設定します。
+    引数「mode」には、以下のいずれかを指定します。
+      SMPC_PORT_15  : 15バイトモード(初期値)
+      SMPC_PORT_255 : 255バイトモード
+      SMPC_PORT_ZERO: 0バイトモード
+    他のプロセスによって、セマフォがロック中である場合、エラーコード NGを、
+    成功した場合 OKを返します。
+【参  照】
+    slGetPortMode1, slGetPortMode2, slGetStatus
+
+
+★ 状態制御
+slCheckReset -- 関数
+    slCheckReset - SMPCリセットボタン状態を取得
+【書  式】
+    #include "sgl.h"
+
+    Uint8 slCheckReset( void );
+【引  数】
+    void - 何も与えません。
+【返  数】
+    Uint8 - SMPCリセットボタン状態(後述)。
+【機  能】
+    SMPCリセットボタン状態を取得し、以下のような値を返します。
+      SMPC_RES_OFF: リセットボタンOFF(初期値)
+      SMPC_RES_ON: リセットボタンON
+【注  意】
+    一度 「ON」 になると slClearResetを呼ぶまで変化しません。
+    通常(リセットボタン有効)時はアプリケーションがリセットボタンの状態を監視
+    する必要はありません。
+    リセットボタン有効の場合は自動的にNMI割り込みが発生し、BOOT-ROMに制御が
+    移ります。
+    モデム対応アプリケーションのように常時リセットボタン無効状態の場合のみ
+    使用してください。
+【参  照】
+    slClearReset, slGetStatus
+
+
+slClearReset -- 関数
+    slClearReset - SMPCリセットボタン状態をクリア
+【書  式】
+    #include "sgl.h"
+
+    Bool slClearReset( void );
+【引  数】
+    void - 何も与えません。
+【返  数】
+    Bool - 処理が正常に終了したかを示すフラグ(後述)。
+【機  能】
+    SMPCリセットボタン状態をクリアします。
+    他のプロセスによって、セマフォがロック中である場合、エラーコード NGを、
+    成功した場合 OKを返します。
+【参  照】
+    slCheckReset, slGetStatus
+
+
+slIntBackCancel -- 関数
+    slIntBackCancel - インタラプトバック設定中フラグをクリア
+【書  式】
+    #include "sgl.h"
+
+    Bool slIntBackCancel( void );
+【引  数】
+    void - 何も与えません。
+【返  数】
+    Bool - 処理が正常に終了したかを示すフラグ(後述)。
+【機  能】
+    slGetPeripheral、slGetStatusで設定されたインタラプトバック
+    設定を解除する時に使用します。
+    他のプロセスによって、セマフォがロック中である場合、エラーコード NGを、
+    成功した場合 OKを返します。
+【参  照】
+    slGetStatus, slGetPeripheral
+
+
+★ SMPCメモリ変換サービス
+slGetLanguage -- 関数
+    slGetLanguage - SMPCメモリ言語番号を取得
+【書  式】
+    #include "sgl.h"
+
+    Uint8 slGetLanguage( void );
+【引  数】
+    void - 何も与えません。
+【返  数】
+    Uint8 - 言語情報番号。
+【機  能】
+    SMPCで管理している言後情報番号(通常マルチプレイヤーで設定される。)を取得
+    します。関数の返す値は
+      SMPC_ENGLISH : 英語
+      SMPC_DEUTSCH : ドイツ語
+      SMPC_FRANCAIS: フランス語
+      SMPC_ESPANOL : スペイン語
+      SMPC_ITALIANO: イタリア語
+      SMPC_JAPAN   : 日本語
+    の6つのいずれかになります。
+【参  照】
+    slSetLanguage, slGetStatus
+
+
+slSetLanguage -- 関数
+    slSetLanguage - SMPCメモリ言語番号を設定
+【書  式】
+    #include "sgl.h"
+
+    Uint8 num;
+
+    void slSetLanguage( num );
+【引  数】
+    Uint8 num - 言語情報番号(後述)。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    SMPCの管理している言語情報番号を変更します。
+    引数"num"には、
+      SMPC_ENGLISH : 英語
+      SMPC_DEUTSCH : ドイツ語
+      SMPC_FRANCAIS: フランス語
+      SMPC_ESPANOL : スペイン語
+      SMPC_ITALIANO: イタリア語
+      SMPC_JAPAN   : 日本語
+    のいずれかが入ります。
+【注  意】
+    言語情報の設定内容については、作成基準にしたがってください。
+    この関数で更新した結果は、
+      slSetSmpcMemory又は、slSetSmpcMemoryWait
+    を使用して、SMPCメモリに書き込んでください。(そうしないと更新されません。)
+【参  照】
+    slSetSmpcMemory, slSetSmpcMemoryWait, slGetLanguage, slGetStatus
+    slGetSoundEffect -- 関数
+    slGetSoundEffect - SMPCメモリ効果音モードを取得
+【書  式】
+    #include "sgl.h"
+
+    Uint8 slGetSoundEffect( void );
+【引  数】
+    void - 何も与えません。
+【返  数】
+    Uint8 - 効果音モード。
+【機  能】
+    SMPCの管理している効果音の情報を取得します。
+      SMPC_EFFECT_ON : 効果音ON
+      SMPC_EFFECT_OFF: 効果音OFF
+【参  照】
+    slSetSoundEffect, slGetStatus
+
+
+slSetSoundEffect -- 関数
+    slSetSoundEffect - SMPCメモリ効果音モードを設定
+【書  式】
+    #include "sgl.h"
+
+    Uint8 mode;
+    void slSetSoundEffect( mode );
+【引  数】
+    Uint8 mode - 効果音モード(後述)。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    SMPCで管理する効果音モードの変更を行ないます。
+      SMPC_EFFECT_ON: 効果音ON
+      SMPC_EFFECT_OFF: 効果音OFF
+【注  意】
+    この関数で更新した結果は、
+      slSetSmpcMemory又は、slSetSmpcMemoryWait
+    を使用して、SMPCメモリに書き込んでください。(そうしないと更新されません。)
+【参  照】
+    slSetSmpcMemory, slSetSmpcMemoryWait, slGetSoundEffect, slGetStatus
+    slGetSoundOutput -- 関数
+    slGetSoundOutput - SMPCメモリ音声出力モードを取得
+【書  式】
+    #include "sgl.h"
+
+    Uint8 slGetSoundOutput( void );
+【引  数】
+    void - 何も与えません。
+【返  数】
+    Uint8 - 音声出力モード(後述)。
+【機  能】
+    SMPCの管理する音声出力モードを取得し、以下の値を返します。
+      SMPC_SOUND_STEREO: ステレオ
+      SMPC_SOUND_MONO  : モノラル
+【注  意】
+    ここで取得される、STREO/MONOモードは、サウンドドライバの出力とは何の
+    関連もありません。アプリケーションからサウンドドライバを通して発声される
+    音については、サウンドドライバのSTREO/MONOの設定をする必要があります。
+【参  照】
+    slSetSoundOutput, slGetStatus
+
+
+slSetSoundOutput -- 関数
+    slSetSoundOutput - SMPCメモリ音声出力モードを設定
+【書  式】
+    #include "sgl.h"
+
+    Uint8 mode;
+
+    void slSetSoundOutput( mode );
+【引  数】
+    Uint8 mode - 音声出力モード(後述)。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    SMPCの管理する音声出力モードを変更します。
+    引数"mode"には、
+      SMPC_SOUND_STEREO: ステレオ
+      SMPC_SOUND_MONO  : モノラル
+    のいずれかが入ります。
+    尚、CDDAの音声出力モードを変更する際、
+    slCDDAOn(SGLのサウンド関数を使っている場合)又は、SND_SetCdDaPan(SBLの
+    サウンド関数を使っている場合)を使うようにしてください。
+【注  意】
+    現在作成基準に於いては、アプリケーションのオプション設定などにて、
+    STEREO/MONOの設定を行なった場合、この関数を利用してSMPCの管理する
+    音声出力モードの設定も変更する必要があります。
+    また、このモードを変更しても、ユーザアプリケーションから出力される
+    音に変化はありません。アプリケーションから出力する音の、STEREO/MONO情報を
+    変更するには、サウンドドライバの設定を変更するようにしてください。
+    この関数で更新した結果は、
+      slSetSmpcMemory又は、slSetSmpcMemoryWait
+    を使用して、SMPCメモリに書き込んでください。(そうしないと更新されません。)
+【参  照】
+    slSetSmpcMemory, slSetSmpcMemoryWait, slGetSoundOutput, slGetStatus
+    slGetHelpWindow -- 関数
+    slGetHelpWindow - SMPCメモリヘルプウィンドウモードを取得
+【書  式】
+    #include "sgl.h"
+
+    Uint8 slGetHelpWindow( void );
+【引  数】
+    void - 何も与えません。
+【返  数】
+    Uint8 - ヘルプウィンドウモード(後述)。
+【機  能】
+    ヘルプウィンドウモードを取得し、
+      SMPC_HELP_ENA: 表示する。
+      SMPC_HELP_DIS: 表示しない。
+    を返します。
+【参  照】
+    slSetHelpWindow, slGetStatus
+
+
+slSetHelpWindow -- 関数
+    slSetHelpWindow - SMPCメモリヘルプウィンドウモードを設定
+【書  式】
+    #include "sgl.h"
+
+    Uint8 mode;
+
+    void slSetHelpWindow( mode );
+【引  数】
+    Uint8 mode - ヘルプウィンドウモード(後述)。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    ヘルプウィンドウモードの設定を行ないます。
+    引数"mode"には、
+      SMPC_HELP_ENA: 表示する。
+      SMPC_HELP_DIS: 表示しない。
+    が入ります。
+【注  意】
+    現在の作成基準では、ヘルプウィンドウモードの設定をする事を禁止しているため
+    この関数は使用しないでください。
+    この関数で更新した結果は、
+      slSetSmpcMemory又は、slSetSmpcMemoryWait
+    を使用して、SMPCメモリに書き込んでください。(そうしないと更新されません。)
+【参  照】
+    slSetSmpcMemory, slSetSmpcMemoryWait, slGetHelpWindow, slGetStatus
+    ★ インタラプトバック設定
+slGetStatus -- マクロ
+    slGetStatus - インタラプトバック(SMPCステータス・ペリフェラルデータを取得)
+【書  式】
+    #include "sgl.h"
+
+    Bool slGetStatus( void );
+【引  数】
+    void - 何も与えません。
+【返  数】
+    Bool - 処理が正常に終了したかを示すフラグ(後述)。
+【機  能】
+    SMPCのインタラプトバックコマンドを実行し、SMPCステータス、
+    ペリフェラルデータのいずれも取得します。
+    この関数は、一度だけ呼べばよく、設定を変更する時も解除せずにそのまま
+    呼べます。
+    次のフレームから設定が有効となり、データ収集を開始します。
+    設定を変更した場合、そのフレームで収集したデータは次のフレームでの
+    参照データに反映され、次のフレームでの収集データから新しい設定が
+    反映されます。
+    したがって、収集したデータを参照できるのは設定後2フレーム目からとなります。
+    ライブラリ起動時は、slInitSystemでペリフェラルデータのみ取得の設定を
+    しているので、ウエイトせずにペリフェラルの参照を開始する事ができます。
+    他のプロセスがロック中でセマフォの獲得が出来ない或いは、
+    slSetPortDir1、slSetPortDir2で与えられるペリフェラルポートの
+    入出力の設定が正しくない場合、リザルトコードとして、 NG を返します。
+【注  意】
+    本関数は、slInitSystemで実行されており、そこで取得された
+    SMPCステータスはライブラリ内部にSmpc_Statusというグローバル変数内に
+    保持されています。その後、slGetPeripheralが呼ばれている為、通常の
+    動作は、ペリフェラルデータのみを取得するモードになっています。
+    意図的に再度SMPCステータスを取得するような場合以外この関数をコールする
+    必要はありません。
+    この関数はスレーブ側からは使えません。
+    スレーブ側で使おうとした場合、関数のリザルトコードとして、 NG を返し、
+    コマンドは実行されません。
+【参  照】
+    slSetPortDir1, slSetPortDir2, slGetPeripheral, slInitSystem
+    slGetPeripheral -- マクロ
+    slGetPeripheral - インタラプトバック(ペリフェラルデータのみ取得)
+【書  式】
+    #include "sgl.h"
+
+    Bool slGetPeripheral( void );
+【引  数】
+    void - 何も与えません。
+【返  数】
+    Bool - 処理が正常に終了したかを示すフラグ(後述)。
+【機  能】
+    SMPCのインタラプトバックコマンドを実行し、ペリフェラルデータのみを取得
+    します。
+    この関数は、一度だけ呼べばよく、設定を変更する時も解除せずにそのまま
+    呼べます。
+    次のフレームから設定が有効となり、データ収集を開始します。
+    設定を変更した場合、そのフレームで収集したデータは次のフレームでの
+    参照データに反映され、次のフレームでの収集データから新しい設定が
+    反映されます。
+    したがって、収集したデータを参照できるのは設定後2フレーム目からとなります。
+    ライブラリ起動時は、slInitSystemでペリフェラルデータのみ取得の設定を
+    しているので、ウエイトせずにペリフェラルの参照を開始する事ができます。
+    他のプロセスがロック中でセマフォの獲得が出来ない或いは、
+    slSetPortDir1、slSetPortDir2で与えられるペリフェラルポートの
+    入出力の設定が正しくない場合、リザルトコードとして、 NG を返します。
+【注  意】
+    この関数はスレーブ側からは使えません。
+    スレーブ側で使おうとした場合、関数のリザルトコードとして、 NG を返し、
+    コマンドは実行されません。
+【参  照】
+    slGetStatus, slSetPortDir1, slSetPortDir2, slInitSystem
+    

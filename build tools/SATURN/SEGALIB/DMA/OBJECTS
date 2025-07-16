@@ -1,0 +1,16 @@
+#
+#■このファイルは makefile から include されます。
+#  TARGET にはライブラリのファイル名を指定してください。
+#  OBJS にはライブラリを作るための dependencies を指定してください。
+#
+TARGET=	sega_dma.a
+
+OBJS=	$(OBJDIR)/dma_cpu0.o\
+		$(OBJDIR)/dma_cpu1.o\
+		$(OBJDIR)/dma_cpu2.o\
+		$(OBJDIR)/dma_cpu3.o\
+		$(OBJDIR)/dma_cpu4.o\
+		$(OBJDIR)/dma_cpu5.o\
+		$(OBJDIR)/dma_scu0.o\
+		$(OBJDIR)/dma_scu1.o
+

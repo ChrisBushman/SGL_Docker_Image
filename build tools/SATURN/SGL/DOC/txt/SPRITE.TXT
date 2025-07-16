@@ -1,0 +1,559 @@
+
+
+★パースペクティブ
+slSetScreenDist -- 関数
+    slSetScreenDist - スクリーンまでの距離定数の設定。
+【書  式】
+    #include "sgl.h"
+
+    FIXED dist;
+
+    void slSetScreenDist( dist );
+【引  数】
+    FIXED dist - スクリーンまでの距離定数。
+【返  数】
+    void - 何も返しません。    
+【機  能】
+    透視変換をする時に使用する スクリーンまでの距離定数を設定します。
+    回転スクロールの回転中心Z位置も設定します。
+【用  例】
+    slSetScreenDist( toFIXED( 40.0 ) );
+【参  照】
+    slWindow, slZdspLevel, slPerspective, ComWrPtr
+    ComRdPtr, MsScreenDist, Resolution, RotScrParA
+    RotScrParB
+
+
+slGetFrameData -- 関数
+    slGetFrameData - フレームバッファデータの取得。
+【書  式】
+    #include "sgl.h"
+
+    void   *dist;
+    Uint16 size_x;
+    Uint16 size_y;
+
+    void slGetFrameData( dist, size_x, size_y );
+【引  数】
+    void   *dist  - 
+    Uint16 size_x - 読み出された後のXサイズ。
+    Uint16 size_y - 読み出された後のYサイズ。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    フレームバッファの内容(1画面分)を読み出し、指定されたサイズに
+    スケーリング(間引き)してセットします。
+    4ドット単位で処理しているので、Xサイズは4の倍数とします。
+    バッファには低解像度の場合2バイト/ドット、高解像度の場合(1バイト/ドット)
+    で、書き込みます。
+【用  例】
+    読み出したデータをスプライトとして表示したい場合、
+    低解像度:
+      slSpriteColMode( SPR_PAL_RGB );    /* default */
+    とし、
+      SPR_ATTRIBUTE( PN_???, No_Palet, No_Gouraud, SPdis|ECdis|CL32KRGB,
+        sprNoflip );
+    といったアトリビュートでスプライト表示関数を実行します。
+    高解像度の場合には
+      slSpriteColMode( SPR_PAL );
+      SPR_ATTRIBUTE( PN_???, No_Palet, No_Gouraud, SPdis|ECdis|CL256Bnk,
+        sprNoflip );
+    のアトリビュートで表示させます。
+【注  意】
+    この関数ではVDP1の描画終了を待ち、フレームバッファを飛ばし読みして、
+    バッファにセットしています。フレームバッファの読み出しにはかなりの
+    ウェイトが入るため、32x24(=768)ドットで5msec.程度の時間がかかるので、
+    処理時間に注意して使用してください。
+    読み込むバッファをワーク上にとり、ブランキングでVRAMに転送する方が、
+    直接VRAMに展開するよりはウェイトが少ないようです。
+【参  照】
+    MsScreenSizeX, MsScreenSizeY, Resolution
+
+
+slPerspective -- 関数
+    slPerspective - ビューイングボリウムの設定。
+【書  式】
+    #include "sgl.h"
+
+    ANGLE pers;
+
+    void slPerspective( pers );
+【引  数】
+    ANGLE pers - ビューイングボリウムの角度。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    透視変換をする時に使用する スクリーンまでの距離定数を設定します。
+    回転スクロールの回転中心Z位置も設定します。
+    画角はスクリーンの横幅(ウィンドウのサイズではない)に視野が入る角度と
+    して使用します。
+【用  例】
+    slPerspective( DEGtoANG( 60.0 ) );
+【参  照】
+    slWindow, slZdspLevel, slSetScreenDist, ComWrPtr
+    ComRdPtr, MsScreenDist, SlScreenDist, MsScreenSizeX
+    MsScreenSizeY, RotScrParA, RotScrParB
+
+
+★表示限界
+slZdspLevel -- 関数
+    slZdspLevel - 表示レベルの設定。
+【書  式】
+    #include "sgl.h"
+
+    Uint16 level;
+
+    Bool slZdspLevel( level );
+【引  数】
+    Uint16 level - 表示レベル。
+【返  数】
+    Bool - 引数に規定値以外を入れた場合FALSE、それ以外TRUE。
+【機  能】
+    スクリーンよりも手前にあるポリゴン(あるいはスプライトデータ)をどこまで
+    表示するのかを切り替えます。
+    level は1～7のいずれかで、それ以外はエラーになります。
+    1: スクリーンまでの距離の1/2までを表示範囲にします(default)。
+    2: スクリーンまでの距離の1/4までを表示範囲にします。
+    3: スクリーンまでの距離の1/8までを表示範囲にします。
+    4: スクリーンまでの距離の1/16までを表示範囲にします。
+    5: スクリーンまでの距離の1/32までを表示範囲にします。
+    6: スクリーンまでの距離の1/64までを表示範囲にします。
+    7: スクリーンまでの距離の1/128までを表示範囲にします。
+    レベルを切り替えるとそれ以降に表示するポリゴン(あるいはスプライト)に
+    対して、slWindowで指定したzlimの基準位置も同様に変化しますので、注意して
+    ください。
+【用  例】
+    表示レベルを7(スクリーンの距離までの1/128)にする。
+    slZdspLevel( 7 );
+【参  照】
+    slPutPolygon, slPutPolygonS, slPutPolygonX, slDispPolygon
+    slPutSprite, slSetSprite, slDispSprite, slDispSpriteHV
+    slDispSpriteSZ, slDispSprite4P, slWindow, slPutObject
+    ComWrPtr, ComRdPtr, SlZlimit
+
+
+★スプライト描画関数
+slDispSprite -- 関数
+    slDispSprite - スプライトの描画。
+【書  式】
+    #include "sgl.h"
+
+    FIXED pos[ XYZS ];
+    ATTR  *attr;
+    ANGLE z_ang;
+
+    Bool slDispSprite( pos, atrb, z_ang );
+【引  数】
+    FIXED pos[ XYZS ] - スプライトの位置。
+    ATTR  *attr       - スプライトの属性。
+    ANGLE z_ang       - スプライトの回転角。
+【返  数】
+    Bool - エラーコード(後述)。
+【機  能】
+    ポジション、スケール、回転角を指定し、スプライトを表示します。
+    slPutPolygon() と同様 Z値によりソーティングもします。
+    スケールにマイナスの値を指定した場合、Zポジションによりスケールを算出し、
+    スケールの補数を掛け、表示用のスケールとします。
+    例えば、スケールに-2.0を指定した場合、0.5倍で表示されるような位置
+    (Zポジション)にあれば、1.0倍になって表示されます。
+    スケールがゼロ又は、スプライトの表示座標(Z)が遠過ぎるあるいは、最大表示数を
+    越えたスプライトを表示しようとした場合、エラーコードFALSEを返します。
+【用  例】
+    FIXED pos[ XYZS ] = {
+      toFIXED( 0.0 ), toFIXED( 0.0 ), toFIXED( 110.0 ), toFIXED( ORIGINAL )
+    };
+    SPR_ATTR attr = SPR_ATTRIBUTE( 0, 0, No_Gouraud, CL16Bnk, sprNoflip|_ZmCC);
+
+    slDispSprite( pos, attr, DEGtoANG( 0.0 ) );
+【注  意】
+    この関数は、座標値取得及びソートの決定にスレーブCPUを使用します。
+【参  照】
+    slWindow, slZdspLevel, slPutSprite, slSetSprite
+    slDispSpriteHV, slDispSpriteSZ, slDispSprite4P, SpritePtr
+    ComWrPtr, ComRdPtr, MsScreenDist, MsZlimit
+    WinUseFlag, TotalPolygons, MXPolygons, DispPolygons
+    DMAEndFlag, DMASetFlag, PutCount, SPR_ATTR
+    SPR_ATTRIBUTE
+
+
+slDispSpriteHV -- 関数
+    slDispSpriteHV - スプライトの描画。
+【書  式】
+    #include "sgl.h"
+
+    FIXED pos[ XYZSS ];
+    ATTR  *attr;
+    ANGLE z_ang;
+
+    Bool slDispSpriteHV( pos, attr, z_ang );
+【引  数】
+    FIXED pos[ XYZSS ] - スプライトの位置。
+    ATTR  *attr        - スプライトの属性。
+    ANGLE z_ang        - スプライトの回転角。
+【返  数】
+    Bool - エラーコード(後述)。
+【機  能】
+    縦、横の表示スケールを指定して、変形スプライトを表示します。
+    上記の slDispSprite() 関数と異なり、スケールにマイナスを指定した
+    場合キャラクターは反転して表示されます。
+    スケールがゼロ又は、スプライトの表示座標(Z)が遠過ぎるあるいは、表示数を
+    越えたスプライトを表示しようとした場合エラーFALSEを返します。
+【用  例】
+    #define FX0 toFIXED( 0.0 )
+
+    FIXED pos[ XYZSS ] = {
+      FX0, FX0, toFIXED( 110.0 ), toFIXED( ORIGINAL ), toFIXED( 2.0 )
+    };
+    SPR_ATTR attr = SPR_ATTRIBUTE( 0, 0, No_Gouraud, CL16Bnk, sprNoflip|_ZmCC);
+
+    slDispSpriteHV( pos, attr, DEGtoANG( 0.0 ) );
+【注  意】
+    この関数は、座標値取得及びソートの決定にマスターCPUを使用します。
+【参  照】
+    slWindow, slZdspLevel, slPutSprite, slSetSprite
+    slDispSprite, slDispSpriteSZ, slDispSprite4P, SpritePtr
+    DispPolygons, DMAEndFlag, DMASetFlag, PutCount
+    SPR_ATTR, SPR_ATTRIBUTE
+
+
+slDispSpriteSZ -- 関数
+    slDispSpriteSZ - スプライトの描画。
+【書  式】
+    #include "sgl.h"
+
+    FIXED pos[ XYZSS ];
+    ATTR  *attr;
+    ANGLE z_ang;
+
+    Bool slDispSpriteSZ( pos, attr, ang_z );
+【引  数】
+    FIXED pos[ XYZSS ] - スプライトの位置。
+    ATTR  *attr        - スプライトの属性。
+    ANGLE z_ang        - スプライトの回転角。
+【返  数】
+    Bool - エラーコード(後述)。
+【機  能】
+    縦、横の表示サイズを指定して、変形スプライトを表示します。
+    サイズにマイナスが指定された場合には、反転して表示されます。
+    サイズがゼロ又は、スプライトの表示座標(Z)が遠過ぎるあるいは、表示数を
+    越えたスプライトを表示しようとした場合エラーFALSEを返します。
+【用  例】
+    #define FX0 toFIXED( 0.0 )
+
+    FIXED pos[ XYZSS ] = {
+      toFIXED( 30.0 ), FX0, toFIXED( 110.0 ), toFIXED( 0.5 ), toFIXED( 2.0 )
+    };
+    SPR_ATTR attr = SPR_ATTRIBUTE( 0, 0, No_Gouraud, CL16Bnk[a], sprNoflip|_ZmCC);
+
+    slDispSpriteSZ( pos, attr, DEGtoANG( 0.0 ) );
+【注  意】
+    この関数は、座標値取得及びソートの決定にマスターCPUを使用します。
+【参  照】
+    slWindow, slZdspLevel, slPutSprite, slSetSprite
+    slDispSprite, slDispSpriteHV, slDispSprite4P, SpritePtr
+    FrameSizeX, FrameSizeY, MsClipXAdder, MsClipYAdder
+    DispPolygons, DMAEndFlag, DMASetFlag, PutCount
+    SPR_ATTR, SPR_ATTRIBUTE
+
+
+slDispSprite4P -- 関数
+    slDispSprite4P - スプライトの描画。
+【書  式】
+    #include "sgl.h"
+
+    FIXED    pos[ 4 ][ XY ];
+    FIXED    pos_z;
+    SPR_ATTR*attr;
+
+    Bool slDispSprite4P( pos, pos_z, attr );
+【引  数】
+    FIXED    pos[ 4 ][ XY ] - 4頂点の座標。
+    FIXED    pos_z;         - ソートの基準値。
+    SPR_ATTR*attr;         - 属性。
+【返  数】
+    Bool - エラーコード(後述)。
+【機  能】
+    画面上の4点を指定して、変形スプライトを表示します。
+    4点はウィンドウ中心に対するオフセット位置で指定し、全体を代表する
+    Z位置を別に指定します。
+    4点は左上、右上、右下、左下の順(時計回り)で指定します。
+    4点の内いずれでも、クリップの範囲を越えた場合エラーコードFALSEを返します。
+【用  例】
+    FIXED pos[ 4 ][ XY ] = {
+      { toFIXED( 0.0 ), toFIXED( 0.0 ) },
+      { toFIXED( 40.0 ), toFIXED( 10.0 ) },
+      { toFIXED( 70.0 ), toFIXED( 60.0 ) },
+      { toFIXED( 10.0 ), toFIXED( 50.0 ) }
+    };
+    SPR_ATTR attr = SPR_ATTRIBUTE( 2, 0x100, No_Gouraud, CL16Bnk, 
+                                  sprNoflip | _ZmCC );
+
+    slDispSprite4P( pos, toFIXED( 150.0 ), attr );
+【注  意】
+    この関数は、座標値取得及びソートの決定にマスターCPUを使用します。
+【参  照】
+    slWindow, slZdspLevel, slPutSprite, slSetSprite
+    slDispSprite, slDispSpriteSZ, slDispSpriteHV, SpritePtr
+    FrameSizeX, FrameSizeY, MsClipXAdder, MsClipYAdder
+    DispPolygons, DMAEndFlag, DMASetFlag, PutCount
+    SPR_ATTR, SPR_ATTRIBUTE
+
+
+slPutSprite -- 関数
+    slPutSprite - スプライトの描画。
+【書  式】
+    #include "sgl.h"
+
+    FIXED pos[ XYZS ];
+    ATTR  *attr;
+    ANGLE ang_z;
+
+    Bool slPutSprite( pos, attr, ang_z );
+【引  数】
+    FIXED pos[ XYZS ];
+    ATTR  *attr;
+    ANGLE ang_z;
+【返  数】
+    Bool - エラーコード(後述)。
+【機  能】
+    カレントマトリクスを使用してポジションを算出し、透視変換に合わせて
+    スケーリングされたスプライトを表示します。
+    上記の slDispSprite() と同じように 指定されたスケール倍
+    されますが、マイナスを指定した場合、符号反転してスケーリングされます。
+    最大ポリゴン数又は最大頂点数を越えた場合、エラーコード'FALSE'を返します。
+【用  例】
+    FIXED pos[ XYZS ] = {
+      toFIXED( 0.0 ), toFIXED( 0.0 ), toFIXED ( 110.0 ), toFIXED( ORIGINAL )
+    };
+    SPR_ATTR attr = SPR_ATTRIBUTE( 0, 0, No_Gouraud, CL16Bnk, sprNoflip | _ZmCC );
+
+    slPutSprite( pos, attr, DEGtoANG( 0.0 ) );
+【注  意】
+    この関数は、座標値取得及びソートの決定にスレーブCPUを使用します。
+【参  照】
+    slWindow, slZdspLevel, slSetSprite, slDispSprite
+    slDispSpriteSZ, slDispSprite4P, slDispSpriteHV, SpritePtr
+    ComWrPtr, ComRdPtr, MsScreenDist, MsZlimit
+    MXPolygons, DispPolygons, DMAEndFlag, DMASetFlag
+    PutCount, SPR_ATTR, SPR_ATTRIBUTE
+
+
+slSetSprite -- 関数
+    slSetSprite - スプライトの描画。
+【書  式】
+    #include "sgl.h"
+
+    SPRITE *spr;
+    FIXED  pos_z;
+
+    Bool slSetSprite( spr, pos_z );
+【引  数】
+    SPRITE *spr  - 表示するVDP1のコマンドデータ。
+    FIXED  pos_z - ソートのための基準。
+【返  数】
+    Bool - エラーコード(後述)。
+【機  能】
+    ハードウエアに渡すスプライトコントロールコマンドデータを転送リストに
+    セットします。
+    ライブラリ関数では作成できないような変形スプライトや、特定のスプライ
+    トにのみ影響するウィンドウの設定をしたい場合などに使用します。
+    最大ポリゴン数を越えた場合または、Zクリッピング境界を越えて使用した場合
+    エラーコードFALSEを返します。
+【用  例】
+    SPRITE attr = {
+      FUNC_Sprite,                         /* Drawing Sprite              */
+      0,                                   /* Link ( Ignore )             */
+      ECdis | SPenb | CL16Look | CL_Trans, /* Color mode.                 */
+      ( 0x1b000 >> 3 ),                    /* Color bank number.          */
+      ( 0x12400 >> 3 ),                    /* Character address.          */
+      ( ( 64 / 8 ) << 8 | 96 ),            /* Character size ((x/8)<<8|y) */
+      0,                                   /* A(x)                        */
+      0,                                   /* A(y)                        */
+      64,                                  /* B(x)                        */
+      0,                                   /* B(y)                        */
+      64,                                  /* C(x)                        */
+      96,                                  /* C(y)                        */
+      0,                                   /* D(x)                        */
+      96,                                  /* D(y)                        */
+      0,                                   /* Gouraud table address       */
+      0                                    /* Dummy.                      */
+    };
+
+    slSetSprite( attr, toFIXED( 145.0 ) );
+【注  意】
+    この関数は、ソートの決定にスレーブCPUを使用します。
+【参  照】
+    slWindow, slZdspLevel, slPutSprite, slDispSprite
+    slDispSpriteSZ, slDispSprite4P, slDispSpriteHV, SpritePtr
+    ComWrPtr, ComRdPtr, MsScreenDist, MsZlimit
+    WinUseFlag, TotalPolygons, MXPolygons, DispPolygons
+    DMAEndFlag, DMASetFlag, PutCount, SPRITE
+    ★ウインドウ
+slWindow -- 関数
+    slWindow - スプライトウインドウの設定。
+【書  式】
+    #include "sgl.h"
+
+    Sint16 left, top, right, bottom;
+    Uint16 zlim;
+    Sint16 cen_x, cen_y;
+
+    Bool slWindow( left, top, right, bottom, zlim, cen_x, cen_y );
+【引  数】
+    Sint16 left   - ウインドウの右端。
+    Sint16 top    - ウインドウの上端。
+    Sint16 right  - ウインドウの左端。
+    Sint16 bottom - ウインドウの下端。
+    Uint16 zlim   - Z限界。
+    Sint16 cen_x  - 消失点(座標原点)のX座標。
+    Sint16 cen_y  - 消失点(座標原点)のY座標。
+【返  数】
+    Bool - エラーコード(後述)。
+【機  能】
+    スプライト、及びポリゴンの表示を制限する範囲を設定します。
+    表示範囲は TV 画面上での位置で、表示中に2回まで指定できます。
+    zlimは これより先が表示されなくなります。
+    cen_x, cen_y は ポリゴンでは消失点の位置、スプライトでは座標原点に
+    なります。
+    画面上での位置は左上が( 0, 0 )、右下が( 319, 223 ) <通常画面サイズ>
+    です。
+    トータルのウインドウ数が3つ以上になったら、関数の戻り値としてFALSEを
+    返します。成功した場合TRUEが返ります。
+【用  例】
+    ウインドウの左上座標(10,15)、右下座標(300,195)、消失点はこのウインドウの
+    中央、Z限界値を5000hとするウインドウ。
+    slWindow( 10, 15, 300, 195, 0x5000, 145, 75 );
+    下の注意も見よ。
+【注  意】
+    slWindow() を 呼ぶ前に slPutPolygon(),
+    slPutSprite() 等のスプライト
+    をセットする関数を使用すると、それらには全画面サイズのウィンドウが使
+    用され、改めて呼ばれた slWindow() で設定されるウィンドウが
+    二つ目になります。
+    通常は
+      slWindow(...) ;                /* Window 1 */
+           ...
+        slPutPolygon(...) ;
+        slPutSprite(...) ;
+           ...
+      slWindow(...) ;                /* Window 2 */
+           ...
+         slPutSprite(...) ;
+         slPutPolygon(...) ;
+
+    のように、処理のはじめにウィンドウをセットし、切替えたい所でもう一度
+    別のウィンドウをセットするようにします。
+【参  照】
+    slPutPolygon, slPutPolygonS, slPutPolygonX, slDispPolygon
+    slPutSprite, slSetSprite, slDispSprite, slDispSpriteHV
+    slDispSpriteSZ, slDispSprite4P, slZdspLevel, slCurWindow
+    slSprWinNum, ComWrPtr, ComRdPtr, MsZlimit
+    WindowNumber, WinUseFlag, TotalPolygons, MsScreenLeft
+    MsScreenTop, MsScreenRight, MsScreenBottom, MsWindowSizeX
+    MsWindowSizeY, FrameSizeX, FrameSizeY, MsWinXAdder
+    MsWinYAdder, SlWinXAdder, SlWinYAdder, MsClipXAdder
+    MsClipYAdder, SlClipXAdder, SlClipYAdder
+
+
+slCurWindow -- 関数
+    slCurWindow - ウインドウの切替え。
+【書  式】
+    #include "sgl.h"
+
+    Uint8 win;
+
+    void slCurWindow( win );
+【引  数】
+    Uint8 win - 切替えるウインドウのタイプ(後述)。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    表示するウィンドウを切り替えます。
+    win には winFar(奥側) , winNear(手前側) のいずれかを指定します。
+    本関数を実行すると、スクリーン位置、表示領域が設定されますが、
+    光源ベクトルは変更されませんので、注意してください。
+【用  例】
+    表示するウインドウを奥にする。
+    slCurWindow( winFar );
+【参  照】
+    slWindow, slSprWinNum, ComWrPtr, ComRdPtr
+    MsScreenDist, WindowNumber, MsScreenLeft, MsScreenTop
+    MsScreenRight, MsScreenBottom, MsWindowSizeX, MsWindowSizeY
+    MsWinXAdder, MsWinYAdder, SlWinXAdder, SlWinYAdder
+    MsClipXAdder, MsClipYAdder, SlClipXAdder, SlClipYAdder
+    SlZlimit
+
+
+slSprWinNum -- 関数
+    slSprWinNum - ウインドウ番号の取得。
+【書  式】
+    #include "sgl.h"
+
+    Uint8 slSprWinNum( void );
+【引  数】
+    void - 何も与えません。
+【返  数】
+    Uint8 - 表示に使用されているウインドウ番号。
+【機  能】
+    表示に使用されているウィンドウ番号を返します。
+【用  例】
+    Uint8 winno;
+
+    winno = slSprWinNum();
+【参  照】
+    slWindow, slCurWindow, WindowNumber
+
+
+slFrameClipSize -- 関数
+    slFrameClipSize - クリッピングサイズの指定。
+【書  式】
+    #include "sgl.h"
+
+    Sint16 size_x, size_y;
+
+    void slFrameClipSize( size_x, size_y );
+【引  数】
+    Sint16 size_x - クリップのXサイズ。
+    Sint16 size_y - クリップのYサイズ。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    スプライト表示関数slDispSprite、slDispSpriteHV、
+    slDispSpriteSZ、slDispSprite4P、slPutSpriteと、
+    UseClipオプションを指定したポリゴンを表示する範囲を設定します。
+    ウィンドウサイズに対し、上下左右にそれぞれ指定された幅を加えた領域から
+    外れた点に対し非表示とします。
+【用  例】
+    slFrameClipSize( 10, 5, 190, 200 );
+【参  照】
+    slInitSystem, slWindow, WindowNumber, MsWindowSizeX
+    MsWindowSizeY, FrameSizeX, FrameSizeY, SlClipXAdder
+    SlClipYAdder
+
+
+★スレーブ活動状況
+slCheckSlave -- 関数
+    slCheckSlave - スレーブ活動状態のチェック。
+【書  式】
+    #include "sgl.h"
+
+    Bool slCheckSlave( void )
+【引  数】
+    void - 何も与えません。
+【返  数】
+    Bool - スレーブのステータス(後述)。
+【機  能】
+    スレーブの動作状況をチェックします。
+【用  例】
+    スレーブのタスク(ジオメトリの計算)が終了するのを待ってから、
+    slSynchを呼ぶ。
+      while ( slCheckSlave() != TRUE );
+      slSynch();
+【注  意】
+    この関数は、透視変換、ジオメトリ演算を必要とするスプライト/ポリゴン描画
+    関数の演算が終了しているかを知るもので、ユーザがslSlaveFuncで
+    設定した関数の動作について調べるものではありません。 
+【参  照】
+    slPutPolygon, slPutPolygonS, slDispPolygon, slPutObject
+    slPutSprite, slDispSprite, slDispSpriteSZ, slDispSprite4P
+    slDispSpriteHV, slPutPolygonX

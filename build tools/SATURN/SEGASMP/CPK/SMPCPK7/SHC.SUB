@@ -1,0 +1,9 @@
+-def=_SH
+-CP=76
+-ST=C
+-OP=1
+-SP
+-I=..\..\..\sh\include,..\..\..\segalib\include
+-macsave=0
+-div=cpu
+

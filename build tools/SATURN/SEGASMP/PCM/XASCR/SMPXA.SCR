@@ -1,0 +1,63 @@
+Disc            SMPXA.DSK
+Session         SEMIXA
+LeadIn          MODE1
+EndLeadIn
+
+;SystemArea     ..\ip.bin
+
+Track           MODE1
+        Volume                          ISO9660 "adpcm.pvd"
+        PrimaryVolume                   00:02:16
+        SystemIdentifier                "SEGA SEGASATURN"
+        VolumeIdentifier                "SAMPLE_GAME_TITLE"
+        VolumeSetIdentifier             "SAMPLE_GAME_TITLE"
+        PublisherIdentifier             "SEGA ENTERPRISES,LTD."
+        DataPreparerIdentifier          "SEGA ENTERPRISES,LTD."
+        VolumeCreationDate              11/11/1994 00:00:00:00:36
+        EndPrimaryVolume
+        EndVolume
+
+        File            SMPXA.SCR;1
+        FileSource      "SMPXA.SCR"
+        EndFileSource
+        EndFile
+
+
+        PostGap 150
+EndTrack
+Track MODE2
+        PreGap 150
+        File SAMPLE1.XA;1
+                FileSource              "MONO_B.XA"
+                        RealTime
+                        DataType                FORM2
+                        SourceType              MONO_B
+                                ;ADPCM 4BIT 37.8KHz
+                                ;MODE:MONO
+                        CodingInformation       0
+                                ;エンファシス   :OFF            bit6   0
+                                ;ADPCM LEVEL    :LEVEL B        bit2-5 0000
+                                ;MODE           :MONO           bit0-1 00
+                EndFileSource
+        EndFile
+        File    SAMPLE2.XA;1
+                FileSource              "MONO_C.XA"
+                RealTime
+                DataType                FORM2
+                SourceType              MONO_C
+                        ;ADPCM 4BIT 18.9KHz
+                        ;MODE:MONO
+                CodingInformation       4
+                        ;エンファシス:OFF       bit6   0
+                        ;ADPCM LEVEL :LEVEL C   bit2-5 0001
+                        ;MODE        :MONO      bit0-1 00
+                EndFileSource
+        EndFile
+    PostGap 150
+EndTrack
+LeadOut MODE2
+    Empty 500
+EndLeadOut
+EndSession
+EndDisc
+

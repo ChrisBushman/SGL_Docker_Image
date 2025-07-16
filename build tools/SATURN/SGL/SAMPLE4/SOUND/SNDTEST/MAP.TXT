@@ -1,0 +1,26 @@
+
+マップ情報　日付:     1997/7/16
+マップ番号: 000    sample01
+マップ番号: 001    sample02
+
+マップ番号: 000    sample01
+      No  Start - End     Size    DataType        FileName
+      000 00B000- 00C225  001226  Sequence    00  Map01Song1.seq
+      001 00C226- 00D447  001222  Sequence    01  Map01Song2.seq
+      002 00D448- 0348EB  0274A4  BANK data   00  Map01.bin
+      003 0348EC- 034A95  0001AA  Sequence    02  Map01SE1.seq
+      004 034A96- 034C2B  000196  Sequence    03  Map01SE2.seq
+      005 034C2C- 042753  00DB28  BANK data   01  SE.bin
+      006 042754- 042C93  000540  DSP program 00  dly.EXB
+      007 042C94- 0431D3  000540  DSP program 01  Reverb01.EXB
+      008 044000- 05403F  010040  DSP workRAM 00  
+
+マップ番号: 001    sample02
+      No  Start - End     Size    DataType        FileName
+      000 00B000- 00E0D5  0030D6  Sequence    00  Map02Song1.seq
+      001 00E0D6- 0111A7  0030D2  Sequence    01  Map02Song2.seq
+      002 0111A8- 046301  03515A  BANK data   00  Map02.bin
+      003 046302- 0652D9  01EFD8  BANK data   01  Map02SE.bin
+      004 0652DA- 065819  000540  DSP program 00  Reverb02.EXB
+      005 066000- 07603F  010040  DSP workRAM 00  
+

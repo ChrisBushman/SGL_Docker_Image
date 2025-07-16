@@ -1,0 +1,53 @@
+Disc		DDS.DSK
+Session		CDROM
+LeadIn		MODE1
+EndLeadIn
+
+SystemArea	ip.bin			;メニュープログラムのＩＰ
+					;（sys_init.obj をリンクしないこと。）
+Track   MODE1
+   Volume ISO9660 "DDS.PVD"
+       PrimaryVolume    0:2:16
+       EndPrimaryVolume
+   EndVolume
+
+;----------------------------------------------------------
+;	メニューで使用するファイル
+;----------------------------------------------------------
+
+    File 0
+		FileSource	ss.bin	;メニュープログラム本体( gnu版 )
+;		FileSource	sh.bin	;メニュープログラム本体( shc版 )
+		EndFileSource
+    EndFile
+
+    File FLD_KNL.BIN
+		FileSource	FLD_KNL.BIN	;カーネル部
+		EndFileSource
+    EndFile
+
+;----------------------------------------------------------
+;	ゲームで使用するファイル
+;----------------------------------------------------------
+    File SAMP_IP.BIN
+	FileSource       SAMP_IP.BIN	;（sys_init.obj をリンクして作成。）
+	EndFileSource
+    EndFile
+
+    Directory SAMP
+	File 0
+	    FileSource	SAMP.BIN	;起動されるゲーム
+	    EndFileSource
+	EndFile
+    EndDirectory
+
+	PostGap 150
+EndTrack
+
+LeadOut MODE1
+    Empty 600
+EndLeadOut
+
+EndSession
+EndDisc
+

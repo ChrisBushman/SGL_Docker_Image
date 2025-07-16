@@ -1,0 +1,21 @@
+#
+#■このファイルは makefile から include されます。
+#  ・このファイルをサンプルプログラムのあるディレクトリにコピーして使って
+#    ください。
+#  ・ TARGET にはサンプルプログラムの名前を指定してください。
+#    （ロードモジュールのプライマリネームになります。）
+#  ・ OBJS にはサンプルプログラムのロードモジュールを作るための dependency
+#    を指定してください。
+#
+TARGET  = ss
+
+OBJS=	$(SEGASMP)/lib/strt1_g.o\
+		$(SEGASMP)/lib/strt2_g.o\
+		main.o \
+		slavesh.o \
+		spr_xpt.o \
+		spr_sinc.o \
+		spr_fmat.o \
+		spr_mtx3.o \
+		slv_mtx3.o 
+

@@ -1,0 +1,16 @@
+;=======================================================================
+;  sample subcommand file for XBLD
+;
+;  File    : sample.bld
+;  Date    : 1997-03-28
+;  System  : XBLD
+;  Version : 1.80
+;
+;=======================================================================
+
+-r         ; realtime emulation (creaate DSK, RTI and TOC file)
+-i=1024    ; number of isofiles
+-d=2048    ; number of dosfiles
+sample     ; script file
+
+

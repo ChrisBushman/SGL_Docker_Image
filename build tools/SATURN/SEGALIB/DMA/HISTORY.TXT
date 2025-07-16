@@ -1,0 +1,7 @@
+94.10.07 dma_cpu.h  N.T. 
+96.11.14 dma_cpu0.c H.O. DMA_CpuSetPrm()でのDRDCR0/DRCR1のDREQ指定禁止対応
+95.07.26 dma_cpu5.c T.T CSH_Purge()を使用しているのでsega_csh.hを追加
+95.07.26 dma_scu0.c T.T Uint 32 work_regが未使用なので削除
+
+1996-09-25  K.K Ver.1.05 コメント内1byteカナコード殲滅作戦
+1997-05-22  A.H Ver.1.06 SEGA_SYS Ver3.00 (MACレジスタ待避)に対応

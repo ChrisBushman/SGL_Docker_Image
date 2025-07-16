@@ -1,0 +1,14 @@
+library	..\..\..\segalib\lib\sega_cdc.lib
+library	..\..\..\segalib\lib\sega_snd.lib
+library	..\..\..\segalib\lib\sega_int.lib
+library	..\..\..\segalib\lib\sega_sys.lib
+library	..\..\..\sh\lib\shcnpic.lib
+OUTPUT	sh.abs
+PRINT	sh.map
+INPUT	..\..\lib\strt1_h.obj
+INPUT	..\..\lib\strt2_h.obj
+INPUT	main.obj
+START	P,SEGA_P,C,SEGA_C,D,SEGA_D,B,SEGA_B(06010000)
+FORM A
+EXIT
+

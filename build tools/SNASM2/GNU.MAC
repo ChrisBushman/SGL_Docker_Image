@@ -1,0 +1,185 @@
+		list	-
+		inform	0,"SNASM assembler version 2.02X GNU compatibility macros"
+
+		opt	mcase+
+		opt	pc+		
+		opt	g+
+
+__errmsg:	macros
+		inform	2,\1
+
+.align:		macros
+		cnop	0,1<<\1,0
+
+.ascii:		alias	dc.b
+
+.asciz:		macros
+		dc.b	\_,0
+
+.byte:		alias	dc.b
+
+.comm:		macro
+		import	\1
+		inform	1,".comm will not define the variable \1"
+		endm
+
+.data:		macro
+		if	strlen("\1")
+		__errmsg	"subsections not supported"
+		else
+		section	.data
+		endif
+		endm
+
+.def:		macros
+		__errmsg	".DEF not supported - compile without -g switch"
+
+.desc:		macro
+		endm
+
+.dim:		macros
+		__errmsg	".DIM not supported - compile without -g switch"
+
+.double:	alias	ieee64
+
+.eject:		macro
+		endm
+
+.else:		alias	else	
+
+
+.endef:		macros
+		__errmsg	".ENDEF not supported - compile without -g switch"
+
+.endif:		alias	endif
+
+.equ:		macros	
+\1:		equ	\2
+
+.extern:	alias	import
+
+.file:		macro
+		endm
+
+.fill:		macros
+		__errmsg	".FILL not supported"
+
+.float:		alias	ieee32
+
+.global:	alias	global
+
+.globl:		alias	global
+
+.hword:		alias	dc.w
+
+.ident:		macro
+		endm
+
+.if:		alias	if
+
+.ifdef:		macros
+		if	def(\1)
+
+.ifndef:		macros
+		if	!def(\1)
+
+ifnotdef:	alias	.ifndef
+
+.include:	alias	include
+
+.int:		alias	dc.l
+
+.lcomm:		macros
+		__errmsg	".LCOMM not supported"
+		
+
+.lflags: 	macro
+		endm
+
+.line:		macros
+		__errmsg	".LINE not supported - compile without -g switch"
+
+.ln:		alias	.line
+
+.list:		macros
+		list	+
+
+.long:		alias	.int
+
+.nolist:	macros
+		list	-
+
+.octa:		macros
+		__errmsg	".OCTA not supported"
+
+.org:		macros
+		__errmsg	".ORG not supported"
+
+.psize:		macro
+		endm
+
+.quad:		macros
+		__errmsg	".QUAD not supported"
+
+.sbttl:		macro
+		endm
+
+.scl:		macros
+		__errmsg	".SCL not supported - compile without -g switch"
+
+
+.section:	macro
+		if	strlen(\2)
+		__errmsg	"subsections not supported"
+		else
+		section	\1
+		endif
+		endm
+	
+.set:		macros
+\1:		=	\2
+
+.short:		alias	dc.w
+
+.single:	alias	.float
+
+.size:		macros
+		__errmsg	".SIZE not supported - compile without -g switch"
+
+.space:		alias		dcb
+
+.stabd:		macros
+		__errmsg	".STABD not supported - compile without -g switch"
+
+.stabn:		macros
+		__errmsg	".STABN not supported - compile without -g switch"
+
+.stabs:		macros
+		__errmsg	".STABS not supported - compile without -g switch"
+
+.tag:		macros
+		__errmsg	".TAG not supported - compile without -g switch"
+
+.text:		macro
+		if	strlen("\1")
+		__errmsg	"subsections not supported"
+		else
+		section	.text
+		endif
+		endm
+
+.title:		macro
+		endm
+
+.type:		macros
+		__errmsg	".TYPE not supported - compile without -g switch"
+
+.val:		macros
+		__errmsg	".VAL not supported - compile without -g switch"
+
+.word:		alias	dc.w
+
+		opt	mcase-
+		list	+
+
+

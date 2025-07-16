@@ -1,0 +1,745 @@
+Sinc_Dinc_Byte -- マクロ定数
+    Sinc_Dinc_Byte 
+       - バイト単位で、ソース、デスティネーション共にインクリメント
+【機  能】
+    #define  Sinc_Dinc_Byte  0
+【参  照】
+    slDMAXCopy
+
+
+Sdec_Dinc_Byte -- マクロ定数
+    Sdec_Dinc_Byte
+       - バイト単位でソースをデクリメント、デスティネーションをインクリメント
+【機  能】
+    #define  Sdec_Dinc_Byte  1
+【参  照】
+    slDMAXCopy
+
+
+Sinc_Ddec_Byte -- マクロ定数
+    Sinc_Ddec_Byte
+       - バイト単位でソースをインクリメント、デスティネーションをデクリメント
+【機  能】
+    #define  Sinc_Ddec_Byte  2
+【参  照】
+    slDMAXCopy
+
+
+Sfix_Dinc_Byte -- マクロ定数
+    Sfix_Dinc_Byte
+        - バイト単位でソースを固定、デスティネーションをインクリメント
+【機  能】
+    #define  Sfix_Dinc_Byte  3
+【参  照】
+    slDMAXCopy
+
+
+Sfix_Ddec_Byte -- マクロ定数
+    Sfix_Ddec_Byte
+       - バイト単位でソースを固定、デスティネーションをデクリメント
+【機  能】
+    #define  Sfix_Ddec_Byte  4
+【参  照】
+    slDMAXCopy
+
+
+Sinc_Dfix_Byte -- マクロ定数
+    Sinc_Dfix_Byte
+       - バイト単位でソースをインクリメント、デスティネーションを固定
+【機  能】
+    #define  Sinc_Dfix_Byte  5
+【参  照】
+    slDMAXCopy
+
+
+Sdec_Dfix_Byte -- マクロ定数
+    Sdec_Dfix_Byte
+       - バイト単位でソースをデクリメント、デスティネーションを固定
+【機  能】
+    #define  Sdec_Dfix_Byte  6
+【参  照】
+    slDMAXCopy
+
+
+Sinc_Dinc_Word -- マクロ定数
+    Sinc_Dinc_Word
+       - ワード単位でソースをインクリメント、デスティネーションをインクリメント
+【機  能】
+    #define  Sinc_Dinc_Word  7
+【参  照】
+    slDMAXCopy
+
+
+Sdec_Dinc_Word -- マクロ定数
+    Sdec_Dinc_Word
+       - ワード単位でソースをデクリメント、デスティネーションをインクリメント
+【機  能】
+    #define  Sdec_Dinc_Word  8
+【参  照】
+    slDMAXCopy
+
+
+Sinc_Ddec_Word -- マクロ定数
+    Sinc_Ddec_Word
+       - ワード単位でソースをインクリメント、デスティネーションをデクリメント
+【機  能】
+    #define  Sinc_Ddec_Word  9
+【参  照】
+    slDMAXCopy
+
+
+Sfix_Dinc_Word -- マクロ定数
+    Sfix_Dinc_Word
+       - ワード単位でソースを固定、デスティネーションをインクリメント
+【機  能】
+    #define  Sfix_Dinc_Word  10
+【参  照】
+    slDMAXCopy
+
+
+Sfix_Ddec_Word -- マクロ定数
+    Sfix_Ddec_Word
+       - ワード単位でソースを固定、デスティネーションをデクリメント
+【機  能】
+    #define  Sfix_Ddec_Word  11
+【参  照】
+    slDMAXCopy
+
+
+Sinc_Dfix_Word -- マクロ定数
+    Sinc_Dfix_Word
+       - ワード単位でソースをインクリメント、デスティネーションを固定
+【機  能】
+    #define  Sinc_Dfix_Word  12
+【参  照】
+    slDMAXCopy
+
+
+Sdec_Dfix_Word -- マクロ定数
+    Sdec_Dfix_Word
+       - ワード単位でソースをデクリメント、デスティネーションを固定
+【機  能】
+    #define  Sdec_Dfix_Word  13
+【参  照】
+    slDMAXCopy
+
+
+Sinc_Dinc_Long -- マクロ定数
+    Sinc_Dinc_Long
+    - 4バイト単位でソースをインクリメント、デスティネーションをインクリメント 
+【機  能】
+    #define  Sinc_Dinc_Long  14
+【参  照】
+    slDMAXCopy
+
+
+Sdec_Dinc_Long -- マクロ定数
+    Sdec_Dinc_Long
+    - 4バイト単位でソースをデクリメント、デスティネーションをインクリメント
+【機  能】
+    #define  Sdec_Dinc_Long  15
+【参  照】
+    slDMAXCopy
+
+
+Sinc_Ddec_Long -- マクロ定数
+    Sinc_Ddec_Long
+    - 4バイト単位でソースをインクリメント、デスティネーションをデクリメント
+【機  能】
+    #define  Sinc_Ddec_Long  16
+【参  照】
+    slDMAXCopy
+
+
+Sfix_Dinc_Long -- マクロ定数
+    Sfix_Dinc_Long
+    - ロングワード単位で、ソースを固定、デスティネーションをインクリメント
+【機  能】
+    #define  Sfix_Dinc_Long  17
+【参  照】
+    slDMAXCopy
+
+
+Sfix_Ddec_Long -- マクロ定数
+    Sfix_Ddec_Long
+    - ロングワード単位で、ソースを固定、デスティネーションをデクリメント
+【機  能】
+    #define  Sfix_Ddec_Long  18
+【参  照】
+    slDMAXCopy
+
+
+Sinc_Dfix_Long -- マクロ定数
+    Sinc_Dfix_Long
+    - ロングワード単位で、ソースをインクリメント、デスティネーションを固定
+【機  能】
+    #define  Sinc_Dfix_Long  19
+【参  照】
+    slDMAXCopy
+
+
+Sdec_Dfix_Long -- マクロ定数
+    Sdec_Dfix_Long
+    - ロングワード単位で、ソースをデクリメント、デスティネーションを固定
+【機  能】
+    #define  Sdec_Dfix_Long  20
+【参  照】
+    slDMAXCopy
+
+
+DMA_CHCR_DE -- マクロ定数
+    DMA_CHCR_DE - CPU-DMAイネーブルビット
+【機  能】
+    #define  DMA_CHCR_DE  0
+
+
+DMA_CHCR_TE -- マクロ定数
+    DMA_CHCR_TE - CPU-DMAトランスファエンドフラグビット
+【機  能】
+    #define  DMA_CHCR_TE  1
+
+
+DMA_CHCR_IE -- マクロ定数
+    DMA_CHCR_IE - CPU-DMAインタラプトイネーブルビット
+【機  能】
+    #define  DMA_CHCR_IE  2
+
+
+DMA_CHCR_TA -- マクロ定数
+    DMA_CHCR_TA - CPU-DMAトランスファアドレスモードビット
+【機  能】
+    #define  DMA_CHCR_TA  3
+
+
+DMA_CHCR_TB -- マクロ定数
+    DMA_CHCR_TB - CPU-DMAトランスファバスモードビット
+【機  能】
+    #define  DMA_CHCR_TB  4
+
+
+DMA_CHCR_DL -- マクロ定数
+    DMA_CHCR_DL - CPU-DMA、DREQレベルビット
+【機  能】
+    #define  DMA_CHCR_DL  5
+
+
+DMA_CHCR_DS -- マクロ定数
+    DMA_CHCR_DS - CPU-DMA、DREQセレクトビット
+【機  能】
+    #define  DMA_CHCR_DS  6
+
+
+DMA_CHCR_AL -- マクロ定数
+    DMA_CHCR_AL - CPU-DMAアクノリッジレベルビット
+【機  能】
+    #define  DMA_CHCR_AL  7
+
+
+DMA_CHCR_AM -- マクロ定数
+    DMA_CHCR_AM - CPU-DMAアクノリッジ/トランスファモードビット
+【機  能】
+    #define  DMA_CHCR_AM  8
+
+
+DMA_CHCR_AR -- マクロ定数
+    DMA_CHCR_AR - CPU-DMAオートリクエストビット
+【機  能】
+    #define  DMA_CHCR_AR  9
+
+
+DMA_CHCR_TS -- マクロ定数
+    DMA_CHCR_TS - CPU-DMAトランスファサイズビット
+【機  能】
+    #define  DMA_CHCR_TS  10
+
+
+DMA_CHCR_SM -- マクロ定数
+    DMA_CHCR_SM - CPU-DMAソースアドレスモードビット
+【機  能】
+    #define  DMA_CHCR_SM  12
+
+
+DMA_CHCR_DM -- マクロ定数
+    DMA_CHCR_DM - CPU-DMAディスティネーションアドレスモードビット
+【機  能】
+    #define  DMA_CHCR_DM  14
+
+
+DMA_DMAOR_DME -- マクロ定数
+    DMA_DMAOR_DME - CPU-DMAマスタイネーブルビット
+【機  能】
+    #define  DMA_DMAOR_DME  0
+
+
+DMA_DMAOR_NMIF -- マクロ定数
+    DMA_DMAOR_NMIF - CPU-DMA、NMIフラグビット
+【機  能】
+    #define  DMA_DMAOR_NMIF  1
+
+
+DMA_DMAOR_AE -- マクロ定数
+    DMA_DMAOR_AE - CPU-DMAアドレスエラーフラグビット
+【機  能】
+    #define  DMA_DMAOR_AE  2
+
+
+DMA_DMAOR_PR -- マクロ定数
+    DMA_DMAOR_PR - CPU-DMAプライオリティモードビット
+【機  能】
+    #define  DMA_DMAOR_PR  3
+
+
+DMA_CPU_CH0 -- マクロ定数
+    DMA_CPU_CH0 - CPU-DMAチャネル0
+【機  能】
+    #define  DMA_CPU_CH0  0
+
+
+DMA_CPU_CH1 -- マクロ定数
+    DMA_CPU_CH1 - CPU-DMAチャネル1
+【機  能】
+    #define  DMA_CPU_CH1  1
+
+
+DMA_CPU_FIX -- マクロ定数
+    DMA_CPU_FIX - CPU-DMA転送時の優先順位は固定
+【機  能】
+    #define  DMA_CPU_FIX  (0 << DMA_DMAOR_PR)
+
+
+DMA_CPU_ROR -- マクロ定数
+    DMA_CPU_ROR - CPU-DMA転送時の優先順位はラウンドロビンモード
+【機  能】
+    #define DMA_CPU_ROR (1 << DMA_DMAOR_PR)
+
+
+DMA_CPU_DIS -- マクロ定数
+    DMA_CPU_DIS - 全チャネルのCPU-DMA転送を禁止
+【機  能】
+    #define  DMA_CPU_DIS  (0 << DMA_DMAOR_DME)
+
+
+DMA_CPU_ENA -- マクロ定数
+    DMA_CPU_ENA - 全チャネルのCPU-DMA転送を許可
+【機  能】
+    #define  DMA_CPU_ENA  (1 << DMA_DMAOR_DME)
+
+
+DMA_CPU_M_PR -- マクロ定数
+    DMA_CPU_M_PR - CPU-DMAのプライオリティモード
+【機  能】
+    #define  DMA_CPU_M_PR  (1 << 0)
+
+
+DMA_CPU_M_AE -- マクロ定数
+    DMA_CPU_M_AE - CPU-DMAのアドレスエラーフラグ
+【機  能】
+    #define  DMA_CPU_M_AE  (1 << 1)
+
+
+DMA_CPU_M_NMIF -- マクロ定数
+    DMA_CPU_M_NMIF - CPU-DMAのNMIフラグ
+【機  能】
+    #define  DMA_CPU_M_NMIF  (1 << 2)
+
+
+DMA_CPU_M_DME -- マクロ定数
+    DMA_CPU_M_DME - CPU-DMAマスタイネーブル
+【機  能】
+    #define  DMA_CPU_M_DME  (1 << 3)
+
+
+DMA_CPU_AM_NOM -- マクロ定数
+    DMA_CPU_AM_NOM - CPU-DMAのソースアドレス固定
+【機  能】
+    #define  DMA_CPU_AM_NOM  0x0
+
+
+DMA_CPU_AM_ADD -- マクロ定数
+    DMA_CPU_AM_ADD - CPU-DMAのソースアドレスは増加
+【機  能】
+    #define  DMA_CPU_AM_ADD  0x1
+
+
+DMA_CPU_AM_SUB -- マクロ定数
+    DMA_CPU_AM_SUB - CPU-DMAのソースアドレスは減少
+【機  能】
+    #define  DMA_CPU_AM_SUB  0x2
+
+
+DMA_CPU_1 -- マクロ定数
+    DMA_CPU_1 - CPU-DMAの転送単位はバイト単位
+【機  能】
+    #define  DMA_CPU_1   (0 << DMA_CHCR_TS)
+
+
+DMA_CPU_2 -- マクロ定数
+    DMA_CPU_2 - CPU-DMAの転送単位はワード(2バイト)単位
+【機  能】
+    #define  DMA_CPU_2  (1 << DMA_CHCR_TS)
+
+
+DMA_CPU_4 -- マクロ定数
+    DMA_CPU_4 - CPU-DMAの転送単位はロングワード(4バイト)単位
+【機  能】
+    #define  DMA_CPU_4  (2 << DMA_CHCR_TS)
+
+
+DMA_CPU_16 -- マクロ定数
+    DMA_CPU_16 - CPU-DMAの転送単位は16バイト転送
+【機  能】
+    #define  DMA_CPU_16  (3 << DMA_CHCR_TS)
+
+
+DMA_CPU_MOD -- マクロ定数
+    DMA_CPU_MOD - CPU-DMAのモジュールリクエスト
+【機  能】
+    #define  DMA_CPU_MOD  (0 << DMA_CHCR_AR)
+
+
+DMA_CPU_AUTO -- マクロ定数
+    DMA_CPU_AUTO - CPU-DMAのオートリクエスト
+【機  能】
+    #define  DMA_CPU_AUTO  (1 << DMA_CHCR_AR)
+
+
+DMA_CPU_INT_ENA -- マクロ定数
+    DMA_CPU_INT_ENA - CPU-DMAの割り込み要求を許可
+【機  能】
+    #define  DMA_CPU_INT_ENA  (1 << DMA_CHCR_IE)
+
+
+DMA_CPU_INT_DIS -- マクロ定数
+    DMA_CPU_INT_DIS - CPU-DMAの割り込み要求を禁止
+【機  能】
+    #define  DMA_CPU_INT_DIS  (0 << DMA_CHCR_IE)
+
+
+DMA_CPU_RXI -- マクロ定数
+    DMA_CPU_RXI - RXI(内蔵SCIの受信データフル割り込み転送要求)
+【機  能】
+    #define  DMA_CPU_RXI  0x1
+
+
+DMA_CPU_TXI -- マクロ定数
+    DMA_CPU_TXI - TXI(内蔵SCIの送信データエンプティ割り込み転送要求)
+【機  能】
+    #define  DMA_CPU_TXI  0x2
+
+
+DMA_CPU_M_SAR -- マクロ定数
+    DMA_CPU_M_SAR - CPU-DMAソースアドレス
+【機  能】
+    #define  DMA_CPU_M_SAR  (1 << 0)
+
+
+DMA_CPU_M_DAR -- マクロ定数
+    DMA_CPU_M_DAR - CPU-DMAディスティネーションアドレス
+【機  能】
+    #define  DMA_CPU_M_DAR  (1 << 1)
+
+
+DMA_CPU_M_TCR -- マクロ定数
+    DMA_CPU_M_TCR - CPU-DMAトランスファカウント
+【機  能】
+    #define  DMA_CPU_M_TCR  (1 << 2)
+
+
+DMA_CPU_M_DM -- マクロ定数
+    DMA_CPU_M_DM - CPU-DMAディスティネーションアドレスモードビット
+【機  能】
+    #define  DMA_CPU_M_DM  (1 << 3)
+
+
+DMA_CPU_M_SM -- マクロ定数
+    DMA_CPU_M_SM - CPU-DMAソースアドレスモードビット
+【機  能】
+    #define  DMA_CPU_M_SM  (1 << 4)
+
+
+DMA_CPU_M_TS -- マクロ定数
+    DMA_CPU_M_TS - CPU-DMAのトランスファサイズ
+【機  能】
+    #define  DMA_CPU_M_TS  (1 << 5)
+
+
+DMA_CPU_M_AR -- マクロ定数
+    DMA_CPU_M_AR - CPU-DMAのオートリクエストモード
+【機  能】
+    #define  DMA_CPU_M_AR  (1 << 6)
+
+
+DMA_CPU_M_IE -- マクロ定数
+    DMA_CPU_M_IE - CPU-DMAのインタラプトイネーブル
+【機  能】
+    #define  DMA_CPU_M_IE  (1 << 7)
+
+
+DMA_CPU_M_DRCR -- マクロ定数
+    DMA_CPU_M_DRCR - CPU-DMA要求/応答選択制御
+【機  能】
+    #define  DMA_CPU_M_DRCR  (1 << 8)
+
+
+DMA_CPU_M_TE -- マクロ定数
+    DMA_CPU_M_TE - CPU-DMAのトランスファエンドフラグ
+【機  能】
+    #define  DMA_CPU_M_TE  (1 << 9)
+
+
+DMA_CPU_ADR_ERR -- マクロ定数
+    DMA_CPU_ADR_ERR - CPU-DMAのDMACによるアドレスエラー発生
+【機  能】
+    #define  DMA_CPU_ADR_ERR  (1 << DMA_DMAOR_AE)
+
+
+DMA_CPU_ADR_NO_ERR -- マクロ定数
+    DMA_CPU_ADR_NO_ERR - CPU-DMAのDMACによるアドレスエラー-なし
+【機  能】
+    #define  DMA_CPU_ADR_NO_ERR  (0 << DMA_DMAOR_AE)
+
+
+DMA_CPU_NMI_ON -- マクロ定数
+    DMA_CPU_NMI_ON - CPU-DMAのNMI割り込み発生
+【機  能】
+    #define  DMA_CPU_NMI_ON  (1 << DMA_DMAOR_NMIF)
+
+
+DMA_CPU_NMI_OFF -- マクロ定数
+    DMA_CPU_NMI_OFF - CPU-DMAのNMI割り込みなし
+【機  能】
+    #define  DMA_CPU_NMI_OFF  (0 << DMA_DMAOR_NMIF)
+
+
+DMA_CPU_TE_MV -- マクロ定数
+    DMA_CPU_TE_MV - CPU-DMAのDMA転送中またはDMA転送中断
+【機  能】
+    #define  DMA_CPU_TE_MV  (0 << DMA_CHCR_TE)
+
+
+DMA_CPU_TE_SP -- マクロ定数
+    DMA_CPU_TE_SP - CPU-DMA転送正常終了
+【機  能】
+    #define  DMA_CPU_TE_SP  (1 << DMA_CHCR_TE)
+
+
+DMA_SCU_CH0 -- マクロ定数
+    DMA_SCU_CH0 - SCU-DMAのチャネル0
+【機  能】
+    #define  DMA_SCU_CH0  0x0
+
+
+DMA_SCU_CH1 -- マクロ定数
+    DMA_SCU_CH1 - SCU-DMAのチャネル1
+【機  能】
+    #define  DMA_SCU_CH1  0x1
+
+
+DMA_SCU_CH2 -- マクロ定数
+    DMA_SCU_CH2 - SCU-DMAのチャネル2
+【機  能】
+    #define  DMA_SCU_CH2  0x2
+
+
+DMA_DXAD_DXRAD -- マクロ定数
+    DMA_DXAD_DXRAD - SCU-DMAの読み込みアドレス加算値
+【機  能】
+    #define  DMA_DXAD_DXRAD  8
+
+
+DMA_DXAD_DXWAD -- マクロ定数
+    DMA_DXAD_DXWAD - SCU-DMAの書き込みアドレス加算値
+【機  能】
+    #define  DMA_DXAD_DXWAD  0
+
+
+DMA_DXEN_DXGO -- マクロ定数
+    DMA_DXEN_DXGO - SCU-DMA起動ビット
+【機  能】
+    #define  DMA_DXEN_DXGO   0
+
+
+DMA_DXEN_DXEN -- マクロ定数
+    DMA_DXEN_DXEN - SCU-DMA許可ビット
+【機  能】
+    #define  DMA_DXEN_DXEN   8
+
+
+DMA_DXMD_DXMOD -- マクロ定数
+    DMA_DXMD_DXMOD - SCU-DMAのモードビット
+【機  能】
+    #define  DMA_DXMD_DXMOD  24
+
+
+DMA_DXMD_DXRUP -- マクロ定数
+    DMA_DXMD_DXRUP - SCU-DMAの読み込みアドレス更新ビット
+【機  能】
+    #define  DMA_DXMD_DXRUP  16
+
+
+DMA_DXMD_DXWUP -- マクロ定数
+    DMA_DXMD_DXWUP - SCU-DMAの書き出しアドレス更新ビット
+【機  能】
+    #define  DMA_DXMD_DXWUP  8
+
+
+DMA_DXMD_DXFT -- マクロ定数
+    DMA_DXMD_DXFT - SCU-DMAの起動要因選択ビット
+【機  能】
+    #define  DMA_DXMD_DXFT  0
+
+
+DMA_SCU_R0 -- マクロ定数
+    DMA_SCU_R0 - SCU-DMAで読み込みアドレスを加算しない
+【機  能】
+    #define  DMA_SCU_R0  (0x0 << DMA_DXAD_DXRAD)
+
+
+DMA_SCU_R4 -- マクロ定数
+    DMA_SCU_R4 - SCU-DMAで読み込みアドレスを4バイト加算する
+【機  能】
+    #define  DMA_SCU_R4  (0x1 << DMA_DXAD_DXRAD)
+
+
+DMA_SCU_W0 -- マクロ定数
+    DMA_SCU_W0 - SCU-DMAで書き込みアドレスを加算しない
+【機  能】
+    #define  DMA_SCU_W0  (0x0 << DMA_DXAD_DXWAD)
+
+
+DMA_SCU_W2 -- マクロ定数
+    DMA_SCU_W2 - SCU-DMAで書き込みアドレスを2バイト加算する
+【機  能】
+    #define  DMA_SCU_W2  (0x1 << DMA_DXAD_DXWAD)
+
+
+DMA_SCU_W4 -- マクロ定数
+    DMA_SCU_W4 - SCU-DMAで書き込みアドレスを4バイト加算する
+【機  能】
+    #define  DMA_SCU_W4  (0x2 << DMA_DXAD_DXWAD)
+
+
+DMA_SCU_W8 -- マクロ定数
+    DMA_SCU_W8 - SCU-DMAで書き込みアドレスを8バイト加算する
+【機  能】
+    #define  DMA_SCU_W8  (0x3 << DMA_DXAD_DXWAD)
+
+
+DMA_SCU_W16 -- マクロ定数
+    DMA_SCU_W16 - SCU-DMAで書き込みアドレスを16バイト加算する
+【機  能】
+    #define  DMA_SCU_W16  (0x4 << DMA_DXAD_DXWAD)
+
+
+DMA_SCU_W32 -- マクロ定数
+    DMA_SCU_W32 - SCU-DMAで書き込みアドレスを32バイト加算する
+【機  能】
+    #define  DMA_SCU_W32  (0x5 << DMA_DXAD_DXWAD)
+
+
+DMA_SCU_W64 -- マクロ定数
+    DMA_SCU_W64 - SCU-DMAで書き込みアドレスを64バイト加算する
+【機  能】
+    #define  DMA_SCU_W64  (0x6 << DMA_DXAD_DXWAD)
+
+
+DMA_SCU_W128 -- マクロ定数
+    DMA_SCU_W128 - SCU-DMAで書き込みアドレスを128バイト加算する
+【機  能】
+    #define  DMA_SCU_W128  (0x7 << DMA_DXAD_DXWAD)
+
+
+DMA_SCU_DIR -- マクロ定数
+    DMA_SCU_DIR - SCU-DMA直接モード
+【機  能】
+    #define  DMA_SCU_DIR  (0x0 << DMA_DXMD_DXMOD)
+
+
+DMA_SCU_IN_DIR -- マクロ定数
+    DMA_SCU_IN_DIR - SCU-DMA間接モード
+【機  能】
+    #define  DMA_SCU_IN_DIR  (0x1 << DMA_DXMD_DXMOD)
+
+
+DMA_SCU_KEEP -- マクロ定数
+    DMA_SCU_KEEP - SCU-DMAのアドレス更新ビットを保持する
+【機  能】
+    #define  DMA_SCU_KEEP  0x0
+
+
+DMA_SCU_REN -- マクロ定数
+    DMA_SCU_REN - SCU-DMAのアドレス更新ビットを更新する
+【機  能】
+    #define  DMA_SCU_REN  0x1
+
+
+DMA_SCU_F_VBLK_IN -- マクロ定数
+    DMA_SCU_F_VBLK_IN - SCU-DMA起動要因ビットのV-ブランク-INビット
+【機  能】
+    #define  DMA_SCU_F_VBLK_IN  (0x0 << DMA_DXMD_DXFT)
+
+
+DMA_SCU_F_VBLK_OUT -- マクロ定数
+    DMA_SCU_F_VBLK_OUT - SCU-DMA起動要因ビットのV-ブランク-OUTビット
+【機  能】
+    #define  DMA_SCU_F_VBLK_OUT  (0x1 << DMA_DXMD_DXFT)
+
+
+DMA_SCU_F_HBLK_IN -- マクロ定数
+    DMA_SCU_F_HBLK_IN - SCU-DMA起動要因ビットのH-ブランク-INビット
+【機  能】
+    #define  DMA_SCU_F_HBLK_IN  (0x2 << DMA_DXMD_DXFT)
+
+
+DMA_SCU_F_TIM0 -- マクロ定数
+    DMA_SCU_F_TIM0 - SCU-DMA起動要因ビットのタイマ0ビット
+【機  能】
+    #define  DMA_SCU_F_TIM0  (0x3 << DMA_DXMD_DXFT)
+
+
+DMA_SCU_F_TIM1 -- マクロ定数
+    DMA_SCU_F_TIM1 - SCU-DMA起動要因ビットのタイマ1ビット
+【機  能】
+    #define  DMA_SCU_F_TIM1  (0x4 << DMA_DXMD_DXFT)
+
+
+DMA_SCU_F_SND -- マクロ定数
+    DMA_SCU_F_SND - SCU-DMA起動要因ビットのサウンド-Reqビット
+【機  能】
+    #define  DMA_SCU_F_SND  (0x5 << DMA_DXMD_DXFT)
+
+
+DMA_SCU_F_SPR -- マクロ定数
+    DMA_SCU_F_SPR - SCU-DMA起動要因ビットのスプライト描画ビット
+【機  能】
+    #define  DMA_SCU_F_SPR  (0x6 << DMA_DXMD_DXFT)
+
+
+DMA_SCU_F_DMA -- マクロ定数
+    DMA_SCU_F_DMA - DMA起動要因ビットのセット
+【機  能】
+    #define  DMA_SCU_F_DMA  (0x7 << DMA_DXMD_DXFT)
+
+
+DMA_SCU_M_DXR -- マクロ定数
+    DMA_SCU_M_DXR - SCU-DMAマスクビットの読み込みアドレスビット
+【機  能】
+    #define  DMA_SCU_M_DXR  (1 << 0)
+
+
+DMA_SCU_M_DXW -- マクロ定数
+    DMA_SCU_M_DXW - SCU-DMAマスクビットの書き出しアドレスビット
+【機  能】
+    #define  DMA_SCU_M_DXW  (1 << 1)
+
+
+DMA_SCU_MV -- マクロ定数
+    DMA_SCU_MV - SCU-DMAが動作中
+【機  能】
+    #define  DMA_SCU_MV  0x1
+
+
+DMA_SCU_NO_MV -- マクロ定数
+    DMA_SCU_NO_MV  - SCU-DMAが動作中でない
+【機  能】
+    #define  DMA_SCU_NO_MV  0x0

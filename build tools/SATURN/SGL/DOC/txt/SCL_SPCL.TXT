@@ -1,0 +1,380 @@
+
+
+★特殊プライオリティ
+slSpecialPrioModeNbg0 -- 関数
+slSpecialPrioModeNbg1 -- 関数
+slSpecialPrioModeNbg2 -- 関数
+slSpecialPrioModeNbg3 -- 関数
+slSpecialPrioModeRbg0 -- 関数
+    slSpecialPrioModeNbg0, slSpecialPrioModeNbg1, slSpecialPrioModeNbg2,
+    slSpecialPrioModeNbg3, slSpecialPrioModeRbg0
+                         - 特殊プライオリティのプライオリティ決定モードの設定。
+【書  式】
+    #include "sgl.h"
+
+    Uint16 type;
+
+    void slSpecialPrioModeNbg0( type );
+    void slSpecialPrioModeNbg1( type );
+    void slSpecialPrioModeNbg2( type );
+    void slSpecialPrioModeNbg3( type );
+    void slSpecialPrioModeRbg0( type );
+【引  数】
+    Uint16 type - プライオリティ決定モード(後述)。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    特殊プライオリティを使用する場合のプライオリティ決定モードを設定します。
+    typeには、
+        spPRI_Scrn、spPRI_Char、spPRI_Dot
+    のいずれかを指定します。
+【用  例】
+    NBG2の、カラーコードの下位4ビットが0と1の色に対してドット単位で特殊
+    プライオリティを掛ける。
+    slSpecialPrioModeNbg2( spPRI_Dot);
+    slSpecialFuncCodeA( sfCOL_01);
+    slSpecialFuncSelectB( 0 );
+【参  照】
+    slSpecialFuncCodeA, slSpecialFuncSelectB, VDP2_SFPRMD
+
+
+slSpecialPrioBitN01 -- 関数
+    slSpecialPrioBitN01 - 特殊プライオリティビットの定義。
+【書  式】
+    #include "sgl.h"
+
+    Uint16 mode;
+    Uint16 flag;
+
+    void slSpecialPrioBitN01( mode, flag );
+【引  数】
+    Uint16 mode - 特殊プライオリティビットをセットする画面(後述)。
+    Uint16 flag - 特殊プライオリティビットをセットするか否か。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    面ごとに指定する特殊プライオリティビットをセットします。
+    セルモード、ビットマップモード用の両方のレジスタをセットします。
+    modeには、
+        scnNBG0、scnNBG1
+    のいずれかが入ります。
+    flagは 
+        ' ON 'または' OFF '
+    を入れます。
+【用  例】
+    slSpecialPrioBitN01( scnNBG0, ON );
+【注  意】
+    この関数は、該当する画面のパターンネームコントロールレジスタの特殊
+    プライオリティビットを操作します。
+【参  照】
+    slPageNbg0, slPageNbg1, slSpecialPrioModeNbg0, slSpecialPrioModeNbg1
+    VDP2_BMPNA, VDP2_PNCN0, VDP2_PNCN1
+
+
+slSpecialPrioBitScr -- 関数
+    slSpecialPrioBitScr - 特殊プライオリティビットの定義。    
+【書  式】
+    #include "sgl.h"
+
+    Uint16 mode;
+    Uint16 flag;
+
+    void slSpecialPrioBitScr( mode ,flag );
+【引  数】
+    Uint16 mode - 特殊プライオリティビットをセットする画面(後述)
+    Uint16 flag - 特殊プライオリティビットをセットするか否か。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    面ごとに指定する特殊プライオリティビットをセットします。
+    modeには、
+        scnNBG2、scnNBG3
+    のいずれかが入ります。
+    flagは 
+        ' ON 'または' OFF '
+    を入れます。
+【用  例】
+    slSpecialPrioBitScr( scnNBG2, ON );
+【注  意】
+    この関数は、該当する画面のパターンネームコントロールレジスタの特殊
+    プライオリティビットを操作します。
+【参  照】
+    slPageNbg2, slPageNbg3, slSpecialPrioModeNbg2, slSpecialPrioModeNbg3
+    VDP2_BMPNA
+
+
+slSpecialPrioBitNbg0 -- マクロ
+slSpecialPrioBitNbg1 -- マクロ
+slSpecialPrioBitNbg2 -- マクロ
+slSpecialPrioBitNbg3 -- マクロ
+slSpecialPrioBitRbg0 -- 関数
+slSpecialPrioBitBMN0 -- マクロ
+slSpecialPrioBitBMN1 -- マクロ
+slSpecialPrioBitBMR0 -- マクロ
+    slSpecialPrioBitNbg0, slSpecialPrioBitNbg1, slSpecialPrioBitNbg2,
+    slSpecialPrioBitNbg3, slSpecialPrioBitRbg0, slSpecialPrioBitBMN0,
+    slSpecialPrioBitBMN1, slSpecialPrioBitBMR0
+                 - 特殊プライオリティビットの定義。
+【書  式】
+    #include "sgl.h"
+
+    Uint16 flag;
+
+    void slSpecialPrioBitNbg0( flag );
+    void slSpecialPrioBitNbg1( flag );
+    void slSpecialPrioBitNbg2( flag );
+    void slSpecialPrioBitNbg3( flag );
+    void slSpecialPrioBitRbg0( flag );
+    void slSpecialPrioBitBMN0( flag );
+    void slSpecialPrioBitBMN1( flag );
+    void slSpecialPrioBitBMR0( flag );
+【引  数】
+    Uint16 flag - 特殊プライオリティビットをセットするか否か。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    面ごとに指定する特殊プライオリティビットをセットします。
+    セルモード、ビットマップモード用の両方のレジスタをセットします。
+    flagは 
+        ' ON'または' OFF'
+    を入れます。
+【用  例】
+    slSpecialPrioBitRbg0( ON );
+【注  意】
+    この関数は、該当する画面のパターンネームコントロールレジスタの特殊
+    プライオリティビットを操作します。
+【参  照】
+    slPageNbg0, slPageNbg1, slPageNbg2, slPageNbg3
+    slSpecialPrioModeNbg0, slSpecialPrioModeNbg1, slSpecialPrioModeNbg2, slSpecialPrioModeNbg3
+    slSpecialPrioModeRbg0, slSpecialPrioBitN01, slSpecialPrioBitScr, VDP2_PNCR
+    ★特殊カラー演算
+slSpecialCCalcModeNbg0 -- 関数
+slSpecialCCalcModeNbg1 -- 関数
+slSpecialCCalcModeNbg2 -- 関数
+slSpecialCCalcModeNbg3 -- 関数
+slSpecialCCalcModeRbg0 -- 関数
+    slSpecialCCalcModeNbg0, slSpecialCCalcModeNbg1, slSpecialCCalcModeNbg2
+    slSpecialCCalcModeNbg3, slSpecialCCalcModeRbg0
+                         - 特殊カラー演算の演算を有効にするためのモードの設定。
+【書  式】
+    #include "sgl.h"
+
+    Uint16 type;
+
+    void slSpecialCCalcModeNbg0( type );
+    void slSpecialCCalcModeNbg1( type );
+    void slSpecialCCalcModeNbg2( type );
+    void slSpecialCCalcModeNbg3( type );
+    void slSpecialCCalcModeRbg0( type );
+【引  数】
+    Uint16 type - 演算を有効にするためのモード(後述)。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    特殊カラー演算を使用する場合の演算を有効にするためのモードを設定します。
+    typeには、
+        spCCAL_Scrn、spCCAL_Char、spCCAL_Dot、spCCAL_MSB
+    のいずれかを指定します。
+【用  例】
+    /* カラー演算の設定。 */
+    slColorCalc( CC_RATE| CC_TOP| NBG1ON);
+    slColRateNbg1( CLRate20_12);
+
+    /* 特殊カラー演算使用宣言 */
+    slSpecialCCalcModeNbg1( spPRI_Dot);
+
+    /* プライオリティの設定
+    slPriorityNbg1( 5 );
+    slPriorityNbg3( 4 );
+
+    /* 特殊機能の設定 */
+    slSpecialFuncCodeA( sfCOL_01);
+    slSpecialFuncSelectB( 0 );
+【参  照】
+    slColorCalc, slColorCalcOn, slColorCalcMode, slSpecialFuncCodeA
+    slSpecialFuncSelectB, slColRateNbg0, slColRateNbg1, slColRateNbg2
+    slColRateNbg3, slColRateRbg0, slColRateLNCL, slColRateBACK
+    slColRateSpr0, slColRateSpr1, slColRateSpr2, slColRateSpr3
+    slColRateSpr4, slColRateSpr5, slColRateSpr6, slColRateSpr7
+    VDP2_SFCCMD
+
+
+slSpecialCCalcBitN01 -- 関数
+    slSpecialCCalcBitN01 - 特殊カラー演算ビットの定義。
+【書  式】
+    #include "sgl.h"
+
+    Uint16 mode;
+    Uint16 flag;
+
+    void slSpecialCCalcBitN01( mode, flag );
+【引  数】
+    Uint16 mode - 特殊カラー演算ビットをセットする画面(後述)
+    Uint16 flag - 特殊カラー演算ビットをセットするか否か。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    面ごとに指定する特殊カラー演算ビットをセットします。
+    セルモード、ビットマップモード用の両方のレジスタをセットします。
+    modeには、
+        scnNBG0、scnNBG1
+    のいずれかが入ります。
+    flagは 
+        ' ON'または' OFF'
+    を入れます。
+【用  例】
+    void slSpecialCCalcBitN01( scnNBG1, ON );
+【注  意】
+    これは、相当する画面のパターンネームコントロールレジスタの特殊カラー演算
+    ビットを立てます。
+【参  照】
+    slPageNbg0, slPageNbg1, slSpecialCCalcBitNbg0, slSpecialCCalcBitNbg0
+    VDP2_BMPNA, VDP2_PNCN0, VDP2_PNCN1
+
+
+slSpecialCCalcBitScr -- 関数
+    slSpecialCCalcBitScr - 特殊カラー演算ビットの定義。
+【書  式】
+    #include "sgl.h"
+
+    Uint16 mode;
+    Uint16 flag;
+
+    void slSpecialCCalcBitScr( mode, flag );
+【引  数】
+    Uint16 mode - 特殊カラー演算ビットをセットする画面(後述)
+    Uint16 flag - 特殊カラー演算ビットをセットするか否か。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    面ごとに指定する特殊カラー演算ビットをセットします。
+    modeには、
+        scnNBG2、scnNBG3
+    のいずれかが入ります。
+    flagは 
+        ' ON'または' OFF'
+    を入れます。
+【用  例】
+    slSpecialCCalcBitScr( scnNBG2, ON );
+【注  意】
+    これは、相当する画面のパターンネームコントロールレジスタの特殊カラー演算
+    ビットを立てます。
+【参  照】
+    slPageNbg2, slPageNbg3, slSpecialCCalcBitNbg2, slSpecialCCalcBitNbg3
+    VDP2_BMPNA, VDP2_PNCN0, VDP2_PNCN1
+
+
+slSpecialCCalcBitNbg0 -- マクロ
+slSpecialCCalcBitNbg1 -- マクロ
+slSpecialCCalcBitNbg2 -- マクロ
+slSpecialCCalcBitNbg3 -- マクロ
+slSpecialCCalcBitRbg0 -- 関数
+slSpecialCCalcBitBMN0 -- マクロ
+slSpecialCCalcBitBMN1 -- マクロ
+slSpecialCCalcBitBMR0 -- マクロ
+    slSpecialCCalcBitNbg0, slSpecialCCalcBitNbg1, slSpecialCCalcBitNbg2,
+    slSpecialCCalcBitNbg3, slSpecialCCalcBitRbg0, slSpecialCCalcBitBMN0,
+    slSpecialCCalcBitBMN1, slSpecialCCalcBitBMR0 - 特殊カラー演算ビットの定義。
+【書  式】
+    #include "sgl.h"
+
+    Uint16 flag;
+
+    void slSpecialCCalcBitNbg0( flag );
+    void slSpecialCCalcBitNbg1( flag );
+    void slSpecialCCalcBitNbg2( flag );
+    void slSpecialCCalcBitNbg3( flag );
+    void slSpecialCCalcBitRbg0( flag );
+    void slSpecialCCalcBitBMN0( flag );
+    void slSpecialCCalcBitBMN1( flag );
+    void slSpecialCCalcBitBMR0( flag );
+【引  数】
+    Uint16 flag - 特殊カラー演算ビットをセットするか否か。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    面ごとに指定する特殊カラー演算ビットをセットします。
+    セルモード、ビットマップモード用の両方のレジスタをセットします。
+    flagは 
+        ' ON'または' OFF'
+    を入れます。
+【用  例】
+    slSpecialCCalcBitNbg3( ON );
+【注  意】
+    これは、相当する画面のパターンネームコントロールレジスタの特殊カラー演算
+    ビットを立てます。
+【参  照】
+    slPageNbg0, slPageNbg1, slPageNbg2, slPageNbg3
+    slSpecialCCalcModeNbg0, slSpecialCCalcModeNbg1, slSpecialCCalcModeNbg2, slSpecialCCalcModeNbg3
+    slSpecialCCalcModeRbg0, slSpecialCCalcBitN01, slSpecialCCalcBitScr, VDP2_PNCN0
+    VDP2_PNCN1, VDP2_PNCR
+
+
+★特殊機能
+slSpecialFuncCodeA -- 関数
+slSpecialFuncCodeB -- 関数
+    slSpecialFuncCodeA, slSpecialFuncCodeB
+                                - 特殊機能を有効にするカラーコードの設定
+【書  式】
+    #include "sgl.h"
+
+    Uint16 type;
+
+    void slSpecialFuncCodeA( type );
+    void slSpecialFuncCodeB( type );
+【引  数】
+    Uint16 type - 特殊機能を有効にするカラーコード(後述)。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    特殊機能を有効にするカラーコード(下位4ビット)を指定します。
+    typeには、
+        sfCOL_01、sfCOL_23、sfCOL_45、sfCOL_67、sfCOL_89、sfCOL_ab、
+        sfCOL_cd、sfCOL_ef
+    を '|' でつないで指定します。
+【用  例】
+    slSpecialCCalcModeNbg1( spPRI_Dot);
+    slPriorityNbg1( 5 );
+    slPriorityNbg1( 4 );
+    slSpecialFuncCodeA( sfCOL_cd);
+【注  意】
+    カラーコードの下位4ビットの内、最後の1ビットは無視される為、(ハードウェア
+    の仕様です。)例えば、sfCOL_67を指定した場合には、下位4ビットが6と7の色
+    に対して特殊機能が働きます。
+【参  照】
+    slSpecialPrioModeNbg0, slSpecialPrioModeNbg1, slSpecialPrioModeNbg2, slSpecialPrioModeNbg3
+    slSpecialPrioModeRbg0, slSpecialCCalcModeNbg0, slSpecialCCalcModeNbg1, slSpecialCCalcModeNbg2
+    slSpecialCCalcModeNbg3, slSpecialCCalcModeRbg0, slSpecialFuncSelectB, VDP2_SFSEL
+    slSpecialFuncSelectB -- 関数
+    slSpecialFuncSelectB - 特殊機能コードBを使用するスクロール画面の指定
+【書  式】
+    #include "sgl.h"
+
+    Uint16 mode;
+
+    void slSpecialFuncSelectB( mode );
+【引  数】
+    Uint16 mode - 特殊機能コードBを使用するスクロール画面。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    特殊機能コードBを使用するスクロール画面を指定します。
+    modeには、
+        NBG0ON、NBG1ON、NBG2ON、NBG3ON、RBG0ON
+    のいずれかを指定します(複数指定する場合'|'で繋いで使用して下さい)。
+【用  例】
+    slSpecialPrioModeNbg1( spPRI_Dot);
+    slPriorityNbg1( 5 );
+    slPriorityNbg1( 4 );
+    slSpecialFuncCodeB( sfCOL_01);
+    slSpecialFuncSelectB( NBG1ON);
+【注  意】
+    この関数で設定したBG面のみが特殊機能コードBを使用し、それ以外のBG面は、
+    全て、特殊機能コードAを使用します。slSpecialFuncSelectAという関数が
+    存在しないのはそのためです。逆にいえば、特殊機能コードAを使用しない面を
+    指定するとお考えください。
+【参  照】
+    slSpecialPrioModeNbg0, slSpecialPrioModeNbg1, slSpecialPrioModeNbg2, slSpecialPrioModeNbg3
+    slSpecialPrioModeRbg0, slSpecialCCalcModeNbg0, slSpecialCCalcModeNbg1, slSpecialCCalcModeNbg2
+    slSpecialCCalcModeNbg3, slSpecialCCalcModeRbg0, slSpecialFuncCodeA, slSpecialFuncCodeB
+    VDP2_SFSEL

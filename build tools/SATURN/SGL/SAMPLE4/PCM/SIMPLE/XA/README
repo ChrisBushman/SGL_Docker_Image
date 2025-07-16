@@ -1,0 +1,83 @@
+◎XA再生について
+
+§１ データの作成
+     XAのデータを作成するためには、予めPCMデータ(AIFF)のサンプリングレートを
+     37.8kHz(Bモード)又は、18.9kHz(Cモード)にしておく必要があります。
+     さて、データを用意したら、弊社提供のSEGA ADPCM Encoderを用いて、
+     エンコードを行ないます。
+
+§２ スクリプトの編集
+     スクリプトは、このディレクトリにあるsmpxa.scrを参考にして下さい。
+     以下にMODE2トラックのスクリプト記述例を示します。
+     Track MODE2
+     	PreGap 150
+     		File TEST3.XA
+        	FileSource              "TEST3.XA"
+     			RealTime
+     			DataType                FORM2
+     			SourceType              STEREO_B
+     			;ADPCM 4BIT 37.8KHz
+     			;MODE:MONO
+     			CodingInformation  1
+     			; Coding Information
+      			;                bit7
+     			;    常に0
+     			;エンファシス    bit6
+     			;    ON: 1  OFF: 0
+    			;ADPCM LEVEL     bit2-5 0000
+     			;    MODE B: 0000  MODE C: 0001
+     			;MODE            bit0-1 00
+     			;    MONORAL: 00  STEREO 01
+     		EndFileSource
+     	EndFile
+     PostGap 150
+     EndTrack
+     PreGap、PostGapについてはモード2に限ったことではありません。
+       必ず150以上の値を入れて下さい。
+     File識別子以降は、CDROM上での名前をアルファベットの大文字で始まる
+       英数字8文字以内のヘッドとピリオドで区切られた3文字以内の拡張子で
+       指定して下さい。アルファベットは全て大文字です。
+     FileSource識別子以降はDOSのファイルシステム上のファイルの名前です。
+     DataType識別子で始まる部分は必ず"FORM2"を指定して下さい。
+       XA AUDIOは、MODE2 FORM2です。
+     SourceType識別子以降は収納するADPCMデータの種類です。
+       ここに入るのは、
+       STEREO_B Bモード(37.8kHz)ステレオ
+       MONO_B   Bモード(37.8kHz)モノラル
+       STEREO_C Cモード(18.9kHz)ステレオ
+       MONO_C   Cモード(18.9kHz)モノラル
+       です。
+    CodingInformationは一バイトのデータで以下のようなビット配置になります。
+        7 6 5 4 3 2 1 0 bit
+       +-+-+-+-+-+-+-+-+
+       |0| |       |   |
+        ^ ^ ^^^^^^^ ^^^
+        | |    |    モード
+        | |    ADPCMレベル
+        | エンファシス
+        常に0
+      まずモードですが、これはデータがステレオかモノラルかを表し
+        00Bの時モノラル
+        01Bの時ステレオ
+      です。
+      次にADPCMレベルですが、これはADPCMのデータがBモードかCモードかつまり
+      サンプリング周波数を表しています。
+        Bモードの時、0000B
+        Cモードの時、0001B
+      です。
+      エンファシスは、サターンでは禁止ですのでここには常に、0を入れて下さい。
+      
+§３ ディスクイメージの作成
+     チャネルインターリーブ、ファイルインターリーブを使う場合、
+     VCDBUILDにはバグがあるので、XBLDを用いる事をお勧めします。
+     ここでは、XBLDを使って作成します。
+     スクリプトがSMPSCR.SCRの時、
+     XBLD SMPSCR.SCR [ENTER]
+
+§４ CDへのライト
+     CDへディスクイメージを書き込むためにはCDライティングソフト
+     SEGACDW又は、ADDCDWを使います。
+     ディスクに書き込むためには、DSKファイルとTOCファイルが必要になります。
+     XBLDを使用した場合ディスクイメージと一緒にTOCファイルも作成されますが、
+     VCDBUILDを使ってDSKファイルを作成した場合、VCDMKTOCを使って別途
+     TOCファイルを作る必要があります、

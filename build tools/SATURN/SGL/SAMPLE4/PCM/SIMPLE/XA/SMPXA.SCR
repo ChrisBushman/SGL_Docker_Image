@@ -1,0 +1,71 @@
+Disc            SMPXA.DSK
+Session         ROMXA
+LeadIn          MODE1
+EndLeadIn
+
+;SystemArea     ..\ip.bin
+
+Track           MODE1
+        Volume                          ISO9660 "adpcm.pvd"
+        PrimaryVolume                   00:02:16
+        SystemIdentifier                "SEGA SEGASATURN"
+        VolumeIdentifier                "SAMPLE_GAME_TITLE"
+        VolumeSetIdentifier             "SAMPLE_GAME_TITLE"
+        PublisherIdentifier             "SEGA ENTERPRISES,LTD."
+        DataPreparerIdentifier          "SEGA ENTERPRISES,LTD."
+        VolumeCreationDate              11/11/1994 00:00:00:00:36
+        EndPrimaryVolume
+        EndVolume
+
+        File            TEST1.AIF;
+	        FileSource      "TEST1.AIF"
+	        EndFileSource
+        EndFile
+        File            TEST2.ADP;
+	        FileSource      "TEST2.ADP"
+	        EndFileSource
+        EndFile
+
+        PostGap 150
+EndTrack
+
+Track MODE2
+        PreGap 150
+        File TEST3.XA;1
+                FileSource              "TEST3.XA"
+                        RealTime
+                        DataType                FORM2
+                        SourceType              STEREO_B
+                                ;ADPCM 4BIT 37.8KHz
+                                ;MODE:MONO
+                        CodingInformation       1
+				; Coding Information
+				;                bit7
+				;    常に0
+                                ;エンファシス    bit6
+				;    ON: 1  OFF: 0
+                                ;ADPCM LEVEL     bit2-5 0000
+				;    MODE B: 0000  MODE C: 0001
+                                ;MODE            bit0-1 00
+				;    MONORAL: 00  STEREO 01
+                EndFileSource
+        EndFile
+ 1   PostGap 150
+EndTrack
+
+Track		CDDA
+	Pause	150
+	FileSource "WRN.DA"
+	EndFileSource
+EndTrack
+
+LeadOut MODE2
+    Empty 500
+EndLeadOut
+EndSession
+EndDisc
+
+
+
+
+

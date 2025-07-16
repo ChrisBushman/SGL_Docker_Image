@@ -1,0 +1,494 @@
+
+
+★カーソル
+slCurScrn -- 関数
+    slCurScrn - デバッグ文字列を表示するNBGの指定。
+【書  式】
+    #include "sgl.h"
+
+    Uint16 mode;
+
+    void slCurScrn( mode );
+【引  数】
+    Uint16 screen - BGの型を示す代用変数。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    slLocateおよび、set_vbarで使用するスクリーンを設定します。
+    modeには以下の6つの内のいずれかを指定します。
+      scnNBG0、scnNBG1、scnNBG2、scnNBG3、scnRBGA、scnRBGB
+    デフォルト値は、scnNBG0です。
+【用  例】
+    デバッグ文字列の表示画面をNBG2にする。
+
+    slCurScrn( scnNBG2);
+【注  意】
+    デバッグ文字列の表示画面にNBG0以外が指定された場合、それに合わせた
+    サイクルパターンテーブルの設定が必要になりますので、その場合には、
+    slScrAutoDispを使って自動設定するか、slScrCycleSet
+    とslScrDispを使って手動でサイクルパターンの自動設定をする必要が
+    あります。
+【参  照】
+    slPrintHex, slPrintFX, slPrint, slPrintMatrix
+    slScrAutoDisp, slScrCycleSet, slScrDisp, VDP2_MPABN0
+    VDP2_MPABN1, VDP2_MPABN2, VDP2_MPABN3, VDP2_MPABRA
+    slCurColor -- 関数
+    slCurColor - デバッグ文字の色を指定。
+【書  式】
+    #include "sgl.h"
+
+    Uint16 pal;
+
+    void slCurColor( pal );
+【引  数】
+    Uint16 pal - パレット番号。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    slPrint, slPrintHex, slPrintFX, slDispHex
+    で表示する文字のパレット番号を
+    指定します。
+    pal には 0～15 のいずれかを指定します。
+    パレットは、カラーRAMの先頭16色分の中からの設定となります。
+【用  例】
+    パレット2番(16ビットモードなら、0x25f00006、32ビットモードなら
+    0x25f0000c)をデバッグ文字列の表示色にする。
+    void slCurColor( 2 );
+【参  照】
+    slPrintHex, slPrintFX, slPrint, slPrintMatrix
+    slScrAutoDisp, slScrCycleSet, slScrDisp, PrintColor
+    VDP2_MPABN0, VDP2_MPABN1, VDP2_MPABN2, VDP2_MPABN3
+    VDP2_MPABRA
+
+
+★デバッグプリント
+slDispHex -- 関数
+    slDispHex - 16進数の表示。
+【書  式】
+    #include "sgl.h"
+
+    Uint32 val;
+    void   *addr_A;
+
+    void slDispHex( val, addr_A );
+【引  数】
+    Uint32 val     - 表示したい値。
+    void   *addr_A - 表示したいVDP2のVRAMアドレス。(絶対アドレス)
+                     通常、slLocateで指定します。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    指定された変数を8桁の16進数で表示します。
+    表示するBG面を変更する場合には、slCurScrn、表示色を変更する時は、
+    slCurColorを使用します。
+【用  例】
+    指定されたBGの(10,20)セルの位置に、100("00000064")を表示します。
+    slDispHex( 100, slLocate( 10, 20 ) );
+【参  照】
+    slPrintHex, slCurScrn, slCurColor, slLocate
+    slPrintFX, slPrint, slPrintMatrix, PrintColor
+    slPrintHex -- 関数
+    slPrintHex - 16進数の表示。
+【書  式】
+    #include "sgl.h"
+
+    Uint32 val;
+    void   *addr_A;
+
+    void slPrintHex( val, addr_A );
+【引  数】
+    Uint32 val     - 表示したい値。
+    void   *addr_A - 表示したいVDP2のVRAMアドレス。(絶対アドレス)
+                     通常、slLocateで指定します。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    slDispHexと同様に、指定された変数を8桁の16進数で表示しますが
+    上位の0はスペースに置き換わります。
+    表示するBG面を変更する場合には、slCurScrn、表示色を変更する時は、
+    slCurColorを使用します。
+【用  例】
+    指定されたBGの(10,20)セルの位置に、100("      64")を表示します。
+    void slPrintHex( 100, slLocate( 10, 20 ) );
+【参  照】
+    slPrintHex, slCurScrn, slCurColor, slLocate
+    slPrintFX, slPrint, slPrintMatrix, PrintColor
+    slPrintFX -- 関数
+    slPrintFX - 固定小数表現の表示。
+【書  式】
+    #include "sgl.h"
+
+    FIXED val;
+    void  addr_A;
+
+    void slPrintFX( val, addr_A );
+【引  数】
+    Uint32 val     - 表示したい値。
+    void   *addr_A - 表示したいVDP2のVRAMアドレス。(絶対アドレス)
+                     通常、slLocateで指定します。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    固定小数点のデータを小数点表示します。
+    整数部上位の0と、小数部下位の0はスペースに代ります。
+    整数部、小数部はそれぞれ5桁の10進数になります。
+【用  例】
+    指定されたBGの(10,20)セルの位置に、10.32を表示します。
+    slPrintFX( toFIXED( 10.32 ), slLocate( 10, 20 ) );
+【参  照】
+    slPrintHex, slCurScrn, slCurColor, slLocate
+    slDispHex, slPrint, slPrintMatrix, PrintColor
+    slPrintMatrix -- 関数
+    slPrintMatrix - 固定小数表現の表示。
+【書  式】
+    #include "sgl.h"
+
+    MATRIX val;
+    void   addr_A;
+
+    void slPrintMatrix( val, addr_A );
+【引  数】
+    MATRIX val     - 表示したい行列を示すMATRIX型値。
+    void   *addr_A - 表示したいVDP2のVRAMアドレス。(絶対アドレス)
+                     通常、slLocateで指定します。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    slPrintFX を使用して、マトリクス(3x4)の表示をします。
+    mtrx に CURRENTを指定した場合、マトリクススタックのカレントマトリクスを
+    表示します。
+【用  例】
+    あるマトリクスを、指定されたBGの(10,20)セルの位置に表示します。
+    MATRIX matrix = {
+         { toFIXED( 1.0 ), toFIXED( 10.3 ), toFIXED( 9.2 ) },
+         { toFIXED( -10.3 ), toFIXED( 1.0 ), toFIXED( 7.5 ) },
+         { toFIXED( -9.2 ), toFIXED( -7.5 ), toFIXED( 1.0 ) },
+         { toFIXED( 1.0 ), toFIXED( 1.0 ), toFIXED( 1.0 ) } };
+
+    slPrintMatrix( matrix, slLocate( 10, 20 );
+【参  照】
+    slPrintHex, slCurScrn, slCurColor, slLocate
+    slPrintFX, slPrint, slDispHex, PrintColor
+    slPrint -- 関数
+    slPrint - デバッグ文字列の表示。
+【書  式】
+    #include "sgl.h"
+
+    char *val;
+    void addr_A;
+
+    void slPrint( val, addr_A );
+【引  数】
+    char *val    - 表示したい文字列。但し文字列の終りは'\0'で終るものとします。
+    void *addr_A - 表示したいVDP2のVRAMアドレス。(絶対アドレス)
+                   通常、slLocateで指定します。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    NULL文字(コード0'\0')で終る文字列を表示します。
+【用  例】
+    指定されたBGの(10,20)セルの位置に、"That's SGL"を表示します。
+    slPrintFX( "That's SGL", slLocate( 10, 20 ) );
+【参  照】
+    slPrintHex, slCurScrn, slCurColor, slLocate
+    slPrintFX, slDispHex, slPrintMatrix, PrintColor
+    ★コンバート
+slHex2Dec -- 関数
+    slHex2Dec - 数値データをBCDフォーマットにコンバート。
+【書  式】
+    #include "sgl.h"
+
+    Uint32 val;
+
+    Uint32 slHex2Dec( val );
+【引  数】
+    Uint32 val   - 変換したい値。
+【返  数】
+    Uint32 - 変換されたBCDフォーマットの数値。
+【機  能】
+    32ビットのバイナリデータを8桁までのB.C.D.データに変換します。
+    8桁を越えるような値(10000000(d) = 5F5E100(h) 以上)
+    を指定した場合、最上位の値がおかしくなります。
+【用  例】
+    100(0x64)を256(0x100)に変換します。
+    ret = slHex2Dec( 100 );
+【参  照】
+    ★簡易スクロール描画
+slExtendScroll -- 関数
+    slExtendScroll - コマンド形式で圧縮されたスクロールデータの展開。
+【書  式】
+    #include "sgl.h"
+    #include "sl_macro.h"
+
+    void tbl;
+    void addr_A;
+
+    void slExtendScroll( tbl, addr_A );
+【引  数】
+    void *tbl    - slExtendScroll用 のコマンドテーブル。「sl_macro.h」ヘッダに
+                   よって定義されています。
+    void *addr_A - 展開されるマップデータを入れるVDP2のVRAM(絶対)アドレス
+【返  数】
+    void - 何も返しません。
+【機  能】
+    コマンド圧縮されたスクロールマップをVRAMに展開します。
+    使用できるファンクションには以下のものがあり、 sl_macro.h 内に
+    登録されています。
+    ファンクション :                    機能
+    End()                           圧縮データの終了
+    LocateA0(adr)                   VRAM A0領域でのアドレス指定
+    LocateA1(adr)                   VRAM A1領域でのアドレス指定
+    LocateB0(adr)                   VRAM B0領域でのアドレス指定
+    LocateB1(adr)                   VRAM B1領域でのアドレス指定
+    Set(cnt)                        指定された個数だけデータをセット
+                                    (この後に実データが続く)
+    Stock(cnt)                      ストックバッファにセットしながら
+                                    データをセット(″)
+    Same(cnt,chr)                   同じキャラクタを続けてセットする
+    Inc(cnt,chr)                    キャラクタナンバーを増やしながらセットする
+    Inc2(cnt,chr)                   キャラクタナンバーを2ずつ増やしながら
+                                    セットする
+    Dec(cnt,chr)                    キャラクタナンバーを減らしながらセットする
+    Dec2(cnt,chr)                   キャラクタナンバーを2ずつ減らしながら
+                                    セットする
+    Vline(cnt,chr)                  同じキャラクタを縦に並べる
+    VlineMinus(cnt,chr)             同じキャラクタを縦に並べる(上方へ)
+    Skip(offset)                    表示アドレスをオフセット分ずらす
+                                    (オフセットは1バイト)
+    Skip2(offset)                   表示アドレスをオフセット分ずらす
+                                    (オフセットは2バイト)
+    Copy(src,cnt)                   すでにセットされているデータをコピーする
+                                    (コピー元はアドレス)
+    RelCopy(src,cnt)                すでにセットされているデータをコピーする
+                                    (コピー元は相対)
+    Fill(cnt,chr)                   同じキャラクタを続けてセットする
+                                    (ポインタは動かない)
+                                    (CPUのD.M.A.を使用)
+    Block(hcnt,vcnt)                横、縦のセル数を指定し、その中に続く
+                                    データをセットします。
+                                    (ポインタはブロックの右隣へ移動する)
+    BlockInc(hcnt,vcnt,chr)         横、縦のセル数を指定し、その中を
+                                    キャラクタナンバーを増やしながら埋める
+                                    (ポインタはブロックの右隣へ移動する)
+    BlockInc2(hcnt,vcnt,chr)        横、縦のセル数を指定し、その中を
+                                    キャラクタナンバーを2ずつ増やしながら埋める
+                                    (ポインタはブロックの右隣へ移動する)
+    One(chr)                        ひとつだけキャラクタをセットします。
+    High(cnt,chr)                   上位バイトの同じキャラクタをセットします。
+                                    カウントはこのセルを含めた数をセットし、
+                                    このマクロの後には LChar マクロが続きます。
+    BlockFill(hcnt,vcnt,chr)        横、縦のセル数を指定し、その中を同じ
+                                    キャラクタナンバーで埋めます
+                                    (ポインタはブロックの右隣へ移動する)。
+    Add(cnt,chr,add)                キャラクタナンバーを指定された数ずつ
+                                    増やしながらセットする。
+                                    (加える値は符号付き8ビット)
+    BlockAdd(hcnt,vcnt,chr,add)     横、縦のセル数を指定し、その中を
+                                    キャラクタナンバーを増やしながら
+                                    セットする。
+                                    (ポインタはブロックの右隣へ移動する。)
+                                    (加える値は符号付き8ビット)
+    Loop(cnt)                       次の Until() までの間を指定された回数
+                                    繰り返し実行する。
+    Until()                         ただし、ネストすることはできない。
+    Char1(c)                        1セル分の実データ
+    Char2(c1,c2)                    2セル分の実データ
+     ...                                   :
+    Char8(c1,c2,c3,c4,c5,c6,c7,c8)  8セル分の実データ
+    LChar1(c)                       High 用の キャラクタデータ(下位バイトのみ)
+    LChar2(c1,c2)                   2セル分の下位バイトデータ
+     ...
+    LChar8(c1,c2,c3,c4,c5,c6,c7,c8) 8セル分の下位バイトデータ
+【用  例】
+    指定したテーブルのデータを、VDP2のVRAM A1の先頭(25e20000h)に展開します。
+    #include "sgl.h"
+    #include "sl_macro.h"
+
+    #define            SpaceCHR        0x0000
+    #define            WhiteCHR        0x00fe
+
+    Uint8 SceneMap_1[] = {
+      Fill( Page, Space ),         /* 1ページ分をスペースでうめる        */
+      Loop( 4 ),                   /* この後、Until() 迄を4回繰り返す    */
+      BlockFill( 8, 8, WhiteCHR ), /* 8x8のブロックを WhiteCHR でうめる */
+      Skip( 8 ),                   /* ブロックの次の位置から8セル分
+                                      ポインタを移動                      */
+      BlockFill( 8, 8, WhiteCHR ),
+      Skip( 8 ),
+      BlockFill( 8, 8, WhiteCHR ),
+      Skip( 8 ),
+      BlockFill( 8, 8, WhiteCHR ),
+      Skip2( 7 * Line + 16 ),      /* ポインタの移動量が1バイトを超えて
+                                      いるので Skip2 を使用               */
+      BlockFill( 8, 8, WhiteCHR ),
+      Skip( 8 ),
+      BlockFill( 8, 8, WhiteCHR ),
+      Skip( 8 ),
+      BlockFill( 8, 8, WhiteCHR ),
+      Skip( 8 ),
+      BlockFill( 8, 8, WhiteCHR ),
+      Skip2( 7 * Line ),
+      Until(),
+      End()
+    };
+
+    void slExtendScroll( ( void * )Scene_Map1, ( void * )( VDP2_VRAM_A1 ) );
+【参  照】
+    ★CPU負荷観察
+set_vbar -- 関数
+    set_vbar - CPU負荷ゲージの表示。
+【書  式】
+    #include "sgl.h"
+
+    Uint16 pos_x;
+
+    set_vbar( pos_x );
+【引  数】
+    Uint16 x_pos - CPUの負荷ゲージを表示するX位置 (1/セル)
+【返  数】
+    void - 何も返しません。
+【機  能】
+    x_posで表される桁位置にCPUの稼動時間を調べるための縦棒を表示します。
+【用  例】
+    横10セルの位置に、CPUの負荷を表示します。
+    set_vbar( 10 );
+    slSynch();
+    reset_vbar( 10 );
+【注  意】
+    この関数は、スレーブCPUの負荷を計測する事は出来ません。
+    スレーブに負荷が掛かっている場合、必ずしもこの結果の通りにはなりません。
+【参  照】
+    slCurScrn, slCurColor, slLocate, reset_vbar
+    slSynch, slInitSynch, PrintColor, VDP2_MPABN0
+    reset_vbar -- 関数
+    reset_vbar - CPU負荷ゲージの非表示。
+【書  式】
+    #include "sgl.h"
+
+    Uint16 pos_x;
+
+    reset_vbar( pos_x );
+【引  数】
+    Uint16 x_pos - CPUの負荷ゲージを消去するX位置 (1/セル)
+【返  数】
+    void - 何も返しません。
+【機  能】
+    set_vbarで書かれたx_posで表される桁位置の縦棒を消します。
+【用  例】
+    これの関数と、set_vbar、ビデオ同期関数 slSynch とを組み合わせて
+    マスターCPUの稼動時間を調べます。
+    while(-1){
+        slExecuteEvent();       /* イベント処理 */
+
+        reset_vbar( 39 );       /* 縦棒の消去 */
+        slSynch();              /* ビデオ同期待ち */
+        set_vbar( 39 );         /* 縦棒の表示 */
+    }
+    ［解説］
+      画面表示が始まるのが slSynch 終了直後ですから、ここでVRAMに縦棒を
+      セットします。slExecuteEventで、イベント処理が実行され、すべての
+      イベントが終了したところで、この縦棒をVRAMから消去すると、その
+      タイミングから後の表示では縦棒が見えなくなり、縦棒の見えていた長さが
+      CPUが稼動していた時間になります。
+【注  意】
+    この関数は縦の解像度によりセットするキャラクタの行数が変化します。
+    低解像度(224または240ライン)の場合、上部の32行分、
+    高解像度(448または480ライン インタレース)の場合64行分を
+    書き換えます。
+    又、この関数と、set_vbarの組で計測できるのは、マスターCPUの負荷
+    のみです。
+【参  照】
+    slCurScrn, slCurColor, slLocate, set_vbar
+    slSynch, slInitSynch, PrintColor, VDP2_MPABN0
+    ★位置情報
+slLocate -- 関数
+    slLocate - デバッグテキストの位置指定。
+【書  式】
+    #include "sgl.h"
+
+    Uint16 x_pos, y_pos;
+
+    void *slLocate( x_pos, y_pos );
+【引  数】
+    Uint16 x_pos - X座標のセル位置 (1/セル)
+    Uint16 y_pos - Y座標のセル位置 (1/セル)
+【返  数】
+    void* - VDP2のVRAMのアドレス。
+【機  能】
+    テキスト表示用のアドレス(カレントスクリーン)を返します。
+    x_pos、y_pos は 画面上でのセル位置(通常0～63)を指定します。
+【用  例】
+    画面の(10,10)セルを基準とする位置に、デバッグ文字列「This is Test.」
+    を表示します。
+
+    slPrint( "This is Test.", slLocate( 10, 10 ) );
+【参  照】
+    slPrintHex, slPrintFX, slPrint, slPrintMatrix
+    VDP2_MPABN0, VDP2_MPABN1, VDP2_MPABN2, VDP2_MPABN3
+    VDP2_MPABRA
+
+
+slLocateNbg -- 関数
+slLocateNbg0 -- マクロ
+slLocateNbg1 -- マクロ
+slLocateNbg2 -- マクロ
+slLocateNbg3 -- マクロ
+    slLocateNbg - ノーマルBG面の表示アドレスを知る。
+【書  式】
+    #include "sgl.h"
+
+    Uint16 pos_x, pos_y;
+    Uint16 mode;
+
+    void *slLocateNbg( pos_x, pos_y, mode );
+    void *slLocateNbg0( pos_x, pos_y );
+    void *slLocateNbg1( pos_x, pos_y );
+    void *slLocateNbg2( pos_x, pos_y );
+    void *slLocateNbg3( pos_x, pos_y );
+【引  数】
+      Uint16 pos_x  - X座標位置 (1/セル)
+    Uint16 pos_y  - Y座標位置 (1/セル)
+    Uint16 mode   - 知りたいBG面のタイプ。
+【返  数】
+    void * - VDP2のVRAMの(絶対)アドレスを示すvoid型のポインタ。
+【機  能】
+    指定したセル位置、ノーマルスクロール面の表示アドレスを返します。
+    pos_x、pos_y は 画面上でのセル位置(通常0～127)で指定します。
+    modeには、
+      scnNBG0、scnNBG1、scnNBG2、scnNBG3
+    のいずれかを指定します。
+【用  例】
+    NBG1の、(10,5)セルの位置のVRAMアドレスを調べます。
+    addr = slLocateNbg( 10, 5, scnNBG1);
+
+    addr = slLocateNbg1( 10, 5 );
+【参  照】
+    slLocate, slLocatePage, VDP2_MPABN0
+
+
+slLocatePage -- 関数
+    slLocatePage - スクロール面の表示アドレスを知る。
+【書  式】
+    #include "sgl.h"
+
+    Uint16 pos_x, pos_y;
+    Uint16 page;
+
+    void *slLocatePage( pos_x, pos_y, page )
+【引  数】
+    Uint16 pos_x - X座標位置 (1/セル)
+    Uint16 pos_y - Y座標位置 (1/セル)
+    Uint16 page  - 知りたいページ番号。ページ番号はVDP2のVRAMの先頭を基準に
+                   2000hのバウンダリを持ちます。
+【返  数】
+    void * - VDP2のVRAMの(絶対)アドレスを示すvoid型のポインタ。
+【機  能】
+    ページ単位のスクロール面の表示アドレスを返します。
+    pos_x、pos_yは 画面上でのセル位置(通常0～63)で指定します。
+    page は VRAMの先頭から0x2000単位で数えたページナンバーを指定
+    します。
+【用  例】
+    ページ4番のセル位置(6,4)の表示アドレスを得る。
+    slLocatePage( 6, 4, 4 );
+【参  照】
+    slLocate, slLocatePage

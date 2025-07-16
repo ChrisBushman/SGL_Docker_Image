@@ -1,0 +1,9 @@
+# source_program
+SRCS     = main.c
+
+#OBJS     = $(CMNDIR)/cinit.o
+OBJS     = $(CMNDIR)/cinit.o $(SRCS:.c=.o) ../../share/sddrvs.o ../../share/smpmap.o
+SYSOBJS = $(SGLLDR)/sglarea.o 
+
+LIBS = -lcpk -lsnd -lcd -lsgl -lint -lsys
+

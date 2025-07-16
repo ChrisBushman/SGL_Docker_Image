@@ -1,0 +1,30 @@
+
+	regs	pc=Master_Start
+
+.text	section.l org $6010000
+
+.data	section.l
+
+.bss	section.l
+
+
+	include master.cof
+	include globals.cof
+	include mirq.cof
+	include pad.cof
+	include vdp1.cof
+	include vdp2.cof
+	include matrix.cof
+	include rand.cof
+	include poly.cof
+	include	print.cof
+	include	shapes.cof
+	include	bfsonic.cof
+	include main.o,gnu
+	include dsp.o,gnu
+        include c:\cygnus\lib\sh2\libgcc.a,gnu
+        include c:\cygnus\lib\sh2\libc.a,gnu
+
+
+
+	end

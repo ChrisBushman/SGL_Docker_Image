@@ -1,0 +1,426 @@
+slInitSystem -- 関数
+    slInitSystem - SGLシステムの初期化。
+【書  式】
+    #include "sgl.h"
+
+    Uint16  mode;
+    TEXTURE *form_tbl;
+    Sint8   cnt;
+
+    void slInitSystem( mode, form_tbl , cnt );
+【引  数】
+    Uint16  mode      - 画面モード。
+    TEXTURE *form_tbl - テクスチャ定義テーブル。
+    Sint8   cnt       - フレーム切替のカウント。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    システム全体の初期化、テクスチャ定義テーブルの登録、フレーム切り替え
+    カウントの設定を行います。
+    画面モード「mode」には、
+        TV_320x224、TV_320x240、TV_320x256
+        TV_352x224、TV_352x240、TV_352x256
+        TV_640x224、TV_640x240、TV_640x256
+        TV_704x224、TV_704x240、TV_704x256
+        TV_320x448、TV_320x480、TV_320x512
+        TV_352x448、TV_352x480、TV_352x512
+        TV_640x448、TV_640x480、TV_640x512
+        TV_704x448、TV_704x480、TV_704x512
+    が入ります。
+    また、引数form_tblの値は、システム変数「FormTbl」にセットされます。
+    slInitSystem() を実行した際に設定されるもの。
+    スプライト、及び、ポリゴン用のウィンドウサイズ、消失点位置
+        Left             : 0
+        Top              : 0
+        Right            : ScreenXSize - 1
+        Bottom           : ScreenYSize - 1
+        Zlimit           : 0x7fff
+        CenterX          : ScreenXSize / 2
+        CenterY          : ScreenYSize / 2
+        PersAngle        : 90゜
+        ZdspLevel        : 1
+        ClipSizeX        : 320
+        ClipSizeY        : 512
+     スクロール関係
+        表示されるスクロール面          : NBG0 , NBG1 , RBG0
+        スクロールのプライオリティ      : NBG0 NBG1 NBG2 NBG3 RBG0
+                                           7    7    2    1    4
+        スプライト0(ポリゴン)の
+                       プライオリティ   : 6
+        その他のスプライト              : 5
+        スクロールの色数                : 各面とも256色モード
+        カラーRAMモード                 : 1(32768色中2048色)
+        VRAM分割                        : バンクA、Bともに分割
+        キャラクタデータ                : NBG0、NBG1 25E60000～
+                                        : RBG0 25E00000～
+        キャラクタサイズ                : 各面とも8x8ドット
+        パターンネームデータ            : NBG0 25E76000～
+                                        : NBG1 25E78000～
+                                        : RBG0 PA 25E40000～
+                                        : RBG0 PB 25E50000～
+        パターンネームサイズ            : NBG0 1ワード
+                                        : セルごとに反転付き10ビット
+                                          パターンネーム
+                                        : NBG1 及び、RGB0 1ワード
+                                        : 反転無し、12ビットパターンネーム
+        プレーンサイズ                  : 各面とも64x64セル
+        バック画面カラー                : 25E3FFFE に 黒(R=0、G=0、B=0)
+        回転パラメータ                  : 25E3FF00 から
+        スプライトデータ                : パレットとRGB形式との混在
+        モザイク、カラーオフセット等の特殊効果機能は使用せず
+        SCU 割り込み優先度(SCUのデフォルトではありません)
+          高      名称         SCU割り込みマスクレジスタ
+           ^  H Blank In          FFFF
+           |  レベル2 DMA終了     FFFB (SGLで予約)
+           |  レベル1 DMA終了     FDFB (SGLで予約)
+           |  レベル0 DMA終了     F9FB (SGLで予約)
+           |  DMAイリーガル       F1FB
+           |  V Blank In          E1FB (SGLで予約)
+           |  V Blank Out         E1FA (SGLで予約)
+           |  タイマ0             E1F8
+           |  タイマ1             E1F0
+           |  DSP終了             E1E0
+           |  サウンドリクエスト  E1C0 (SGLで予約)
+           |  SMPC                E180 (SGLで予約)
+           |  Pad                 E100
+          低  スプライト描画終了  E000
+    サウンドの初期化は行なわれませんのでサウンド関連の関数を使用する場合、
+    それぞれのライブラリのサウンド初期化関数で初期化を行なってください。
+【用  例】
+    テクスチャ(スプライト)を使わない時。(ポリゴンは使用できる。)
+    ss_main() {
+      slInitSystem( TV_352x224, NULL, 1 );
+                        :
+
+    テクスチャを使用する場合。
+    extern TEXTURE textbl[];
+
+    ss_main() {
+      slInitSystem( TV_320x240, textbl, 1 );
+                        :
+
+    ダイナミックフレーム(描画待ちフレーム切替え)モードを使用する時。
+    ss_main() {
+      slInitSystem( TV_320x240, NULL, -3 );
+                        :
+【注  意】
+    この関数は全てのSGL関数を実行する前に必ず実行してください。
+    未初期化のシステム領域を他のSGL関数がアクセスした場合バグの温床となります。
+    解像度(TVモード)によってシステムクロックを切り替えるため、VRAM等の
+    内容が壊れる場合がありますので、システムスタートの直後に1度だけ実行して
+    ください。
+    フレーム切り替えカウントにマイナスを指定した場合、切り替えカウント経過
+    (-2であれば2ブランキング)の後、VDP1のフレームバッファへの書き込み終了を
+    チェックし、書き込み完了を待って切り替えを行ないます。ただし、
+    インターレースモードを指定した場合にはこの指定は無視されます。
+
+    slInitSystem()実行時、画面モードの変更によって SH2 の動作クロック
+    が変更される場合、クロックチェンジが発生します。この時、家庭用TVの機種に
+    よって同期が瞬間的に取れなくなる事があります。
+    SH2の動作クロックが 26MHz になるのは、
+       横解像度 320 又は 640 DOT
+    の場合です。
+    SH2の動作クロックが 28MHz になるのは、
+       横解像度 352 又は 704 DOT
+    の場合です。
+    クロックチェンジによって影響を受けるデバイスの内、注意が必要なのは、
+    次の通りです。
+
+    ・VDP1 VDP2
+      全てのレジスタおよび VRAM が無保証となります。
+      slInitSystem()の内部にてレジスタの再設定が行われますが、ユーザの
+      データは再度ロードし直す必要があります。
+    ・WORKRAM-LOW(1Mバイト)
+      メモリ内容は無保証となります。
+      必ず全てのデータを再ロードしてください。
+    ・サウンドブロック
+      68000 および SCSP の両方ともリセットされます。
+      また、SOUND-RAMの内容は全て無保証となりますので、slInitSystem()が
+      終了次第、サウンドドライバ等の再ロードを行い、68000 を再起動させる
+      必要があります。
+    ・SCU
+      全ての設定が初期化されます。
+    ・スレーブSH
+      リセット後、SGLの管理下に戻ります。
+      ユーザ登録関数は、再登録する必要があります。
+    本関数をクロックチェンジ以外の目的で何度も呼び出すのは、
+    アプリケーションの製作上あまり思わしくありませんので、クロックチェンジ
+    をする以外は、出来るだけ他の関数を用いて初期化を行なうようにしてください。
+【参  照】
+    slDynamicFrame, slSetTVMode, slSetScrTVMode, slSetSprTVMode
+    slInitPeripheral, slGetStatus, slGetPeripheral, SprbufBias
+    MsLightVector, MsScreenDist, SlScreenDist, MsZlimit
+    WindowNumber, TotalPolygons, TotalVertices, MsScreenLeft
+    MsScreenTop, MsScreenRight, MsScreenBottom, MXPolygons
+    MXVertices, FrameSizeX, FrameSizeY, MsWinXAdder
+    MsWinYAdder, SlWinXAdder, SlWinYAdder, MsClipXAdder
+    MsClipYAdder, DMAEndFlag, DMASetFlag, Resolution
+    NbPCMBf, PCMBufFlag, VDP2_VRSIZE, VDP2_HCNT
+    VDP2_VCNT, VDP2_RAMCTL, VDP2_CYCA0L, VDP2_CYCA0U
+    VDP2_CYCA1L, VDP2_CYCA1U, VDP2_CYCB0L, VDP2_CYCB0U
+    VDP2_CYCB1L, VDP2_CYCB1U, VDP2_BGON, VDP2_MZCTL
+    VDP2_SFSEL, VDP2_SFCODE, VDP2_CHCTLA, VDP2_CHCTLB
+    VDP2_BMPNA, VDP2_BMPNB, VDP2_PNCN0, VDP2_PNCN1
+    VDP2_PNCN2, VDP2_PNCN3, VDP2_PNCR, VDP2_PLSZ
+    VDP2_MPOFN, VDP2_MPOFR, VDP2_MPABRA, VDP2_MPCDRA
+    VDP2_MPEFRA, VDP2_MPGHRA, VDP2_MPIJRA, VDP2_MPKLRA
+    VDP2_MPMNRA, VDP2_MPOPRA, VDP2_MPABRB, VDP2_MPCDRB
+    VDP2_MPEFRB, VDP2_MPGHRB, VDP2_MPIJRB, VDP2_MPKLRB
+    VDP2_MPMNRB, VDP2_MPOPRB, VDP2_SCXN0, VDP2_SCXIN0
+    VDP2_SCXDN0, VDP2_SCYN0, VDP2_SCYIN0, VDP2_SCYDN0
+    VDP2_SCXN1, VDP2_SCXIN1, VDP2_SCXDN1, VDP2_SCYN1
+    VDP2_SCYIN1, VDP2_SCYDN1, VDP2_SCXN2, VDP2_SCYN2
+    VDP2_SCXN3, VDP2_SCXN3, VDP2_ZMCTL, VDP2_SCRCTL
+    VDP2_VCSTA, VDP2_LSTA0, VDP2_LSTA1, VDP2_LCTA
+    VDP2_BKTA, VDP2_RPMD, VDP2_RPRCTL, VDP2_KTCTL
+    VDP2_KTAOF, VDP2_OVPNRA, VDP2_OVPNRB, VDP2_RPTA
+    VDP2_WPSX0, VDP2_WPSY0, VDP2_WPEX0, VDP2_WPEY0
+    VDP2_WPSX1, VDP2_WPEX1, VDP2_WCTLA, VDP2_WCTLB
+    VDP2_WCTLC, VDP2_WCTLD, VDP2_LWTA0, VDP2_LWTA1
+    VDP2_SPCTL, VDP2_SDCTL, VDP2_CRAOFA, VDP2_CRAOFB
+    VDP2_LNCLEN, VDP2_SFPRMD, VDP2_SFCCMD, VDP2_CCCTL
+    VDP2_PRISA, VDP2_PRISB, VDP2_PRISC, VDP2_PRISD
+    VDP2_PRINA, VDP2_PRINB, VDP2_PRIR, VDP2_CCRSA
+    VDP2_CCRSB, VDP2_CCRSC, VDP2_CCRSD, VDP2_CCRNA
+    VDP2_CCRNB, VDP2_CCRR, VDP2_CCRLB, VDP2_CLOFEN
+    VDP2_CLOFSL, VDP2_COAR, VDP2_COAG, VDP2_COAB
+    VDP2_COBR, VDP2_COBG, VDP2_COBB, ScrRotPtr
+    nbg0_char_adr, nbg1_char_adr, nbg2_char_adr, nbg3_char_adr
+    nbg0_char_adr, ra_char_adr, rb_char_adr, nbg0_page_adr
+    nbg1_page_adr, nbg2_page_adr, nbg3_page_adr, ra_page_adr
+    rb_page_adr, rpara_vram_adr, RotScrParA, RotScrParB
+    Nbg2_PosX, Nbg2_PosY, Nbg3_PosX, Nbg3_PosY
+    slSetTVMode -- 関数
+    slSetTVMode - 解像度の切替え。
+【書  式】
+    #include "sgl.h"
+
+    Uint16 mode;
+
+    Bool slSetTVMode( mode );
+【引  数】
+    Uint16 mode - TVモード(後述)。
+【返  数】
+    Bool - エラーコード(後述)。
+【機  能】
+    指定されたTVモードに設定します。
+    システムクロックを切り替えるような場合、FALSE を返します。
+    システムクロックは2つ用意されており、横方向の解像度によって切り替わります。
+         320、640ドット <--> 352、704ドット
+         (26.84MHz)             (28.64MHz)                <NTSC>
+         (26.66MHz)             (28.44MHz)                <PAL>
+    このため、320ドットモードから640ドットモードへは切り替えることが
+    できますが、352ドットに切り替えようとするとエラーになります。
+    また、縦方向の解像度を448または480ラインにする場合にはインターレースと
+    なるため、2インタラプトで1フレームになりますので、フレームの切り替え
+    カウンタが2の倍数になるように調整されます。もし、インターレースモードを
+    1インタラプトで処理したい場合には本関数を実行したのち、
+    (Sint8)SynchConstを1にし、slInitSynch関数を実行してください。
+    本関数では 指定された解像度により、スプライト用ウィンドウの初期化(全画
+    面サイズ)、パースの変更(画角90゜)、スプライトデータタイプの変更が行
+    われます。
+    スプライトデータタイプは 4ビットの内、ビット3のみを変更します。
+    画面モード「mode」には、
+        TV_320x224、TV_320x240、TV_320x256
+        TV_352x224、TV_352x240、TV_352x256
+        TV_640x224、TV_640x240、TV_640x256
+        TV_704x224、TV_704x240、TV_704x256
+        TV_320x448、TV_320x480、TV_320x512
+        TV_352x448、TV_352x480、TV_352x512
+        TV_640x448、TV_640x480、TV_640x512
+        TV_704x448、TV_704x480、TV_704x512
+    が入ります。
+【用  例】
+    slInitSystem( TV_352x224, NULL, 1 );
+                     :
+    slSetTVMode( TV_352x480 );
+                             OK.
+
+    slInitSystem( TV_352x224, NULL, 1 );
+                     :
+    slSetTVMode( TV_320x224 );
+                             NG.   
+【注  意】
+    本関数では以下の設定は変更されません。本関数実行後に必要に応じて設定して
+    ください。
+      ○ VDP2サイクルモード
+      ○ スクロール画面用のウィンドウ
+      ○ スプライト表示前方限界値(ZdspLevel)
+    また、画面にノイズが入ることがありますので、必要に応じてslTVOff
+    関数を実行してください。
+【参  照】
+    slInitSystem, slSetScrTVMode, slSetSprTVMode, slTVOff
+    slTVOn, ComWrPtr, ComRdPtr, MsScreenDist
+    WindowNumber, WinUseFlag, MsScreenLeft, MsScreenTop
+    MsScreenRight, MsScreenBottom, MsScreenSizeX, MsScreenSizeY
+    MsWindowSizeX, MsWindowSizeY, MsWinXAdder, MsWinYAdder
+    SlWinXAdder, SlWinYAdder, MsClipXAdder, MsClipYAdder
+    SlClipXAdder, SlClipYAdder, Resolution, VDP2_TVSTAT
+    VDP2_SPCTL, RotScrParA, RotScrParB
+
+
+slSetScrTVMode -- 関数
+    slSetScrTVMode - VDP2の解像度の切替え。
+【書  式】
+    #include "sgl.h"
+
+    Uint16 mode;
+
+    Bool slSetScrTVMode( mode );
+【引  数】
+    Uint16 mode - TVモード(後述)。
+【返  数】
+    Bool - エラーコード(後述)。
+【機  能】
+    スクロール制御(VDP2)に関する部分のTVモードを設定します。
+    上記の slSetTVMode関数と同様にシステムクロックを切り替えるような
+    場合FALSE を返します。
+    画面モード「mode」には、
+        TV_320x224、TV_320x240、TV_320x256
+        TV_352x224、TV_352x240、TV_352x256
+        TV_640x224、TV_640x240、TV_640x256
+        TV_704x224、TV_704x240、TV_704x256
+        TV_320x448、TV_320x480、TV_320x512
+        TV_352x448、TV_352x480、TV_352x512
+        TV_640x448、TV_640x480、TV_640x512
+        TV_704x448、TV_704x480、TV_704x512
+    が入ります。
+【用  例】
+    slInitSystem( TV_352x224, NULL, 1 );
+                     :
+    slSetScrTVMode( TV_352x480 );
+                             OK.
+
+    slInitSystem( TV_352x448, NULL, 1 );
+                     :
+    slSetScrTVMode( TV_320x448 );
+                             NG.   
+
+    slInitSystem( TV_352x448, NULL, 1 );
+                     :
+    slSetScrTVMode( TV_352x240 );
+                             NG.
+【注  意】
+    スプライトがインターレースモードで表示される場合、スクロールも必ず
+    インターレースモードにしてください。
+    これは EvenFrame と OddFrame とをVDP2のステータスから得ているため
+    です。
+【参  照】
+    slInitSystem, slSetSprTVMode, slSetTVMode, slTVOff
+    slTVOn, Resolution, VDP2_TVSTAT
+
+
+slSetSprTVMode -- 関数
+    slSetSprTVMode - VDP1の解像度の切替え。
+【書  式】
+    #include "sgl.h"
+
+    Uint16 mode;
+
+    Bool slSetSprTVMode( mode );
+【引  数】
+    Uint16 mode - TVモード(後述)。
+【返  数】
+    Bool - エラーコード(後述)。
+【機  能】
+    スプライト制御(VDP1)に関する部分のTVモードを設定します。
+    上記の slSetTVMode関数と同様にシステムクロックを切り替えるような
+    場合FALSE を返します。
+    また、インターレースモードに切り替える場合には、2インタラプトで
+    1フレームとなるようにカウンタを調整します。
+    スプライト用ウィンドウの初期化、パース設定(画角90°)、スプライト
+    データタイプの変更が行なわれます。
+    スプライトデータタイプは 4ビットの内、ビット3のみを変更します。
+    画面モード「mode」には、
+        TV_320x224、TV_320x240、TV_320x256
+        TV_352x224、TV_352x240、TV_352x256
+        TV_640x224、TV_640x240、TV_640x256
+        TV_704x224、TV_704x240、TV_704x256
+        TV_320x448、TV_320x480、TV_320x512
+        TV_352x448、TV_352x480、TV_352x512
+        TV_640x448、TV_640x480、TV_640x512
+        TV_704x448、TV_704x480、TV_704x512
+    が入ります。
+【用  例】
+    slInitSystem( TV_352x448, NULL, 1 );
+                     :
+    slSetSprTVMode( TV_352x240 );
+                             OK.   
+
+    slInitSystem( TV_352x224, NULL, 1 );
+                     :
+    slSetSprTVMode( TV_352x480 );
+                             NG.
+
+    slInitSystem( TV_352x448, NULL, 1 );
+                     :
+    slSetSprTVMode( TV_320x448 );
+                             NG.   
+
+    slInitSystem( TV_320x448, NULL, 1 );
+                     :
+    slSetScrTVMode( TV_320x224 );
+    slSetSprTVMode( TV_320x224 );
+                             OK.   
+【注  意】
+    スクロールがインターレースモードでない場合スプライトをインターレースモード
+    にすることは出来ません。
+    これは EvenFrame と OddFrame とをVDP2のステータスから得ているため
+    です。
+【参  照】
+    slInitSystem, slSetScrTVMode, slSetTVMode, ComWrPtr
+    ComRdPtr, MsScreenDist, WindowNumber, WinUseFlag
+    MsScreenLeft, MsScreenTop, MsScreenRight, MsScreenBottom
+    MsScreenSizeX, MsScreenSizeY, MsWindowSizeX, MsWindowSizeY
+    MsWinXAdder, MsWinYAdder, SlWinXAdder, SlWinYAdder
+    MsClipXAdder, MsClipYAdder, SlClipXAdder, SlClipYAdder
+    Resolution, VDP2_TVSTAT, VDP2_SPCTL, RotScrParA
+    RotScrParB
+
+
+slDynamicFrame -- 関数
+    slDynamicFrame - 描画終了待ちモードの設定。
+【書  式】
+    #include "sgl.h"
+
+    Uint16 flag;
+
+    Bool slDynamicFrame( flag );
+【引  数】
+    Uint16 flag - ダイナミックフレームモードの切替え
+【返  数】
+    Bool - エラーステータス
+【機  能】
+    一定周期のフレームチェンジとVDP1の描画終了待ち(ダイナミック)フレーム
+    チェンジとを切り替えます。
+    flag には ON または OFF のいずれかを指定します。
+    インターレースモードの場合には FALSE を返します。
+【用  例】
+    固定インターバル→不定インターバル
+      /* 1 int固定から 2 intベース不定モードに切り替える */
+      extern Uint8 SynchConst; /* signed intではなくunsigned int */
+                               /* ^^^^^^            ^^^^^^^^     */
+      slInitSystem( TV_320x224, NULL, 1 );
+                  :
+                  :
+      /* 不定インターバルモード-2を設定 */
+      slDynamicFrame( ON );
+      SynchConst = 2; /* -2ではない */
+      slSynch();
+
+    不定インターバル→固定インターバル
+      /* 1 int不定インターバルから 1 int固定インターバルに変更 */
+      slInitSystem( TV_320x224, NULL, -1 );
+                   :
+                   :
+      /* 固定インターバルモード 1を設定 */
+      slDynamicFrame( OFF );
+      /* SynchConstを変更する必要はない */
+      slSynch();
+
+【注  意】
+    固定インターバルから不定インターバル(ダイナミックフレームモード)に変更
+    する時、システム変数「SynchConst」には、負数ではなく正数を入れます。
+【参  照】
+    slInitSystem, SynchConst, SynchCount, Resolution
+    

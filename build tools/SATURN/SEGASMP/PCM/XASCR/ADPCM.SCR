@@ -1,0 +1,156 @@
+Disc		adpcm.dsk
+Session		SEMIXA
+LeadIn		MODE1
+EndLeadIn
+
+;SystemArea	..\ip.bin
+
+Track		MODE1
+	Volume				ISO9660 "adpcm.pvd"
+	PrimaryVolume			00:02:16
+	SystemIdentifier		"SEGA SEGASATURN"
+	VolumeIdentifier		"SAMPLE_GAME_TITLE"
+	VolumeSetIdentifier		"SAMPLE_GAME_TITLE"
+	PublisherIdentifier		"SEGA ENTERPRISES,LTD."
+	DataPreparerIdentifier		"SEGA ENTERPRISES,LTD."
+	VolumeCreationDate		11/11/1994 00:00:00:00:36
+	EndPrimaryVolume
+	EndVolume
+
+	File		SDDRVS.TSK;1
+	FileSource	"sddrvs.tsk"
+	EndFileSource
+	EndFile
+
+	File		BOOTSND.MAP;1
+	FileSource	"bootsnd.map"
+	EndFileSource
+	EndFile
+
+	File		SAMPLE.AIF;1
+	FileSource	"song.aif"
+	EndFileSource
+	EndFile
+
+	File		SAMPLE1.SAP;1
+	FileSource	"sample1.sap"
+	EndFileSource
+	EndFile
+
+	File		SONG.ACM;1
+	FileSource	"SONG.ACM"
+	EndFileSource
+	EndFile
+
+	File		LEON.ABM;1
+	FileSource	"LEON.ABM"
+	EndFileSource
+	EndFile
+
+	File		LEON.ACM;1
+	FileSource	"LEON.ACM"
+	EndFileSource
+	EndFile
+
+	File		TRACK1.ABM;1
+	FileSource	"TRACK1.ABM"
+	EndFileSource
+	EndFile
+
+	File		TRACK1.ACM;1
+	FileSource	"TRACK1.ACM"
+	EndFileSource
+	EndFile
+
+	File		A0241.AIF;1
+	FileSource	"A0241.AIF"
+	EndFileSource
+	EndFile
+
+	File		A0241.ACM;1
+	FileSource	"A0241.ACM"
+	EndFileSource
+	EndFile
+
+	PostGap 150
+EndTrack
+Track MODE2
+	PreGap 150
+	File SAMPLE1.XA;1
+		FileSource		"MONO37.ADP"
+			RealTime
+			DataType		FORM2
+			SourceType		MONO_B
+				;サンプリング：ADPCM4ビット 37.8KHz
+				;モード：モノラル
+			CodingInformation	0
+				;エンファシス：オフ		bit6   0
+				;ADPCMレベル：レベルＢ	bit2-5 0000
+				;モード：モノラル		bit0-1 00
+			EndFileSource
+		EndFile
+	File	SAMPLE2.XA;1
+		FileSource		"MONO18.ADP"
+		RealTime
+		DataType		FORM2
+		SourceType		MONO_C
+			;サンプリング：ADPCM4ビット 18.9KHz
+			;モード：モノラル
+		CodingInformation	4
+			;エンファシス：オフ		bit6   0
+			;ADPCMレベル：レベルＣ	bit2-5 0001
+			;モード：モノラル		bit0-1 00
+		EndFileSource
+	EndFile
+	File	SAMPLE3.XA;1
+		FileSource		"189ADPCM.XA"
+		RealTime
+		DataType		FORM2
+		SourceType		MONO_C
+			;サンプリング：ADPCM4ビット 18.9KHz
+			;モード：モノラル
+		CodingInformation	4
+			;エンファシス：オフ		bit6   0
+			;ADPCMレベル：レベルＣ	bit2-5 0001
+			;モード：モノラル		bit0-1 00
+		EndFileSource
+	EndFile
+	File	SAMPLE4.XA;1
+		FileSource		"NCS_ADP.XA"
+		RealTime
+		DataType		FORM2
+		SourceType		MONO_C
+			;サンプリング：ADPCM4ビット 18.9KHz
+			;モード：モノラル
+		CodingInformation	4
+			;エンファシス：オフ		bit6   0
+			;ADPCMレベル：レベルＣ	bit2-5 0001
+			;モード：モノラル		bit0-1 00
+		EndFileSource
+	EndFile
+	File	A0241.ADP;1
+		FileSource		"A0241.ADP"
+		RealTime
+		DataType		FORM2
+		SourceType		MONO_C
+			;サンプリング：ADPCM4ビット 18.9KHz
+			;モード：モノラル
+		CodingInformation	4
+			;エンファシス：オフ		bit6   0
+			;ADPCMレベル：レベルＣ	bit2-5 0001
+			;モード：モノラル		bit0-1 00
+		EndFileSource
+	EndFile
+    PostGap 150
+EndTrack
+Track CDDA
+    Pause 150
+    FileSource	"SEGA_WRN.DA"
+    EndFileSource
+EndTrack
+LeadOut CDDA
+    Empty 600
+EndLeadOut
+EndSession
+EndDisc
+

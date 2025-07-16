@@ -1,0 +1,85 @@
+　　　　　　　　　　　　　　　　　　　　　　　　　　　　１９９５年４月２５日
+　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　T.N
+
+                          SCRGEN.EXE VER 1.00
+
+１．　概要
+
+　ディレクトリ名を指定して、そのディレクトリ以下のファイルを全てビルドする
+スクリプトを標準出力に出力する。
+
+２．　使用法
+
+（１）　起動
+
+　　　　　SCRGEN  [-bベース名] [-iIPファイル] [-f]  ディレクトリ名
+
+（２）　オプション
+
+　　      -b 　：～.DSKなど出力ファイル名のベース名を指定する。
+　　　　　　　　 （省略時はディレクトリ名を使用する）
+      　　-i　 ：イニシャルプログラム名を指定する。（省略時はIP.BIN）
+      　　-f   ：ファイルとサブディレクトリがある場合、ファイルを先に記述する。
+
+３．　使用例
+
+   以下のディレクトリ構造を前提とする。
+
+   <カレントディレクトリ>
+                   |
+　　　             +---IP.BIN
+　　　             +---SAMPLEIP.BIN
+　　　             |
+ 　　　　　　　　　+---<SAMPLE>---+---<SUB1>--+--SUB11.DAT
+                                  |           +--SUB12.DAT
+                                  |  
+                                  +---<SUB2>--+--SUB21.DAT
+                                  |           +--SUB22.DAT
+                                  |  
+                                  +---SAMPLE1.DAT  
+                                  +---SAMPLE2.DAT  
+
+   (例１) 　イニシャルプログラムIP.BIN、ベース名=SAMPLE を使用する。
+
+   　　　　   SCRGEN SAMPLE >SAMPLE.SCR
+
+　　　　この場合、ディレクトリが先に記述される。
+                  Disc "SAMPLE.DSK"
+　　　　          　 ： 
+　　　　          Track MODE1 
+　　　　          　 ： 
+　　　　          　　Directory SUB1 
+　　　　          　　　　File  SUB11.DAT
+　　　　          　　　　File  SUB12.DAT
+　　　　          　　EndDirectory 
+　　　　          　　Directory SUB2 
+　　　　          　　　　File  SUB21.DAT
+　　　　          　　　　File  SUB22.DAT
+　　　　          　　EndDirectory 
+                      File SAMPLE1.DAT 
+                      File SAMPLE2.DAT 
+
+
+   (例２) 　イニシャルプログラムSAMPLEIP.BIN、ベース名=TEST を使用する。
+　　　　　　ファイルを先に記述する。
+
+   　　　　   SCRGEN -bTEST -iSAMPLEIP.BIN -f SAMPLE >SAMPLE.SCR
+
+　　　　この場合、ファイルが先に記述される。
+                  Disc "TEST.DSK"
+　　　　          　 ： 
+　　　　          Track MODE1 
+　　　　          　 ： 
+                      File SAMPLE1.DAT 
+                      File SAMPLE2.DAT 
+　　　　          　　Directory SUB1 
+　　　　          　　　　File  SUB11.DAT
+　　　　          　　　　File  SUB12.DAT
+　　　　          　　EndDirectory 
+　　　　          　　Directory SUB2 
+　　　　          　　　　File  SUB21.DAT
+　　　　          　　　　File  SUB22.DAT
+　　　　          　　EndDirectory 
+
+　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　以上
+

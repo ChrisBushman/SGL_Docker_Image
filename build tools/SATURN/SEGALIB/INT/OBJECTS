@@ -1,0 +1,10 @@
+#
+#■このファイルは makefile から include されます。
+#  TARGET にはライブラリのファイル名を指定してください。
+#  OBJS にはライブラリを作るための dependencies を指定してください。
+#
+TARGET=	sega_int.a
+
+OBJS=	$(OBJDIR)/int_main.o
+
+

@@ -1,0 +1,9 @@
+#
+#■このファイルは makefile から include されます。
+#  TARGET にはライブラリのファイル名を指定してください。
+#  OBJS にはライブラリを作るための dependencies を指定してください。
+#
+TARGET=	$(LIBDIR)/sega_dsp.a
+
+OBJS=	$(OBJDIR)/dsp_ctrl.o
+

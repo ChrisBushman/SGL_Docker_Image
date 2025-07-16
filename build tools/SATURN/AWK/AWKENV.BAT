@@ -1,0 +1,3 @@
+REM gawk-env
+SET AWKENV=\SATURN\AWK
+

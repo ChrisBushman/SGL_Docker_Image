@@ -1,0 +1,13 @@
+#
+#■このファイルは makefile から include されます。
+#  TARGET にはライブラリのファイル名を指定してください。
+#  OBJS にはライブラリを作るための dependencies を指定してください。
+#
+TARGET=	sega_cmp.a
+
+OBJS=	$(OBJDIR)/cmplrun.o\
+		$(OBJDIR)/cmplrunb.o\
+		$(OBJDIR)/cmplrunw.o\
+		$(OBJDIR)/cmplrund.o\
+		$(OBJDIR)/cmpltool.o
+

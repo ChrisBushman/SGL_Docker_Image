@@ -1,0 +1,897 @@
+
+
+★マトリクス操作
+slInitMatrix -- 関数
+    slInitMatrix - マトリクスの初期化
+【書  式】
+    #include "sgl.h"
+
+    void slInitMatrix( void )
+【引  数】
+    void - 何も与えません。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    マトリクス演算で使用する変数、バッファの初期化
+【用  例】
+    マトリクスバッファの初期化をします。
+    slInitMatrix();
+【参  照】
+    slPushMatrix, slPushUnitMatrix, slIncMatrixPtr, slPopMatrix
+    slDecMatrixPtr, slUnitMatrix, slUnitAngle, slUnitTranslate
+    slLoadMatrix, slCopyMatrix, slRegistMatrix, slGetMatrix
+    slGetTranslate, slLoadTranslate, slInversMatrix, slTransposeMatrix
+    slRegistTranslate, slMultiMatrix, slScrMatConv, slScrMatSet
+    mtptr
+
+
+slPushMatrix -- 関数
+    slPushMatrix - マトリクスの退避
+【書  式】
+    #include "sgl.h"
+
+    Bool slPushMatrix( void )
+【引  数】
+    void - 何も与えません。
+【返  数】
+    Bool - エラーが発生した場合NGが、成功した場合OKが返ります。
+【機  能】
+    マトリクススタックのポインタを進め、カレントマトリクスをそれに
+    コピーします。
+    マトリクスは20個までネストできるが、これをオーバーするとエラーを返します。
+【用  例】
+    カレントマトリクスをマトリクススタックにセーブして次の処理にその
+    マトリクスの内容を流用する。
+    slPushMatrix();
+    {
+      slScale(...);
+          :
+【注  意】
+    この関数は階層構造のモデルなど過去のカレントマトリクス情報を保存する様な
+    組み方をする場合に使用します。
+【参  照】
+    slInitMatrix, slPushUnitMatrix, slIncMatrixPtr, slPopMatrix
+    slDecMatrixPtr, slUnitMatrix, slUnitAngle, slUnitTranslate
+    slLoadMatrix, slCopyMatrix, slRegistMatrix, slGetMatrix
+    slGetTranslate, slLoadTranslate, slInversMatrix, slTransposeMatrix
+    slRegistTranslate, slMultiMatrix, slScrMatConv, slScrMatSet
+    mtptr, MatrixCount
+
+
+slPushUnitMatrix -- 関数
+    slPushUnitMatrix - マトリクスの退避
+【書  式】
+    #include "sgl.h"
+
+    Bool slPushUnitMatrix( void )
+【引  数】
+    void - 何も与えません。
+【返  数】
+    Bool - エラーが発生した場合NG、成功した場合OKが返ります。
+【機  能】
+    マトリクススタックのポインタを進め、そこに単位行列をセットします。
+    ネストしすぎた場合、エラーを返します。
+【用  例】
+    マトリクスバッファに単位マトリクスを退避させる。
+    slPushUnitMatrix();
+    {
+       slTranslate( ... );
+              :
+       slPutPolygonX( ... );
+    }
+    slPopMatrix();
+    この時点でカレントマトリクスは単位行列になる。
+【参  照】
+    slInitMatrix, slPushMatrix, slIncMatrixPtr, slPopMatrix
+    slDecMatrixPtr, slUnitMatrix, slUnitAngle, slUnitTranslate
+    slLoadMatrix, slCopyMatrix, slRegistMatrix, slGetMatrix
+    slGetTranslate, slLoadTranslate, slInversMatrix, slTransposeMatrix
+    slRegistTranslate, slMultiMatrix, slScrMatConv, slScrMatSet
+    mtptr, MatrixCount
+
+
+slIncMatrixPtr -- 関数
+    slIncMatrixPtr - マトリクスのスタックを1つ進める
+【書  式】
+    #include "sgl.h"
+
+    Bool slIncMatrixPtr( void )
+【引  数】
+    void - 何も与えません。
+【返  数】
+    Bool - エラーが発生した場合NGが、成功した場合OKが返ります。
+【機  能】
+    マトリクススタックのポインタを進めます。
+    マトリクスは20個までネストできるが、これをオーバーするとエラーを返します。
+【用  例】
+    マトリクススタックのポインタを一つ進め、スタックオーバフローを起こして
+    いないか確認する。
+    if ( slIncMatrixPtr() == NG ) {
+      /* Stack Over flow. */
+    } else {
+      /* Stack safty. */
+    }
+【参  照】
+    slInitMatrix, slPushMatrix, slPushUnitMatrix, slPopMatrix
+    slDecMatrixPtr, slUnitMatrix, slUnitAngle, slUnitTranslate
+    slLoadMatrix, slCopyMatrix, slRegistMatrix, slGetMatrix
+    slGetTranslate, slLoadTranslate, slInversMatrix, slTransposeMatrix
+    slRegistTranslate, slMultiMatrix, slScrMatConv, slScrMatSet
+    mtptr, MatrixCount
+
+
+slPopMatrix -- 関数
+    slPopMatrix - マトリクスの復元
+【書  式】
+    #include "sgl.h"
+
+    Bool slPopMatrix( void )
+【引  数】
+    void - 何も与えません。
+【返  数】
+    Bool - エラーが発生した場合NGが、成功した場合OKが返ります。
+【機  能】
+    マトリクススタックのポインタをひとつ戻します。
+    戻しすぎた場合には、エラーを返します。
+【用  例】
+    カレントマトリクスに退避したマトリクスを復活させ流用する。
+    slPushMatrix();         <-- (A)
+    {
+       slTranslate( .. );
+            :
+    }
+    slPopMatrix();          <-- (B)
+    (B)の時点ではカレントマトリクスは(A)と同じ状態になる。
+【参  照】
+    slInitMatrix, slPushMatrix, slPushUnitMatrix, slIncMatrixPtr
+    slDecMatrixPtr, slUnitMatrix, slUnitAngle, slUnitTranslate
+    slLoadMatrix, slCopyMatrix, slRegistMatrix, slGetMatrix
+    slGetTranslate, slLoadTranslate, slInversMatrix, slTransposeMatrix
+    slRegistTranslate, slMultiMatrix, slScrMatConv, slScrMatSet
+    mtptr, MatrixCount
+
+
+slDecMatrixPtr -- 関数
+    slDecMatrixPtr - マトリクスの復元
+【書  式】
+    #include "sgl.h"
+
+    Bool slDecMatrixPtr( void )
+【引  数】
+    void - 何も与えません。
+【返  数】
+    Bool - エラーが発生した場合NGが、成功した場合OKが返ります。
+【機  能】
+    マトリクススタックのポインタをひとつ戻します。
+    戻しすぎた場合、エラーを返します。
+【用  例】
+    マトリクススタックのポインタを一つ戻しスタックアンダーフローを起こして
+    いるか調べる。
+    if ( slDecMatrixPtr() == NG ) {
+      /* Stack underflow. */
+    } else {
+      /* Stack safty. */
+    }
+    slPushMatrix();
+    {
+          :
+    }
+    slDecMatrixPtr();
+【注  意】
+    slPopMatrixと同様の機能を持つ関数です。
+【参  照】
+    slInitMatrix, slPushMatrix, slPushUnitMatrix, slIncMatrixPtr
+    slPopMatrix, slUnitMatrix, slUnitAngle, slUnitTranslate
+    slLoadMatrix, slCopyMatrix, slRegistMatrix, slGetMatrix
+    slGetTranslate, slLoadTranslate, slInversMatrix, slTransposeMatrix
+    slRegistTranslate, slMultiMatrix, slScrMatConv, slScrMatSet
+    mtptr, MatrixCount
+
+
+slUnitMatrix -- 関数
+    slUnitMatrix - マトリクスを単位行列にする
+【書  式】
+    #include "sgl.h"
+
+    MATRIX *mtptr;
+
+    void slUnitMatrix( mtptr )
+【引  数】
+    MATRIX *mtptr - 単位行列にしたいマトリクスを表すMATRIXデータ型へのポインタ
+【返  数】
+    void - 何も返りません。
+【機  能】
+    指定されたマトリクスを単位行列にします。マトリクスに CURRENTを指定
+    した場合、マトリクススタックのカレントマトリクスを対象にします。
+【参  照】
+    slInitMatrix, slPushMatrix, slPushUnitMatrix, slIncMatrixPtr
+    slPopMatrix, slDecMatrixPtr, slUnitAngle, slUnitTranslate
+    slLoadMatrix, slCopyMatrix, slRegistMatrix, slGetMatrix
+    slGetTranslate, slLoadTranslate, slInversMatrix, slTransposeMatrix
+    slRegistTranslate, slMultiMatrix, slScrMatConv, slScrMatSet
+    mtptr
+
+
+slUnitAngle -- 関数
+    slUnitAngle - マトリクスの回転成分を単位化する
+【書  式】
+    #include "sgl.h"
+
+    MATRIX *mtptr;
+
+    void slUnitAngle( mtptr )
+【引  数】
+    MATRIX *mtptr - 単位化したいマトリクスを表すMATRIXデータ型へのポインタ
+【返  数】
+    void - 何も返りません。
+【機  能】
+    マトリクスの回転部分(3×3)を単位行列にする。平行移動部分は変更しません。
+    マトリクスに CURRENT を指定した場合カレントマトリクスを変更します。
+【参  照】
+    slInitMatrix, slPushMatrix, slPushUnitMatrix, slIncMatrixPtr
+    slPopMatrix, slDecMatrixPtr, slUnitMatrix, slUnitTranslate
+    slLoadMatrix, slCopyMatrix, slRegistMatrix, slGetMatrix
+    slGetTranslate, slLoadTranslate, slInversMatrix, slTransposeMatrix
+    slRegistTranslate, slMultiMatrix, slScrMatConv, slScrMatSet
+    mtptr
+
+
+slUnitTranslate -- 関数
+    slUnitTranslate - マトリクスの平行移動成分を0にする
+【書  式】
+    #include "sgl.h"
+
+    MATRIX *mtptr;
+
+    void slUnitTranslate( mtptr )
+【引  数】
+    MATRIX *mtptr - 平行成分を0にしたいマトリクスを表すMATRIXデータ型への
+                    ポインタ。
+【返  数】
+    void - 何も返りません。
+【機  能】
+    マトリクスの平行移動部分を0にします。回転部分は変更しません。
+    マトリクスに CURRENT を指定した場合カレントマトリクスを変更します。
+【用  例】
+    マトリクスの平行移動成分を0にする。
+    MATRIX matr
+                  :
+    slUnitTranslate( &matr );
+【参  照】
+    slInitMatrix, slPushMatrix, slPushUnitMatrix, slIncMatrixPtr
+    slPopMatrix, slDecMatrixPtr, slUnitMatrix, slUnitAngle
+    slLoadMatrix, slCopyMatrix, slRegistMatrix, slGetMatrix
+    slGetTranslate, slLoadTranslate, slInversMatrix, slTransposeMatrix
+    slRegistTranslate, slMultiMatrix, slScrMatConv, slScrMatSet
+    mtptr
+
+
+slLoadMatrix -- 関数
+    slLoadMatrix - カレントマトリクスへのコピー
+【書  式】
+    #include "sgl.h"
+
+    MATRIX *mtptr;
+
+    void slLoadMatrix( mtptr )
+【引  数】
+    MATRIX *mtptr - カレントマトリクスにコピーしたいマトリクスを示す
+                    MATRIXデータ型へのポインタ。
+【返  数】
+    void - 何も返りません。
+【機  能】
+    カレントマトリクスに指定されたマトリクスをコピーする。
+【用  例】
+    カレントマトリクスに指定したマトリクスの内容をコピーする。
+    MATRIX matr = {
+                   :
+    };
+    slPushMatrix();
+    {
+       slLoadMatrix( &matr );
+       slRotX( ... );
+             :
+    }
+    slPopMatrix();
+【参  照】
+    slInitMatrix, slPushMatrix, slPushUnitMatrix, slIncMatrixPtr
+    slPopMatrix, slDecMatrixPtr, slUnitMatrix, slUnitAngle
+    slUnitTranslate, slCopyMatrix, slRegistMatrix, slGetMatrix
+    slGetTranslate, slLoadTranslate, slInversMatrix, slTransposeMatrix
+    slRegistTranslate, slMultiMatrix, slScrMatConv, slScrMatSet
+    mtptr
+
+
+slCopyMatrix -- 関数
+    slCopyMatrix - カレントマトリクスへのコピー
+【書  式】
+    #include "sgl.h"
+
+    Bool slCopyMatrix( void )
+【引  数】
+    void - 何も与えません。
+【返  数】
+    Bool - エラーが発生した場合NGが、成功した場合OKが返ります。
+【機  能】
+    カレントマトリクスにひとつ前のマトリクスをコピーします。
+    マトリクスがネストされていない場合にはエラーを返します。
+【用  例】
+    マトリクススタックの内容をカレントマトリクスに入れ、マトリクススタックの
+    ポインタを一つ減らす。
+            :               <-- (A)
+    slPushMatrix();         
+    {                       <-- (B)
+       slTranslate( .. );
+            :
+       slCopyMatrix();       <-- (C)
+    }
+    slPopMatrix();          
+            :               <-- (D)
+    (C)の時点ではカレントマトリクスは(A)と同じ状態になる。
+    但しマトリクススタックのポインタは操作されないので、(C)の時点でのマトリクス
+    スタックの状態は(B)と同じ状態で(A)と同じ状態ではない。(D)の時点で始めて、
+    (A)と同じ状態になる。
+【参  照】
+    slInitMatrix, slPushMatrix, slPushUnitMatrix, slIncMatrixPtr
+    slPopMatrix, slDecMatrixPtr, slUnitMatrix, slUnitAngle
+    slUnitTranslate, slLoadMatrix, slRegistMatrix, slGetMatrix
+    slGetTranslate, slLoadTranslate, slInversMatrix, slTransposeMatrix
+    slRegistTranslate, slMultiMatrix, slScrMatConv, slScrMatSet
+    mtptr
+
+
+slRegistMatrix -- 関数
+    slRegistMatrix - 新規マトリクスのバッファ登録
+【書  式】
+    #include "sgl.h"
+
+    MATRIX *mtptr;
+
+    void slRegistMatrix( mtptr )
+【引  数】
+    MATRIX *mtptr - マトリクススタックへ登録したいマトリクスを表す
+                    MATRIXデータ型へのポインタ。
+【返  数】
+    void - 何も返りません。
+【機  能】
+    マトリクスバッファに指定されたマトリクスをコピーします。
+    マトリクスに CURRENT を指定した場合、マトリクススタックのカレント
+    マトリクスを対象にします。
+【用  例】
+    指定したマトリクスをマトリクススタックに登録する。
+    MATRIX matr;
+              :
+    slRegistMatrix( &matr );
+【参  照】
+    slInitMatrix, slPushMatrix, slPushUnitMatrix, slIncMatrixPtr
+    slPopMatrix, slDecMatrixPtr, slUnitMatrix, slUnitAngle
+    slUnitTranslate, slLoadMatrix, slCopyMatrix, slGetMatrix
+    slGetTranslate, slLoadTranslate, slInversMatrix, slTransposeMatrix
+    slRegistTranslate, slMultiMatrix, slScrMatConv, slScrMatSet
+    mtptr, MatrixCount
+
+
+slGetMatrix -- 関数
+    slGetMatrix - カレントマトリクスのコピー
+【書  式】
+    #include "sgl.h"
+
+    MATRIX *mtptr;
+
+    void slGetMatrix( mtptr )
+【引  数】
+    MATRIX *mtptr - カレントマトリクスの内容をコピーするMATRIX型データへの
+                    ポインタ。
+【返  数】
+    void - 何も返りません。(但し処理の結果は引数のmtptrで示されるMATRIXデータ
+                            に反映されます。)
+【機  能】
+    カレントマトリクスを指定されたマトリクスにコピーします。
+【用  例】
+    カレントマトリクスの内容を別の場所にコピーする。
+    MATRIX *matr;
+    slGetMatrix( matr );
+    matrにカレントマトリクスの内容がコピーされる。
+【参  照】
+    slInitMatrix, slPushMatrix, slPushUnitMatrix, slIncMatrixPtr
+    slPopMatrix, slDecMatrixPtr, slUnitMatrix, slUnitAngle
+    slUnitTranslate, slLoadMatrix, slCopyMatrix, slRegistMatrix
+    slGetTranslate, slLoadTranslate, slInversMatrix, slTransposeMatrix
+    slRegistTranslate, slMultiMatrix, slScrMatConv, slScrMatSet
+    mtptr, MatrixCount
+
+
+slGetTranslate -- 関数
+    slGetTranslate - カレントマトリクスから平行移動成分の取り出し。
+【書  式】
+    #include "sgl.h"
+
+    FIXED pos[XYZ]
+
+    void slGetTranslate( pos )
+【引  数】
+    FIXED pos[XYZ] - 取り出した平行成分を保存するFIXED型配列へのポインタ。
+【返  数】
+    void - 何も返りません。(但し処理の結果は引数のposで示されるFIXED型データ
+                            に反映されます。)
+【機  能】
+    カレントマトリクスから平行移動成分を取り出し、指定されたバッファにコピー
+    します。
+【参  照】
+    slInitMatrix, slPushMatrix, slPushUnitMatrix, slIncMatrixPtr
+    slPopMatrix, slDecMatrixPtr, slUnitMatrix, slUnitAngle
+    slUnitTranslate, slLoadMatrix, slCopyMatrix, slRegistMatrix
+    slGetMatrix, slLoadTranslate, slInversMatrix, slTransposeMatrix
+    slRegistTranslate, slMultiMatrix, slTranslate, slScrMatConv
+    slScrMatSet, mtptr
+
+
+slLoadTranslate -- 関数
+    slLoadTranslate - 平行移動成分の更新
+【書  式】
+    #include "sgl.h"
+
+    FIXED x_dif, y_dif, z_dif;
+
+    void slLoadTranslate( x_dif, y_dif, z_dif )
+【引  数】
+    FIXED x_dif - 平行移動成分のX値。
+    FIXED y_dif - 平行移動成分のY値。
+    FIXED z_dif - 平行移動成分のZ値。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    カレントマトリクスの平行移動部分のみを更新します。
+【参  照】
+    slInitMatrix, slPushMatrix, slPushUnitMatrix, slIncMatrixPtr
+    slPopMatrix, slDecMatrixPtr, slUnitMatrix, slUnitAngle
+    slUnitTranslate, slLoadMatrix, slCopyMatrix, slRegistMatrix
+    slGetMatrix, slGetTranslate, slInversMatrix, slTransposeMatrix
+    slRegistTranslate, slTranslate, slMultiMatrix, slScrMatConv
+    slScrMatSet, mtptr
+
+
+slInversMatrix -- 関数
+    slInversMatrix - カレントマトリクスを逆行列にする
+【書  式】
+    #include "sgl.h"
+
+    void slInversMatrix( void )
+【引  数】
+    void - 何も与えません。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    カレントマトリクスを逆行列にする。
+【参  照】
+    slInitMatrix, slPushMatrix, slPushUnitMatrix, slIncMatrixPtr
+    slPopMatrix, slDecMatrixPtr, slUnitMatrix, slUnitAngle
+    slUnitTranslate, slLoadMatrix, slCopyMatrix, slRegistMatrix
+    slGetMatrix, slGetTranslate, slLoadTranslate, slTransposeMatrix
+    slRegistTranslate, slScrMatConv, slScrMatSet, mtptr
+    slTransposeMatrix -- 関数
+    slTransposeMatrix - カレントマトリクスを転置行列にする
+【書  式】
+    #include "sgl.h"
+
+    void slTransposeMatrix( void )
+【引  数】
+    void - 何も与えません。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    カレントマトリクスを転置行列にします。
+【参  照】
+    slInitMatrix, slPushMatrix, slPushUnitMatrix, slIncMatrixPtr
+    slPopMatrix, slDecMatrixPtr, slUnitMatrix, slUnitAngle
+    slUnitTranslate, slLoadMatrix, slCopyMatrix, slRegistMatrix
+    slGetMatrix, slGetTranslate, slLoadTranslate, slInversMatrix
+    slRegistTranslate, slScrMatConv, slScrMatSet, mtptr
+    ★アフィン変換
+slRotX -- 関数
+    slRotX - カレントマトリクスにX軸の回転変換を施す
+【書  式】
+    #include "sgl.h"
+
+    ANGLE angx;
+
+    void slRotX( angx )
+【引  数】
+    ANGLE angx - 回転角
+【返  数】
+    void - 何も返しません。
+【機  能】
+    カレントマトリクスに対し、X軸回りの回転行列を掛けます。
+    回転マトリクスは
+         1.0      0.0      0.0      0.0
+         0.0     cosΘ    sinΘ     0.0
+         0.0    -sinΘ    cosΘ     0.0
+         0.0      0.0      0.0      1.0
+【参  照】
+    slRotXSC, slRotY, slRotYSC, slRotZ
+    slRotZSC, slRotAX, slZrotR, mtptr
+    slRotXSC -- 関数
+    slRotXSC - カレントマトリクスにX軸の回転変換を施す
+【書  式】
+    #include "sgl.h"
+
+    FIXED sin;
+    FIXED cos;
+
+    void slRotXSC( sin, cos )
+【引  数】
+    FIXED sin - 回転変換の際に与えるsinの値。
+    FIXED cos - 回転変換の際に与えるcosの値。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    サインと、コサインを指定して、X軸回りの回転をします。
+         1.0      0.0      0.0      0.0
+         0.0      cos      sin      0.0
+         0.0     -sin      cos      0.0
+         0.0      0.0      0.0      1.0
+【参  照】
+    slRotX, slRotY, slRotYSC, slRotZ
+    slRotZSC, slRotAX, slZrotR, mtptr
+    slRotY -- 関数
+    slRotY - カレントマトリクスにX軸の回転変換を施す
+【書  式】
+    #include "sgl.h"
+
+    ANGLE angy;
+
+    void slRotY( angy )
+【引  数】
+    ANGLE angy - 回転角
+【返  数】
+    void - 何も返しません。
+【機  能】
+    カレントマトリクスに対し、Y軸回りの回転行列を掛けます。
+        cosΘ     0.0    -sinΘ     0.0
+         0.0      1.0      0.0      0.0
+        sinΘ     0.0     cosΘ     0.0
+         0.0      0.0      0.0      1.0
+【参  照】
+    slRotX, slRotXSC, slRotYSC, slRotZ
+    slRotZSC, slRotAX, slZrotR, mtptr
+    slRotYSC -- 関数
+    slRotYSC - カレントマトリクスにX軸の回転変換を施す
+【書  式】
+    #include "sgl.h"
+
+    FIXED sin;
+    FIXED cos;
+
+    void slRotYSC( sin, cos )
+【引  数】
+    FIXED sin - 回転変換の際に与えるsinの値。
+    FIXED cos - 回転変換の際に与えるcosの値。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    サインと、コサインを指定して、Y軸回りの回転をします。
+         cos      0.0     -sin      0.0
+         0.0      1.0      0.0      0.0
+         sin      0.0      cos      0.0
+         0.0      0.0      0.0      1.0      
+【参  照】
+    slRotX, slRotXSC, slRotY, slRotZ
+    slRotZSC, slRotAX, slZrotR, mtptr
+    slRotZ -- 関数
+    slRotZ - カレントマトリクスにZ軸の回転変換を施す
+【書  式】
+    #include "sgl.h"
+
+    ANGLE angz;
+
+    void slRotZ( angz )
+【引  数】
+    ANGLE angz - 回転角
+【返  数】
+    void - 何も返しません。
+【機  能】
+    カレントマトリクスに対し、Z軸回りの回転行列を掛けます。
+        cosΘ    sinΘ     0.0      0.0
+       -sinΘ    cosΘ     0.0      0.0
+         0.0      0.0      1.0      0.0
+         0.0      0.0      0.0      1.0
+【参  照】
+    slRotX, slRotXSC, slRotY, slRotYSC
+    slRotZSC, slRotAX, slZrotR, mtptr
+    slRotZSC -- 関数
+    slRotZSC - カレントマトリクスにZ軸の回転変換を施す
+【書  式】
+    #include "sgl.h"
+
+    FIXED sin;
+    FIXED cos;
+
+    void slRotZSC( FIXED sin , FIXED cos )
+【引  数】
+    FIXED sin - 回転変換の際に与えるsinの値。
+    FIXED cos - 回転変換の際に与えるcosの値。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    サインと、コサインを指定して、Z軸回りの回転をします。
+         cos      sin      0.0      0.0
+        -sin      cos      0.0      0.0
+         0.0      0.0      1.0      0.0
+         0.0      0.0      0.0      1.0
+【参  照】
+    slRotX, slRotXSC, slRotY, slRotYSC
+    slRotZ, slRotAX, slZrotR, mtptr
+    slRotAX -- 関数
+    slRotAX - カレントマトリクスに任意の軸回りの回転変換を施す
+【書  式】
+    #include "sgl.h"
+
+    FIXED vecx, vecy, vecz;
+    ANGLE ang;
+
+    void slRotAX( vecx, vecy, vecz, ang )
+【引  数】
+    FIXED vecx - 回転軸を表すベクトルのX成分
+    FIXED vecy - 回転軸を表すベクトルのY成分
+    FIXED vecz - 回転軸を表すベクトルのZ成分
+    ANGLE ang  - 回転角
+【返  数】
+    void - 何も返しません。
+【機  能】
+    原点を通る任意軸回りの回転をする。軸は単位ベクトルで指定します。
+        NxNx(1-C)+C     NxNy(1-C)+NzS  NxNz(1-C)-NyS  0.0
+        NyNx(1-C)-NzS   NyNy(1-C)+C    NyNz(1-C)+NxS  0.0
+        NzNx(1-C)+NyS   NzNy(1-C)-NxS  NzNz(1-C)+C    0.0
+        0.0             0.0            0.0            1.0
+    Nx、Ny、Nzは 軸を表す単位ベクトルの成分。
+    C はコサイン 、S はサイン を表す。
+【参  照】
+    slRotX, slRotXSC, slRotY, slRotYSC
+    slRotZ, slRotZSC, slZrotR, mtptr
+    slTranslate -- 関数
+    slTranslate - カレントマトリクスに平行移動変換を施す
+【書  式】
+    #include "sgl.h"
+
+    FIXED x_dif, y_dif, z_di;f
+
+    void slTranslate( x_dif, y_dif, z_dif )
+【引  数】
+    FIXED x_dif - 平行移動のX成分
+    FIXED y_dif - 平行移動のY成分
+    FIXED z_dif - 平行移動のZ成分
+【返  数】
+    void - 何も返しません。
+【機  能】
+    カレントマトリクスに対し、平行移動を行います。
+         0.0      0.0      0.0      0.0
+         0.0      0.0      0.0      0.0
+         0.0      0.0      0.0      0.0
+         tx       ty       tz       1.0
+【参  照】
+    slGetTranslate, slRegistTranslate, mtptr
+
+
+slRegistTranslate -- 関数
+    slRegistTranslate - マトリクスバッファからマトリクスを取り出し、平行移動
+                        変換をした後、カレントマトリクスにコピー
+【書  式】
+    #include "sgl.h"
+
+    FIXED x_dif, y_dif, z_di;f
+
+    void slRegistTranslate( x_dif, y_dif, z_dif )
+【引  数】
+    FIXED x_dif - 平行移動のX成分
+    FIXED y_dif - 平行移動のY成分
+    FIXED z_dif - 平行移動のZ成分
+【返  数】
+    void - 何も返しません。
+【機  能】
+    マトリクスバッファに対して、平行移動したものを、カレントマトリクスに
+    コピーします。ただし、マトリクスバッファは変更されません。
+【参  照】
+    slInitMatrix, slPushMatrix, slPushUnitMatrix, slIncMatrixPtr
+    slPopMatrix, slDecMatrixPtr, slUnitMatrix, slUnitAngle
+    slUnitTranslate, slLoadMatrix, slCopyMatrix, slRegistMatrix
+    slGetMatrix, slGetTranslate, slLoadTranslate, slInversMatrix
+    slScrMatConv, slScrMatSet, mtptr
+
+
+slScale -- 関数
+    slScale - カレントマトリクスにスケール変換を施す
+【書  式】
+    #include "sgl.h"
+
+    FIXED scl_x, scl_y, scl_z;
+
+    void slScale( FIXED scl_x, FIXED scl_y, FIXED scl_z )
+【引  数】
+    FIXED scl_x - X方向のスケール値。
+    FIXED scl_y - Y方向のスケール値。
+    FIXED scl_z - Z方向のスケール値。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    カレントマトリクスに対してスケーリングします。
+        scl_x    0.0      0.0      0.0
+         0.0    scl_y     0.0      0.0
+         0.0     0.0     scl_z     0.0
+         0.0     0.0      0.0      1.0
+【参  照】
+    mtptr
+
+
+slMultiMatrix -- 関数
+    slMultiMatrix - カレントマトリクスにマトリクスを掛ける
+【書  式】
+    #include "sgl.h"
+
+    MATRIX mtrx
+
+    void slMultiMatrix( mtrx )
+【引  数】
+    MATRIX mtrx - カレントマトリクスに掛けたいマトリクス。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    カレントマトリクスに指定されたマトリクスを掛けます。
+【参  照】
+    slInitMatrix, slPushMatrix, slPushUnitMatrix, slIncMatrixPtr
+    slPopMatrix, slDecMatrixPtr, slUnitMatrix, slUnitAngle
+    slUnitTranslate, slLoadMatrix, slCopyMatrix, slRegistMatrix
+    slGetMatrix, slGetTranslate, slLoadTranslate, slInversMatrix
+    slRegistTranslate, slScrMatConv, slScrMatSet, mtptr
+    ★視点操作
+slLookAt -- 関数
+   slLookAt - カレントマトリクスに対する視点変換
+【書  式】
+    #include "sgl.h"
+
+    FIXED camera[XYZ];
+    FIXED target[XYZ];
+    ANGLE angz;
+
+    void slLookAt( camera, target, angz )
+【引  数】
+    FIXED camera[XYZ] - カメラ(視点の位置)
+    FIXED target[XYZ] - 視線方向を表すベクトル。
+    ANGLE angz        - 視線方向に対する回転成分。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    カメラ位置から目標方向を見るマトリクスをカレントマトリクスに掛けます。
+    その際、Z軸回りに回転もします。
+【注  意】
+    Y軸に沿うような方向では、XZ平面上でのベクトルが小さくなり、正しく計算
+    できない場合があります。
+【参  照】
+    mtptr
+
+
+★ベクトル演算
+slCheckOnScreen -- 関数
+    slCheckOnScreen - 指定した球が画面上に表示されるかを判定
+【書  式】
+    #include "sgl.h"
+
+    FIXED obj[XYZ];
+    FIXED size;
+
+    FIXED slCheckOnScreen( obj, size )
+【引  数】
+    FIXED obj[XYZ] - オブジェクトの位置。 
+    FIXED size     - オブジェクトの半径。
+【返  数】
+    FIXED オブジェクトのZポジション。画面外の時は負数を返します。
+【機  能】
+    指定されたオブジェクトのポジションをカレントマトリクスを通して変換し、
+    その位置で指定されたサイズの物体が画面に表示されるかをテストし、結果を
+    返します。
+    スクリーンよりも手前の場合には -1(FFFFFFFF)、上下左右に出ている場合には
+    -2(FFFFFFFE)、画面内の場合にはZポジションを返します。
+【用  例】
+    if ( slCheckOnScreen( obj, obj_size ) < toFIXED( 0.0 ) ) {
+      /* スクリーン内には表示されないので描画しない。 */
+    } else {
+      slPutPolygonX( ... );
+    }
+【参  照】
+    slCheckOnScreen0, slConvert3Dto2DFX, slConvert3Dto2D, mtptr
+    slCheckOnScreen0 -- 関数
+    slCheckOnScreen0 - 原点にある球がそのサイズで表示されるか判定
+【書  式】
+    #include "sgl.h"
+
+    FIXED size[XYZ];
+
+    FIXED slCheckOnScreen0( size )
+【引  数】
+    FIXED size     - オブジェクトの半径。
+【返  数】
+    FIXED オブジェクトのZポジション。画面外の時は負数を返します。
+【機  能】
+    ポジション(0,0,0)にあるオブジェクトが指定されたサイズで画面に表示されるか
+    をテストし、結果を返します。
+    スクリーンよりも手前の場合には -1(FFFFFFFF)、上下左右に出ている場合には
+    -2(FFFFFFFE)、画面内の場合にはZポジションを返します。
+【参  照】
+    slCheckOnScreen, slConvert3Dto2DFX, slConvert3Dto2D, mtptr
+    slCalcPoint -- 関数
+    slCalcPoint - 指定した点をカレントマトリクスで座標変換する
+【書  式】
+    #include "sgl.h"
+
+    FIXED pos_x, pos_y, pos_z;
+    FIXED ans[XYZ];
+
+    void slCalcPoint( pos_x, pos_y, pos_z, ans )
+【引  数】
+    FIXED pos_x, pos_y, pos_z - カレントマトリクスで変換したい点。
+    FIXED ans[XYZ]            - 演算結果を入れるためのFIXED型配列。
+【返  数】
+    void - 何も返しません。(但し演算の結果は、引数で与えるansに入ります。)
+【機  能】
+    指定されたポイントをカレントマトリクスで座標変換した結果をバッファに
+    返します。
+    →
+    a  = ( pos_x, pos_y, pos_z )
+    →
+    b  = ans
+    カレントマトリクスが、Mの時、
+    →      →
+    b  = M・a
+    の計算を行ないます。
+【用  例】
+    slPushMatrix();
+    {
+       slScale( ... );
+             :
+       slPutPolygonX( ... );
+       slCalcPoint( ... );
+    }
+    slPopMatrix();
+【参  照】
+    mtptr
+
+
+slConvert3Dto2DFX -- 関数
+slConvert3Dto2D -- 関数
+    slConvert3Dto2D, slConvert3Dto2DFX - 3D座標から画面座標への変換
+【書  式】
+    #include "sgl.h"
+
+    FIXED  pos[XYZ];
+    FIXED  ans_fx[XY];
+    Sint32 ans_si[XY];
+
+    FIXED  slConvert3Dto2DFX( pos, ans_fx );
+    FIXED  slConvert3Dto2D( pos, ans_si );
+【引  数】
+    FIXED pos[XYZ]    - 画面座標に変換したい座標(但し、カレントマトリクスで
+                                                 与える座標空間での座標値
+                                                 つまり相対座標になります。)
+    FIXED ans_si[XY]  - 演算の結果を入れるFIXED型配列。
+    FIXED ans_fx[XY]  - 演算の結果を入れるFIXED型配列。
+【返  数】
+    FIXED  与えた座標のZポジション。(演算結果は引数に与えるansに返ります。)
+【機  能】
+    カレントマトリクスを使用して、3D相対座標posから実際画面上に表示する際の
+    画面座標値ans_fx/ans_siを返します。関数値として、Z値を返します。
+【用  例】
+    あるモデルの中心位置の画面座標を求める。
+    FIXED pos[ XYZ ] = { toFIXED( 1.0 ), toFIXED( 2.0 ), toFIXED( 3.0 ) };
+    FIXED ans[ XY ];
+              :
+    slPushMatrix();
+    {
+      slTranslate( toFIXED( 3.5 ), toFIXED( 6.2 ), toFIXED( 2.1 ) );
+      slRotX( DEGtoANG( 20.0 ) );
+      slRotY( ang_para_y );
+      slRotZ( ang_para_z );
+      slPutPolygon( ... );
+      slConvert3Dto2D( pos, ans );
+    }
+    slPopMatrix();
+【参  照】
+    slCheckOnScreen, slCheckOnScreen0, mtptr

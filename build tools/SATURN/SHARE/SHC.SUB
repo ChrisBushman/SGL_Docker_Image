@@ -1,0 +1,9 @@
+-optimize=1
+-string=const
+-show=expansion
+-div=cpu
+-cpu=sh2
+-include=..\sh\include,..\segalib\include
+-def=_SH
+-macsave=0
+

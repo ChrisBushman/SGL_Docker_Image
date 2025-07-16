@@ -1,0 +1,953 @@
+
+
+◎ イベントの登録と実行について
+
+  slInitEvent() を実行した時には実行リストはクリアされますので、実行したい
+  イベントをリストに登録しなければなりません。
+  イベントの登録には slSetEvent() あるいは slSetEventNext() を使用します。
+
+    void *eventtbl[] = {
+        init_camera ,
+        init_player1 ,
+        init_player2 ,
+        init_enemyctrl
+    } ;
+
+    void InitGame(){
+        void  **evrdptr ;
+        EVENT  *evptr ;
+        int        cnt ;
+
+        slInitEvent() ;                /* イベント管理用変数の初期化 */
+        evrptr = eventtbl ;
+        for(cnt = sizeof(eventtbl) / sizeof(void *) ; cnt-- > 0 ;){
+            evptr = slSetEvent(*evrptr++) ;
+        }
+        slSetSprTVMode(TV_320x224) ;
+    }
+
+    void Game(){
+        slExecuteEvent() ;        /* イベントの実行 */
+        slSynch() ;                /* ポリゴンデータの出力とビデオ表示同期 */
+    }
+
+  イベントは slExecuteEvent() 関数を呼び出すごとに実行されます。
+  各イベントは基本的に、登録された順に実行されます。
+  はじめに登録されたイベントは システムの EventTop 変数に定義され、これを
+  起点として、イベントのポインタを順次 EventNow 変数に定義しながら、各イベ
+  ントの処理関数を呼び出します。処理関数は以下の形式で定義しておきます。
+
+  void function(EVENT *evptr){
+        ...                /* イベント処理 */
+  }
+
+  アセンブリ言語で書く場合には
+
+  _function:
+        ...                ; イベント処理
+                        ; イベントのポインタは r４レジスタにセットされている
+        rts
+        nop
+
+  ひとつのイベントが終わると、そのイベントの構造体にある next ポインタを
+  EventNow 変数に入れ、同様に処理関数に実行を移します。これらは next ポインタ
+  がNULLとなるまで繰り返されます。
+
+  EventTop: ----+
+                 |
+                 |   +------------------+
+                 +-->| *work = NULL     |
+                     | *before = NULL   |
+                +--  | *next            |
+                |    | *exad()          |
+                |    |  user[]          |
+                |    +------------------+
+                |
+                |    +------------------+       +------------------+
+                +--> | *work            |  ---> | *next            | -+
+                     | *before          |       |                  |  |
+                +--  | *next            |       |                  |  |
+                |    | *exad()          |       +------------------+  |
+                |    |  user[]          |   +-------------------------+
+                |    +------------------+   |
+                |                           |   +------------------+
+                |    +------------------+   +-> | *next = NULL     | 
+  EventLast: ---+--> | *work            |       |                  |
+                     | *before          |       |                  |
+                     | *next = NULL     |       +------------------+
+                     | *exad()          |
+                     |  user[]          |
+                     +------------------+
+
+  EventLast 変数には最後に実行されるイベントのポインタが定義されており、イベ
+  ントを追加する際に使用されます。
+  ユーザーがRAMを使用するには、ユーザー用に構造体を定義し、イベントRAM
+  の user[] を その構造体に cast します。
+
+  例)
+    typedef struct rob{
+        FIXED  posX , posY , posZ ;
+        ANGLE  angX , angY , angZ ;
+        PDATA *pat ;
+    } ROBOT ;                /* この構造体は112バイトを越えない様にすること */
+
+    void rob_control(EVENT *evptr){
+        ROBOT *rbptr ;
+
+        rbptr = (ROBOT *)evptr->user ;
+        rbptr->posX = to_fixed(0) ;
+        rbptr->posY = to_fixed(0) ;
+        rbptr->posZ = to_fixed(0) ;
+        rbptr->pat = &PD_Robot ;
+    }
+
+  ワークはポインタのリストによりつなげて持つことができます。
+  ひとつのイベントで複数のキャラクタを動かす場合にはワークを使用して、RAM
+  を確保します。
+
+    typedef struct road{
+        struct road *next ;
+        FIXED  posX , posY , posZ ;
+        PDATA *pat ;
+    } ROAD ;
+
+    typedef struct rdat{
+        Sint16 px , py , pz ;
+        Uint16 pn ;
+    } ROAD_DAT ;
+
+    ROAD_DAT roadtbl[] = {
+        {   0 ,   0 ,   0 , PN_ROAD} ,
+        {   0 ,   0 , 100 , PN_ROAD} ,
+        {   0 ,   0 , 200 , PN_ROAD}
+    } ;
+
+    void InitRoadControl(EVENT *evptr){
+        WORK  *wkptr ;
+        ROAD  *rdptr ;
+        ROAD_DAT *rdtptr ;
+        int    cnt ;
+
+        rdptr = (ROAD *)evptr ;
+        rdtptr = roadtbl ;
+        for(cnt = sizeof(roadtbl) / sizeof(ROAD_DAT) ; cnt-- > 0 ;){
+            if((wkptr = slGetWork()) == NULL){
+                break ;
+            }
+            rdptr->next = (ROAD *)wkptr ;        /* ひとつめのポインタは */
+                                                /* イベントの work に入る */
+            rdptr = (ROAD *)wkptr ;
+            rdptr->posX = rdtptr->px << 16 ;        /* ポジション */
+            rdptr->posY = rdtptr->py << 16 ;
+            rdptr->posZ = rdtptr->pz << 16 ;
+            rdptr->pat = pattbl[rdptr->pn] ;        /* パターンデータ */
+            rdtptr++ ;
+        }
+        rdptr->next = NULL ;                        /* End mark */
+        evptr->exad = (void *)RoadControl ;
+    }
+
+
+
+
+
+★クロックチェンジ時の注意について
+  ・クロックチェンジ時に保証されるRAM
+      WORKRAM-HIGH
+      VRAM
+  ・クロックチェンジ時に保証されないRAM
+      WORKRAM-LOW
+      VDPの各レジスタ
+      SOUND RAM
+  そのため、クロックチェンジ後は保証されないメモリを再初期化する必要が
+  あります。
+  特に、クロックチェンジ前に、LOW-RAMやSOUND RAMにデータがあった場合、
+  そのデータの正当性は保証されませんので必ず、データをリロードするなどの
+  処理を行なうようにしてください。
+  SGL 3.10より、slInitSystemでクロックチェンジが発生した場合、MC68000を
+  起動させ続けるために、ダミーの空ループを登録しますので、クロックチェンジ後
+  サウンドドライバのリロードを必ず行なってください。
+  又、slInitSystemによって、各ステータスやレジスタは初期状態になりますので、
+  ユーザプログラムでそれぞれのパラメータに関して再初期化をしてください。
+
+★BSS領域と、システム変数領域の初期化について。
+  C言語でプログラムを組む場合必ずBSSという領域が確保されます。未初期化の
+  変数をプログラム上で使用する場合、このBSSと呼ばれるメモリ空間の一部を
+  その変数用に割り当てます。
+  普通プログラムで、未初期化の変数を定義する場合、あとで何らかの値を
+  代入するというのが前提の条件になるのですが、極稀に、そのまま使用する
+  場合があります。(通常こういった操作はプログラムミスですが)その場合、
+  大体において0を仮定して操作を行なうことが多くなります。もし、この領域に
+  不定な値が書かれていた場合、未初期化変数をそのまま使用した場合の動作
+  が不定になりバグの温床となります。そのため、SGLのサンプルプログラムでは
+  saturn/sample/common/cinit.c
+  というプログラムリンクしその中でBSS領域の0クリアを行なっています。
+  SGLのサンプルが、ss_mainで始まるのはこの為でmain関数では、こういった
+  初期化を行なっています。
+  又、SGL内部で使われる「システム変数領域」も同じで、この場合BOOT ROM
+  によっては、この領域と重なる所にスタックが設定されている場合もあり
+  中身が不定になります。SGLの関数slInitSystemで全て初期化されると
+  お思いの方もおられるとは思いますが、実際にはこの関数で全ての領域を
+  初期化するという訳ではなく、場合によっては、SGLの関数が不定な値を
+  参照する可能性もあります。
+  この「システム変数領域」の0クリアも上の"cinit.c"で行なっているため、
+  以上の2つの問題においてはこのファイルをリンクする事で解消されます。
+  もし、自分のプログラムにおいて、このファイルをリンクしない場合、
+  これらの初期化を必ず行なうようにしてください。
+  尚、このcinit.cは、最近までバグを持っており、「システム変数領域」
+  を初期化できていませんでしたので、お使いのcinit.cが
+        /* 3.SGL System Variable Clear */
+        for( dst = (Uint8 *)SystemWork, i = 0;i < SystemSize; i++) {
+                *dst = 0;
+        }
+  となっている場合、以下のように変更して御使用ください。
+        /* 3.SGL System Variable Clear */
+        for( dst = (Uint8 *)SystemWork, i = 0;i < SystemSize; i++) {
+                *dst++ = 0;
+                /*  ^^   */
+        }
+
+
+◎ ブランキング割り込みの処理について
+
+   ブランキング開始割り込みではスクロールのデータ転送、slTransferEntry
+   によって作成されたDMA転送テーブルの実行、slIntFunction[a]により
+   登録されたユーザー関数の実行が行われます。この内、スクロールの
+   データ転送は PauseFlag 変数により、禁止することができます。
+
+   PauseFlag は Uint8型のフラグ変数で、0以外では上記の転送を
+   禁止するように働きます。
+
+   ブランキング終了割り込みでは、スプライトのフレームバッファの
+   イレースライト、フレームチェンジ等のモード切り替え、スプライトデータの
+   DMA転送、ペリフェラルデータの取り込み、割り込み待ちカウンタの減算を
+   行います。このうち、スプライトに関する部分は上記の PauseFlagにより、
+   禁止することができます。
+
+◎ SGLで使用のFRTについて
+   SGLでは、SMPCへのコマンド発行のために、FRT(フリーランニングタイマ)を
+   使用しています。この時のFRTの分周比は128となっており、これをユーザ側
+   で変更するとことは禁止します。
+   V-Blank In以降300μsのSMPCへのアクセス禁止時間帯にSMPCリクエストをしない
+   ように、その時間分のウエイトをFRTをみてかけているためです。
+
+◎ libsys.a、libint.aの使用に関して
+   libsys.aとlibint.aの御使用に関して注意して頂きたい点があります。
+   割り込みの登録時に使用する、
+     SYS_SETUINT、SYS_GETUINT、SYS_SETSINT、SYS_GETUINT
+   は、これまで特定アドレスの中身を参照してアドレスジャンプする
+   マクロ(BootROMコール)でしたが、このパッケージに入っているものは、
+   macレジスタを退避、復帰させるフックルーチンへの関数コールとなっています。
+   これは、Boot ROMコールがmacレジスタ(mach、macl)を保存しないため、より
+   安全な方法を採用したためです。
+   そのためこれまでは、これらのマクロは、sega_sys.aなしでコンパイル
+   できましたが、このバージョン以降の、sega_int.a(libint.a)、
+   sega_sys.a(libsys.a)を御使用になる場合、libsys.aとlibint.aのリンクが
+   必要になります。
+   また、古いバージョンのsega_sys.aとsega_int.aをお使いの場合、
+   SYS_SETUINT、SYS_SETSINTで登録した割り込みルーチンでmacレジスタを
+   使っていた場合、メインルーチンが破壊されたmacレジスタを使用する可能性
+   があるため、極力新しい、sega_int.a(libint.a)、sega_sys.a(libsys.a)を
+   お使い頂くようよろしくお願い致します。
+   御使用を強くお勧めするsega_sys.a、sega_int.aのバージョンは、
+   sysライブラリ Ver 2.50 以降(libsys.a)
+   intライブラリ Ver 2.00 以降(libint.a)
+   です。  
+
+   X-Band、NetLink、フラッシュシステムなどをお使いの場合、
+   SYS_?et?intMacSave関数がないといった、リンクエラーが発生する可能性が
+   あります。この場合リンク時-lsglの後に
+   -lint -lsys
+   をリンクするようお願いします。例えばobjectsというファイルで、
+   LIBS = -lcd -lsgl -lint -lsys -lcd
+   といったようにします。
+   sega_sys.a(libsys.a)、sega_int(libint.a)の詳細については、同梱の
+   ドキュメント、
+   mansys.txt及びmanint.txtを御覧ください。(こちらも合わせて御覧になる事を
+   強く推奨します。)
+
+
+◎ 演算ライブラリ及び、システムライブラリについて
+
+ライブラリで使用する数値は以下の使用に基づいています。
+
+ポジション、三角関数等の固定小数点データ :
+    上位16ビットが整数部、下位16ビットが小数部のトータル32ビット(符号付き)
+    型名称  FIXED
+
+例)
+    16.5 を 表す場合        :   0x0010_8000
+                                ---- ----
+                                  |    |__ 小数部
+                                  |__ 整数部
+    座標は 左右方向がX軸(プラスは右)、上下方向がY軸(プラスは下)、奥行方向が
+    Z軸(プラスは奥)になります。
+
+
+角度 :
+    360度を16ビットで表す
+    型名称  ANGLE
+
+例)
+    90.0゜ :  0x4000
+    45.0゜ :  0x2000
+    22.5゜ :  0x1000
+    11.25゜:  0x0800
+
+    回転行列を作成した場合、角度のプラス方向は軸に対して右回転になります。
+
+行列 :
+    数値は FIXED を使用。3x4の行列で、メモリ上の配置は以下の通り。
+    M00, M01, M02,
+    M10, M11, M12,
+    M20, M21, M22,
+    M30, M31, M32
+
+
+◎ペリフェラルライブラリの概要
+   ☆ 排他制御を行なっているので、マルチプロセス環境での使用が可能。
+   ☆ アプリケーションからあらゆるタイミングで呼び出す事ができる。
+      SMPCコマンドをリクエストしたフレームで既にインタラプトバックが
+      発行されていた場合、コマンドキャッシュにキューイングされ、
+      次のVブランクで適切にSMPCへのコマンド発行が行なわれる。
+   ☆ インタラプトバック発行・データ収集は全自動。
+      ユーザーがデータ収集の設定を変更すると、次のフレームからは
+      自動的にインタラプトバックを発行してデータ収集が行なわれる。
+      SMPCがデータ収集中でも以前のデータを参照でき、
+      フレームが変わるVブランク中に最新の情報に切り替わる。
+   ☆ ペリフェラル未接続ポートのスキップ機能。
+      マルチタップを一切意識する必要が無い。
+
+  ◆これで全てがわかる!ペリフェラル制御サンプルプログラム
+
+  void main()
+  {
+    slInitSystem( TV_320x224, NULL, 1 );
+    {
+      slSetLanguage( SMPC_JAPAN );
+      slSetSoundOutput( SMPC_SOUND_STEREO );
+      ( void )slSetSmpcMemory();
+    }
+
+    {
+      SmpcDateTime *dt = &( Smpc_Status->rtc );
+
+      dt->year = 0x1999;
+      dt->month = SMPC_FRI | SMPC_DEC;
+      dt->date = 0x31;
+      dt->hour = 0x23;
+      dt->minute = 0x59;
+      dt->second = 0x59;
+      ( void )slSetDateTime();
+    }
+
+    ( void )slResetDisable();
+
+    while( TRUE ) {
+      if( slCheckReset() == SMPC_RES_ON) {
+      ( void )slClearReset();
+      break;
+    }
+
+    if(Per_Connect1) {
+      PerDigital *pad;
+
+      pad = Smpc_Peripheral + 0;
+      if( !( pad->data & PER_DGT_ST ) ) break;
+    }
+    slSynch();
+  }
+
+  ( void )slResetEnable();
+  ( void )slIntBackCancel();
+
+  while( TRUE ) slSynch();
+}
+
+;---------------------------------------------------------------------------;
+
+
+  ◆ ライブラリ使用時の禁じ手および、
+   ファンクションコール手順による実行失敗の例
+
+   ☆ スレーブSH2からの呼び出しは禁止。
+      内部ワークエリアをキャッシュスルー領域に取っていないので、動作が不定と
+      なります。
+      特に排他制御が正常に行なわれない為、SMPCがデッドロックするなどの
+      不具合が生じます。
+
+   ☆ "slGetPeripheral" および "slGetStatus" 実行後、
+      以下の関数が呼び出された時にイントバックコマンドを実行中だった場合、
+      実行に失敗します。
+      これはウエイトモードでのSMPCコマンドリクエストがコマンドキャッシュを
+      使用しない事を前提としているために起こります。
+
+      slNMIRequestWait
+      slResetDisableWait
+      slResetEnableWait
+      slSetDateTimeWait
+      slSetSmpcMemoryWait
+      上記の実行失敗を回避するには、"slIntBackCancel" を呼び出し、
+      次のフレームでコマンド発行すればよい。
+
+      以下の関数はイントバックコマンド実行中でなくても実行に失敗します。
+      これはSMPCが初期設定状態以外でのイントバックコマンドの発行を
+      禁止しているためです。
+      slSetPortDir1,2
+      slSetPortExt1,2
+      slSetPortSelect1,2
+      上記の実行失敗を回避するには、"slIntBackCancel" を呼び出せばよい。
+
+  ◆ "slIntBackCancel" 実行後、以下の条件を設定した場合、
+     "slGetPeripheral" の呼出しで失敗となる。
+
+     "slSetPortSelect1,2" でSMPCコントロールモードにしたポートについて
+     "slSetPortDir1,2" で出力設定にした。
+     "slSetPortExt1,2" で外部ラッチ入力を許可した。
+
+     上記いずれかの場合および、両方設定した場合。
+
+     これはSMPCが初期設定状態以外でのイントバックコマンドの発行を
+     禁止しているためです。
+
+     "slSetPortSelect1,2" でポート1・2を共にSH2ダイレクトモードにした。
+
+     これはSMPCがポート入出力設定に関わらず、ポートセレクトが共にSH2
+     ダイレクトモードの時は、ペリフェラルデータのみを返すイントバックコマンドの
+     発行を禁止しているためです。
+
+  ◆ "slIntBackCancel" 実行後、以下の条件を設定した場合、
+     "slGetStatus" の呼出しで失敗となる。
+
+     "slSetPortSelect1,2" でSMPCコントロールモードにしたポートについて
+     "slSetPortDir1,2" で出力設定にした。
+     "slSetPortExt1,2" で外部ラッチ入力を許可した。
+     上記いずれかの場合および、両方設定した場合。
+
+     これはSMPCが初期設定状態以外でのイントバックコマンドの発行を禁止している
+     ためです。
+
+
+  ◆ 限界性能
+
+   ☆ 最大キャッシングコマンド数   ... 31個
+   ☆ 最大ペリフェラルデータサイズ ... 15バイト * 30ポート
+      95年4月1日現在で発売されているペリフェラルデバイスおよび、
+      今後発売されるペリフェラルデバイスからの15バイトモードでの
+      データ取得に対応。
+      システム変数 "Smpc_Status" および "Smpc_Peripheral" への
+      ユーザー定義バッファアドレスの登録により、
+      255バイトモードによるデータ取得が可能。
+      ただし、デバイス固有のデータ変換処理を行なうには
+      ライブラリサポートが必要です。
+
+
+◎ サウンド関数のコマンド発行と成功不成功について。
+   サウンドドライバには、8つのコマンドバッファを持っています。
+   SGLのサウンド関数ではコマンドの発行を要求がある度に、ドライバのバッファ
+   に送るのではなく、まず最初にライブラリ内部のバッファに転送します。
+   それを、slSndFlush関数が呼ばれたか、slSynch関数が呼ばれると、
+   CPU-DMAを用いて、コマンドバッファに転送しています。
+   又、サウンドドライバとの通信にはタイミングフラグハンドシェイクを用いて
+   おり、バッファのデータをDMA転送する前に、サウンドドライバのタイミング
+   フラグが0になるまで待ってからデータ転送を行なっています。
+   一般にサウンド関数が成功しない場合、発音管理番号やPCMチャネルが足りない
+   場合に起こります。
+
+◎ マップチェンジとマップチェンジ時のウエイト時間
+   マップチェンジする場合、コマンドの発行手順や処理順序によって発行終了
+   するまでの時間が大きく変わってきます。
+   コマンドの発行処理時間を減らすためにも以下の手順を守ってください。
+   １）サウンドの停止
+       サウンドの停止には、slSoundAllOffを使います。
+       この時、SGLのサウンドコマンドバッファに蓄えられていたコマンドは、全て
+       クリアされますので注意が必要です。
+   ２）サウンドデータの転送
+       転送するサウンドデータは以下のようなものが考えられます。
+       トーンデータ
+       シーケンスデータ
+       エフェクトデータ
+       結合ファイル
+   ３）マップチェンジ
+       マップチェンジをするために、
+         slWaitSound( slSndMapChange( num ) );
+       という関数コールを行ないます。
+       マップチェンジは、サウンドドライバにとっては負荷が重い処理ですので、
+       ここではそれなりの時間がかかることもあります。
+   ４）マップデータの転送終了ビットに1を立てる
+       サウンドドライバにデータの転送が終了したことを示すため、
+       0x25a00500で始まるサウンドエリアカレントワークの各マップ情報の
+       データ転送終了フラグを立てます。(マップ情報の4バイトめのMSB)
+       ※この処理は、サウンドのイニシャライズ時のマップの初期化の際にも
+         しなければなりませんが、slInitSound関数内部で行なっているため、
+         マップチェンジをしない場合に限りユーザ側で意識する必要はありません。
+   ５）必要であればDSPの設定を行ないます。
+       DSPの設定は、slSndEffectを使います。
+   ６）ミキサの設定。
+       ミキサは、DSPを使う使わないに関わらず必ず設定します。
+       SGL上でのミキサチェンジは、slSndMixParmChange関数を使って
+       行なってください。
+
+   注意：SGL 3.04以前のサウンド関数には、マップチェンジに関する関数の
+         多くにバグがあることが分かっています。SGLのサウンド関数を使う場合、
+         極力、SGL 3.10以降のものをお使いください。
+
+◎ エフェクトチェンジ時、マップチェンジ時のプチノイズ
+   SGL、SBLに関わらずエフェクトチェンジする際にプチノイズが発生する事が
+   あります。
+   これは、前の音のリリース処理(エコーやリバーブのように、音の発音が終了した
+   後に残響的な処理が入るもの)がサウンドドライバ内に残っていたり、急激に
+   音の処理を変更するためで、極力それらの症状を抑える為に幾つか方法が
+   あります。
+   １）ボリュームを落す方法。
+       エフェクトチェンジしている間(もっといってしまえば、ノイズがのっ
+       ている間)トータルボリュームを0にしてしまえばノイズは聞こえません。
+       しかしながら、この場合全ての音が止まってしまうことを頭に入れて
+       おかなければなりません。また、再度ボリュームを上げた際に、
+       急激にボリュームを上げてしまうとやはりノイズののる原因になりますので、
+       上げる際には、段階をおって、(フェードインするなどの処理を入れて)音量
+       を上げる必要があります。
+   ２）ミキサを変更する方法。
+       DSPに関する処理を、サウンド処理が安定するまで止めてしまう方法で、
+       ミキサで、DSPの処理を出力しないように設定します。
+       そのためには予め、DSPを出力しないミキサを作っておく必要があります。
+       ミキサはトーンデータの中にありますので、サウンドの製作側と相談の上
+       作成してください。
+       この方法についてはslSndEffectの注意書きも合わせて御覧ください。
+   ★ノイズがのらなくなるまでの時間
+     ノイズがのらなくなるまでの時間は、前に発音されていたリリースの時間
+     などにもよりますが、大体1秒程度を見込んでおいた方が良いでしょう。
+     但し、それでもノイズがのるようならもう少し多めに時間をとっておいた
+     方がいいかも知れません。
+
+◎シーケンス再生関数の、発音管理番号の管理について
+  SGLのシーケンス再生関数では、自動的に発音管理番号を割り当て、シーケンスの
+  再生を行ないますがそのプロセスは以下の通りです。
+    slSndSeqNum関数で空いている発音管理番号を探す。
+    空いていればその発音管理番号を使ってシーケンス再生を開始し、
+    空いていなければFALSEを返す。
+    slSndSeqNum関数内の処理
+      slSndSeqNum関数内では、発音管理番号7番から1番までの発音状態を
+      検索する。(0番は、slBGM～関数群で予約。)
+      検索の方法は、内部バッファに使用状態が管理されているため、それを使用
+      する。
+
+
+◎ ポリゴンのデータについて
+
+  slPutPolygon() で使用するポリゴンデータは以下のフォーマットになっています。
+
+    .data.l        point_tbl     ; 頂点座標のテーブル
+    .data.l        NbPoint       ; 計算させる頂点の数
+    .data.l        polygon_tbl   ; 各ポリゴンの法線ベクトルと頂点番号のテーブル
+    .data.l        NbPolygon     ; 計算させるポリゴンの数
+    .data.l        attribute_tbl ; 各ポリゴンのアトリビュートのテーブル
+
+ point_tbl:
+    .data.l        X,Y,Z                ; 頂点番号0の座標データ
+    .data.l        X,Y,Z                ; 頂点番号1の座標データ
+        ...
+    .data.l        X,Y,Z                ; 頂点番号 NbPoint - 1 の座標データ
+
+    C言語でテーブルを作成する場合、POINT型が宣言されており、POStoFIXED
+    マクロを使用することで、上記のデータテーブルを作成することができます。
+  例)
+        static POINT point_CUBE[] = {
+            POStoFIXED(-80,-80,-80),
+            POStoFIXED( 80,-80,-80),
+            POStoFIXED( 80, 80,-80),
+            POStoFIXED(-80, 80,-80),
+
+            POStoFIXED( 80,-80, 80),
+            POStoFIXED(-80,-80, 80),
+            POStoFIXED(-80, 80, 80),
+            POStoFIXED( 80, 80, 80)
+        } ;
+
+ polygon_tbl:
+    .data.l        Nx,Ny,Nz     ; ポリゴン番号0の法線ベクトル
+    .data.w        P0,P1,P2,P3  ; ポリゴン番号0で使用する頂点の番号
+        (三角形のポリゴンの場合、P2 と P3 が同じ番号になる)
+        ...
+    .data.l        Nx,Ny,Nz     ; ポリゴン番号 NbPolygon - 1 の法線ベクトル
+    .data.w        P0,P1,P2,P3  ; ポリゴン番号 NbPolygon - 1 で使用する頂点の
+                                ; 番号
+
+    C言語でテーブルを作成する場合、POLYGON型が宣言されており、POStoFIXED
+    マクロを使用することで、上記のデータテーブルを作成することができます。
+  例)
+        static POLYGON polygon_CUBE[] = {
+            {POStoFIXED( 0 , 0 ,-1) , { 0 , 1 , 2 , 3}} ,
+                |__ |__
+            {POStoFIXED( 1 , 0 , 0) , { 1 , 4 , 7 , 2}} ,
+            {POStoFIXED(-1 , 0 , 0) , { 5 , 0 , 3 , 6}} ,
+            {POStoFIXED( 0 ,-1 , 0) , { 4 , 1 , 0 , 5}} ,
+            {POStoFIXED( 0 , 1 , 0) , { 2 , 7 , 6 , 3}} ,
+            {POStoFIXED( 0 , 0 , 1) , { 4 , 5 , 6 , 7}} ,
+        } ;
+
+ attribute_tbl:
+    .data.b        RevCheck     ; 表裏判定により裏側になった面を表示するかどう
+                                  かのフラグ
+                        Single_PlaneとDual_Planeのいずれかを指定します。
+    .data.b        SortMode     ; ソーティングの基準にする位置の算出方法とオプ
+                                  ション機能の使用を宣言します。
+                        SORT_CEN, SORT_MIN, SORT_MAX, SORT_BFR の いずれか
+        SORT_CEN : 指定された4点のZ位置の平均をソーティングの基準に使用します
+        SORT_MIN : 4点の内、最も小さいZ位置を使用します
+        SORT_MAX : 4点の内、最も大きいZ位置を使用します
+        SORT_BFR : 直前に表示されたポリゴンのZ位置を使用します
+                  直前のポリゴンの常に手前に表示されます
+                        オプションはこれらに加えて指定します
+                        UseTexture, UseLight, UseClip オプションは複数指定す
+                        ることができます。
+        UseTexture : テクスチャ(変形スプライト)を使用する場合に指定します。
+        UseLight : 光源ベクトルと法線ベクトルとの内積によりポリゴンのカラーに
+                   オフセットを掛け明暗を表現します。
+                   UseTexture と 同時には使用できません。
+        UseClip : 大きなポリゴンを使用する場合、表示位置がオーバーフローして
+                  正しく表示できないような時に使用します。
+
+    .data.w        TextNum      ; テクスチャを使用する場合、キャラクタの登録番
+                                  号として使用します。
+    .data.w        DispMode  ; ポリゴンの表示モードを指定します。
+                               指定できる表示モードには以下のものがあります
+        MSBon : フレームバッファへの書き込みにおいて最上位ビットのみを1に
+                します。(スプライトへのシャドウは通常これを使用します)
+        HSSon : ハイスピードシュリンク有効
+        HSSoff: ハイスピードシュリンク無効(default)
+        Window_In : 指定したウィンドウの内側に表示します。
+        Window_Out : ウィンドウの外側に表示します。
+        No_Window : (default)ウィンドウに影響されずに表示します。
+        MESHon : メッシュで表示します。
+        MESHoff : (default)通常表示をします。
+        ECdis : テクスチャを使用する時、エンドコードを無効にします。
+        ECenb : (default)テクスチャを使用する時、エンドコードを有効にします。
+        SPdis : テクスチャを使用する時、スペースを無効(パレット0のカラーで
+                表示)にします。
+                ただし、フレームバッファへの書き込みデータが 0000になる
+                場合には、表示されませんので、プライオリティ等の値を調整して
+                0000にならないようにしてください。
+        SPenb : (default)テクスチャを使用するとき、スペースを有効にします。
+
+        CL16Bnk  : (default)テクスチャのカラーモードを16色のカラーバンク方式
+                  にします。
+        CL16Look : テクスチャのカラーモードを16色のルックアップテーブル方式
+                   にします。
+        CL64Bnk  : テクスチャのカラーモードを64色のカラーバンク方式にします。
+        CL128Bnk : テクスチャのカラーモードを128色のカラーバンク方式にします。
+        CL256Bnk : テクスチャのカラーモードを256色のカラーバンク方式にします。
+        CL32KRGB : テクスチャのカラーモードを32000色のRGB方式にします。
+
+        CL_Replace : (default)書き換えモードにします。
+        CL_Trans   : 半透明で表示します。
+        CL_Half    : 半輝度で表示します。
+        CL_Shadow  : シャドウ表示にします。
+        CL_Gouraud : グーローシェーディングを指定します。
+
+        表示モードは各グループのいずれかひとつずつを指定します。
+
+    .data.w        Color         ; 表示カラーを指定します。
+        光源の影響を受ける場合、また、表示モードで CL_Replace 以外を指定する場合に
+        はRGBモードでなければなりません。
+        また、テクスチャを使用する場合で、CL32KRGBモードの場合には、ここでの指
+        定は無視されます。
+
+    .data.w        GouraudTable  ; グーローシェーディングテーブルを指定します。
+        CL_Gouraud を指定した場合、グーローシェーディングテーブルのオフセット位
+        置を指示します。オフセット位置はSpriteVRAM(0x25c00000)を0とし、8バイト
+        ごとに1進む値で指定します。
+        例えば、0x25c12000にデータがある場合
+        ( 0x25c12000 - 0x25c00000 ) / 0x08 = 0x2400
+
+    .data.w        Function      ; スプライト表示ファンクションを指定します。
+        ポリゴン、テクスチャ、ポリラインのいずれとして表示するかを指定します。
+        指定には以下の6つからひとつを選びます。
+        sprNoflip  : テクスチャを表示します。
+        sprHflip   : テクスチャを横方向に反転して表示します。
+        sprVflip   : テクスチャを縦方向に反転して表示します。
+        sprHVflip  : テクスチャを縦、横双方に反転して表示します。
+        sprPolygon : ポリゴンとして表示します。
+        sprPolyLine: ポリライン(ポリゴンの輪郭のみ)を表示します。
+
+    C言語でテーブルを作成する場合、ATTR型が宣言されており、ATTRIBUTE
+    マクロを使用することで、上記のデータテーブルを作成することができます。
+  例)
+        static ATTR attr_CUBE[] = {
+            ATTRIBUTE( Single_Plane, SORT_MIN, No_Texture, CD_MediumGreen,
+                      No_Gouraud, Window_In, sprPolygon, UseLight ),
+            ATTRIBUTE( Single_Plane, SORT_MIN, No_Texture, CD_MediumBlue,
+                      No_Gouraud, Window_In, sprPolygon, UseLight ),
+            ATTRIBUTE( Single_Plane, SORT_MIN, No_Texture, CD_MediumMagenta,
+                      No_Gouraud, Window_In, sprPolygon, UseLight ),
+            ATTRIBUTE( Single_Plane, SORT_MIN, No_Texture, CD_MediumWhite,
+                      No_Gouraud, Window_In, sprPolygon, UseLight ),
+            ATTRIBUTE( Single_Plane, SORT_MIN, No_Texture, CD_MediumYellow,
+                      No_Gouraud, Window_In, sprPolygon, UseLight ),
+            ATTRIBUTE( Single_Plane, SORT_MIN, No_Texture, CD_MediumRed,
+                      No_Gouraud, Window_In, sprPolygon, UseLight )
+        };
+
+◎ スプライト表示関数用のアトリビュートについて
+
+  slPutSprite() 、slDispSprite() で使用するアトリビュートテーブルは、上記のポ
+  リゴン用のものとほぼ同じですが、先頭の2つのデータがなくなっています。
+    C言語でこのテーブルを作成する場合、SPR_ATTR型が宣言されており、
+  SPR_ATTRIBUTEマクロを使用することができます。
+  例)
+        SPR_ATTR attr_AM2Logo = {
+            SPR_ATTRIBUTE(PN_AM2_Logo,CL_AM2_Logo,No_Gouraud,Window_In|ECdis,
+                sprNoflip|_ZmCB)
+        } ;
+
+        _ZmCB はポジションがスプライトのどの位置を指すかを指定するもので、
+        以下の9つが定義されています。
+
+        _ZmLT        _ZmCT        _ZmRT
+           +-------+-------+
+           |       |       |
+     _ZmLC +----_ZmCC------+ _ZmRC
+           |       |       |
+           +-------+-------+
+        _ZmLB        _ZmCB        _ZmRB
+
+◎ スプライト表示サンプル
+
+ #define        CGtop                 0x10000
+ #define        TEXTBL(hs,vs,cga)     {hs , vs , (cga)>>3 , ((hs)&0x1f8)<<5|(vs)}
+ #define        AdjCG(cga,hs,vs,col)  ((cga + (((hs)*(vs)*4)>>(col)) + 0x1f) & 0x7ffe0)
+ #define        PICTBL(txno,cmod,cga) {txno , cmod , cga}
+ #define        CL_Triangle           0x00
+
+ static const Uint16 triangle[] = {
+   0x0000,0x0001,0x1000,0x0000,        /* スプライトのキャラクタデータ */
+   0x0000,0x0012,0x2100,0x0000,
+   0x0000,0x0123,0x3210,0x0000,
+   0x0000,0x1234,0x4321,0x0000,
+   0x0001,0x2344,0x4432,0x1000,
+   0x0012,0x3333,0x3333,0x2100,
+   0x0122,0x2222,0x2222,0x2210,
+   0x1111,0x1111,0x1111,0x1111
+ };
+
+ enum patn {
+   PN_Triangle,                        /* スプライトパターンナンバー */
+   Max_Texture,                        /* 総パターン数               */
+   Max_Picture = Max_Texture           /* 総キャラクタ数             */
+ };
+
+ enum cga {                                /* キャラクタアドレス */
+   CG_Triangle = CGtop,
+   CG_Next = AdjCG( CG_Triangle, 16, 8, COL_16 )
+ };
+
+ TEXTURE form_tbl[] = {         /* パターンサイズデータ */
+   TEXTBL( 16, 8, CG_Triangle )
+ };
+
+ PICTURE pic_tbl[] = {                          /* キャラクタ定義テーブル */
+   PICTBL( PN_Triangle, COL_16, triangle )
+ };
+
+ static const Sint16 Triangle_Color[] = {                   /* カラーデータ */
+                    RGB( 0, 0,31), RGB( 0, 0, 29 ), RGB( 0, 0, 27 ),
+   RGB( 0, 0, 25 ), RGB( 0, 0,23), RGB( 0, 0, 21 ), RGB( 0, 0, 19 ),
+   RGB( 0, 0, 17 ), RGB( 0, 0,15), RGB( 0, 0, 13 ), RGB( 0, 0, 11 ),
+   RGB( 0, 0, 9  ), RGB( 0, 0,7),  RGB( 0, 0, 5 ),  RGB( 0, 0, 3 )
+ };
+
+ typedef struct{                        /* カラー定義用構造体 */
+   Sint16 *src;
+   void   *dst;
+   Sint16  size;
+ } COLMAP;
+
+ static const COLMAP ctrns_list[] = {  /* カラー定義テーブル */
+   { Triangle_Color,
+     ( void* )( VDP2_COLRAM + ( CL_Triangle + 1 ) * 2 ),
+     sizeof( Triangle_Color )
+   }
+ };
+
+ extern TEXTURE * FormTbl ;
+
+ /*                                                */
+ /*  キャラクタデータ転送                          */
+ /*                                                */
+
+ void SetTexture( PICTURE *pcptr, Uint32 NbPicture ) {
+   TEXTURE *txptr;
+
+   for( ; NbPicture-- > 0 ; pcptr++ ) {
+     txptr = FormTbl + pcptr->texno ;
+     slDMACopy( pcptr->pcsrc,
+                ( void * )( SpriteVRAM + ( ( txptr->CGadr ) << 3 ) ),
+                ( txptr->Hsize * txptr->Vsize * 4 ) >> ( pcptr->cmode ) );
+   }
+ }
+
+ /*                                                */
+ /*  カラーデータ転送                              */
+ /*                                                */
+
+ void SetColor(){
+   COLMAP      *cmptr ;
+   Sint16       cnt ;
+
+   slTVOff() ;
+   cmptr= ctrns_list ;
+   for ( cnt = sizeof( ctrns_list ) / sizeof( COLMAP ) ; cnt-- > 0 ; cmptr++ ){
+    slDMACopy( cmptr->src, cmptr->dst, cmptr->size );
+   }
+   slTVOn();
+ }
+
+ /*  サンプルキャラクタ表示位置 */
+   FIXED tpos[] = { toFIXED(1.0), toFIXED(2.0), toFIXED(2.0), toFIXED(4.0)};
+ /*                 |             |             |             |_ 表示スケール*/
+ /*                 X位置         Y位置         Y位置 (等倍ならtoFIXED(ORIGINAL)
+                                                        を指定のこと) */
+
+ /*  サンプルキャラクタデータ */
+   SPR_ATTR tattr = SPR_ATTRIBUTE(PN_Triangle,CL_Triangle,No_Gouraud,CL16Bnk,sprNoflip|_ZmCC);
+ /*                               |           |           |          |       |         |__ 回転中心位置 */
+ /*                               |           |           |          |       |__ キャラクタ反転はなし */
+ /*                               |           |           |          |__ 16色カラーバンクモード  */
+ /*                               |           |           |___ グーローシェーディングは使用しない */
+ /*                        パターンナンバー  カラーバンクナンバー */
+
+ main() {
+   ANGLE        ang = DEGtoANG (0.0);
+
+   *( Uint32 * )( 0x06002500 ) = ( Uint32 )( 0x060007f0 );
+
+   slInitSystem( TV_320x224, form_tbl, 1 ); /* システム初期化 */
+   SetTexture( pic_tbl, Max_Picture );      /* キャラクタデータのセット */
+   SetColor();                              /* カラーデータのセット */
+   while( -1 ) {
+     slDispSprite( tpos, &tattr, ang );     /* スプライトの登録 */
+     ang += DEGtoANG ( 3.0 );
+     slSynch();                             /* 画面表示への同期との
+                                              スプライト出力 */
+   }
+ }
+
+
+◎リアルタイムグーロー使用手順
+　リアルタイムグーローを実現するには以下の4つの処理が必要です。
+
+ (1)アトリビュートテーブルに以下の3つを加えます。
+ 　(a) MODEに「CL_Gouraud」を指定。
+　 (b) GOURAUDにグローテーブルの格納位置の指定。
+   (c) OPTIONに「UseGouraud」を指定。
+
+   <例>
+     ATTRIBUTE(Single_Plane, SORT_CEN, 0, 0xffa0, 0xe000,
+            CL16Look|MESHoff|CL_Gouraud, sprNoflip, UseGouraud )
+           
+ (2)法線ベクトルの指定
+　 各頂点の法線ベクトルと「XPDATA」というポリゴンモデルデータテーブルを指定
+   <例>
+         VECTOR        gr_point[] = {              /* 頂点法線ベクトルデータ */
+           toFIXED(-0.873),toFIXED( 0.436),toFIXED( 0.217),
+           toFIXED(-0.873),toFIXED(-0.436),toFIXED( 0.217),
+                                :
+                                :
+         };
+         XPDATA PD_BOX = {                          /* モデルテーブル指定    */
+           point_BOX,                               /* 頂点の位置データ
+                                                                  テーブル   */
+           sizeof( point_BOX ) / sizeof( POINT ),   /* 頂点の数              */
+           polygon_BOX,                             /* ポリゴン定義テーブル  */
+           sizeof( polygon_BOX ) /sizeof( POLYGON ),/* ポリゴンの数          */
+           attribute_BOX2,                          /* ポリゴンの
+                                                     アトリビュートテーブル  */
+           gr_point                                 /*頂点法線ベクトルデータ */
+         };
+        
+ (3)リアルタイムグーロープログラムの初期化
+   (a) 使用するグーローテーブルの位置大きさを指定
+     <例>
+       slInitGouraud( ( GOURAUDTBL * )gr_tab, ( Uint32 )300, 0xe000, addr );
+   (b) グーロープログラムをVブランクに登録
+     <例>
+       slIntFunction( slGouraudTblCopy );
+
+ (4)光源ベクトルの指定
+     <例>
+         FIXED      light[XYZ];
+         light[X] = toFIXED( 1.0 );
+         light[Y] = toFIXED( 0.0 );
+         light[Z] = toFIXED( 0.0 );
+         slPutPolygonX( &PD_BOX, ( FIXED * )light );
+
+ (5)実際のプログラム使用例
+    <例>
+ static GOURAUDTBL gr_tab[300];
+
+ void ss_main( void )
+ {
+   FIXED light[XYZ];
+          :
+   /* リアルタイムグロープログラムの初期化 */
+   slInitGouraud( ( GOURAUDTBL * )gr_tab, ( Uint32 )300, 0xe000, addr );
+   slGouraudTblCopy();
+   slSynch();
+               :
+   light[X] = toFIXED( 1.0 );
+   light[Y] = toFIXED( 0.0 );
+   light[Z] = toFIXED( 0.0 );
+   while( 1 )
+   {
+           :
+     slPushMatrix();
+     {
+        :
+       /**/
+       slPutPolygonX( &PD_BOX, ( FIXED * )light );
+     }
+     slPopMatrix();
+     slSynch();
+   }
+ }
+
+◎ニアクリッピング
+   アトリビュートテーブルのOPTIONに「UseNearClip」を指定するとニアクリッピング
+   処理をします。「UseClip」はVer3.0から同機能追加により「UseNearClip」に
+   置き換わりました。
+ <例>
+   ATTRIBUTE( Single_Plane, SORT_CEN, 1, No_Palet, No_Gouraud, 
+              CL32KRGB|MESHoff,sprNoflip, UseNearClip );
+
+ ◎SGL Ver2.1xとSGL Ver3.00の相違点
+   (1)フラットシェーディングの光源計算方法の変更
+      フラットシェーディングの光源計算方法が以下のように変更になっています。
+      <Ver2.1xまでの光源計算方法>
+      光源と面の角度
+              0------45------90-----135-----180
+              31-----16-------0-------0-------0
+      グーローテーブル
+
+                   ↓
+
+　    <Ver3.0 からの光源計算方法>
+      光源と面の角度
+              0------45------90-----135-----180
+              31-----24------16-------8-------0
+      グーローテーブル
+
+   (2)光源の影響による発色データテーブルのサイズ変更
+  　  光源処理に機能追加したことにより、発色データテーブル(CLOfsfBuf)領域を
+      確保するサイズが、
+        32×32 (0x400)から32×32×3 (0xC00)
+      に変更になりました。
+      よって、初期値が設定されていたsaturn/sgl/libディレクトリのsglarea.o
+      の変更と、ユーザカスタム用の
+        saturn\sgl\sample\workarea
+      ディレクトリにあるworkarea.cなどのファイルも計算部分に変更が加えられて
+      います。SGL Ver2.1xからの移行時には必ず変更するようにしてください。
+ 
+   (3)UseClipオプションの削除
+      アトリビュートオプションUseClipが、SGL Ver3.0の機能追加によりUseNearClip
+      に置き換わりました。
+

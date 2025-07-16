@@ -1,0 +1,540 @@
+slInitSound -- 関数
+    slInitSound - サウンドライブラリの初期化とドライバの起動
+【書  式】
+    #include "sgl.h"
+
+    Uint8  *sddrvaddr;
+    Uint32 drvsize;
+    Uint8  *map;
+    Uint32 mapsize;
+
+    void slInitSound( sddrv, drvsize, map, mapsize );
+【引  数】
+    Uint8  *sddrvaddr - サウンドドライバのアドレス
+    Uint32 drvsize    - サウンドドライバのサイズ
+    Uint8  *map       - サウンドエリアマップのアドレス
+    Uint32 mapsize    - サウンドエリアマップのサイズ
+【返  数】
+    void - 何も返しません。
+【機  能】
+    サウンドドライバーのセットと、サウンドコントロールCPU(MC68000)の
+    初期化を行います。
+    サウンドドライバは バージョン2.00 以降に対応していますので、
+    それ以前のサウンドドライバでは実行できません。
+【用  例】
+    extern Uint8  *sddrvs;
+    extern Uint32 sddrvsize;
+
+    Uint8  map[ 256 ];
+    Uint32 mapsz = 256;
+    slInitSound( sddrvs, sddrvszize, map, mzpsz );
+【注  意】
+    全てのサウンド関数を実行する前に必ず実行してください。
+    slInitSystem関数では、サウンドに関する初期化を一切行ないません。
+【参  照】
+    slBGMOn, slBGMPause, slBGMCont, slBGMOff
+    slBGMFade, slBGMTempo, slBGMStat, slSoundAllOff
+    slDSPOff, slSndVolume, slSequenceOn, slSequenceOff
+    slSequenceFade, slSequenceTempo, slSequencePause, slSequenceCont
+    slSequencePan, slSequenceReset, slSequenceStat, slSndMapChange
+    slSndSeqNum, slSndPCMNum, slWaitSound, slCDDAOn
+    slCDDAOff, slPCMOn, slPCMOff, slPCMParmChange
+    slPCMStat, slSndEffect, slSndMixParmChange, slSoundRequest
+    slSoundAllPause, slSoundAllCont, slSndFlush, NbPCMBf
+    PCMBufFlag
+
+
+slWaitSound -- 関数
+    slWaitSound - ドライバの実行終了を待つ
+【書  式】
+    #include "sgl.h"
+
+    void *addr;
+
+    void slWaitSound( addr );
+【引  数】
+    void *addr - 監視したいアドレス。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    指定されたアドレスのデータが0になるまで待ちます。
+    サウンドドライバが、ファンクションを実行したことを表します。
+【用  例】
+    slWaitSound( slSndMapChange( 2 ) );
+【参  照】
+    slSndMapChange, slSoundRequest
+
+
+★CDDA
+slCDDAOn -- 関数
+    slCDDAOn - CDDAの音量設定
+【書  式】
+    #include "sgl.h"
+
+    Uint8 Lvol;
+    Uint8 Rvol;
+    Uint8 Lpan;
+    Uint8 RPan;
+
+    Bool slCDDAOn( Lvol, Rvol, Lpan, Rpan );
+【引  数】
+    Uint8 Lvol - 左方向の音量 
+    Uint8 Rvol - 右方向の音量
+    Uint8 Lpan - 左方向のパン
+    Uint8 RPan - 右方向のパン
+【返  数】
+    Bool - コマンドの発行が正しく行なわれたかを示すフラグ。
+【機  能】
+    CDDAを使用する際の、音量、方向を指定します。
+    音量は 0(Off)から127(下位4ビットは無効)、パンは(左 -127～0～+127 右)
+    (ただし、下位3ビットは無効)で指定します。
+    成功すればTRUEを、失敗すればFALSEを返値として返します。
+【用  例】
+    slCDDAOn( 127, 127, 0, 0 );
+【参  照】
+    slCDDAOff, slSndFlush
+
+
+slCDDAOff -- 関数
+    slCDDAOff - CDDAの再生中止
+【書  式】
+    #include "sgl.h"
+
+    Bool slCDDAOff( void );
+【引  数】
+    void - 何も与えません。
+【返  数】
+    Bool - コマンドの発行が正しく行なわれたかを示すフラグ。
+【機  能】
+    CDDAの再生を中止します。
+    成功すればTRUEを、失敗すればFALSEを返値として返します。
+【用  例】
+    slCDDAOff();
+【参  照】
+    slCDDAOn, slSndFlush
+
+
+★PCM
+slPCMOn -- 関数
+    slPCMOn - PCMの演奏開始
+【書  式】
+    #include "sgl.h"
+
+    PCM    *pcm;
+    void   *data;
+    Uint32 size;
+
+    Sint8 slPCMOn( pcm, data, size );
+【引  数】
+    PCM    *pcm  - PCMデータ管理構造体
+    void   *data - PCMデータの実体
+    Uint32 size  - PCMデータのサイズ
+【返  数】
+    Sint8 - PCMチャネルの番号又は、エラーコード。
+【機  能】
+    PCM音源による音楽(効果音)の再生を行います。
+    data は 再生用のPCMデータテーブルで、ステレオの場合には下の図の様に
+    右チャンネル用と左チャンネル用とを前半と後半とに分けてセットしておいて
+    ください。通常のPCMデータはLチャネルとRチャネルが交互に来ており、下の
+    図のように分離されていません。
+      +---------------+
+      |               |
+      |    Rデータ    |
+      | (frame * datasize byte)
+      +---------------+
+      |               |
+      |    Lデータ    |
+      |               |
+      +---------------+
+    PCM型のデータは以下のような形式の構造体です。
+      typedef struct {
+        Uint8  mode;      /* 再生モード                           */
+        Uint8  channel;   /* 再生チャンネル                       */
+        Uint8  level;     /* 再生レベル                           */
+        Sint8  pan;       /* 再生パン                             */
+        Uint16 pitch;     /* 再生ピッチ                           */
+        Uint8  eflevelR;  /* エフェクトレベル(右及び、モノラル用) */
+        Uint8  efselectR; /* エフェクト番号(右及び、モノラル用)   */
+        Uint8  eflevelL;  /* エフェクトレベル(左用)               */
+        Uint8  efselectL; /* エフェクト番号(左用)                 */
+      } PCM;
+    再生モードは以下のものをセットします。
+      <_Stereo または _Mono> 及び、<_PCM16Bit は _PCM8Bit
+    再生チャンネルは slPCMOn 関数がセットします(通常終了時の戻り値)。
+    再生レベルは 0～127(下位4ビットは無効) 、
+    再生パンは (左 -127～0～+127 右) (下位8ビットは無効) をセットします。
+    再生ピッチは16ビットで、44.1kHzに対するレートを指定します。
+    エフェクトレベルは 0～7、エフェクト番号は0～15を指定してください。
+    関数の戻り値は通常終了の場合0～7、コマンドバッファが足りない場合-1、
+    PCMのチャンネルが空いていない場合-2、PCM用のバッファが足りない場合
+    -3を返します。
+    この関数で開始されたPCM再生はデータ終了をもって停止します。
+【用  例】
+    slPCMOn( pcm , dat, datsize );
+【注  意】
+    PCMの再生データをサウンドRAMに転送する場合。通常SCU-DMAのレベル2が
+    使用され、V-Blank In時に転送されます。ところが、WorkRAM LowはSCUの制御外
+    ですのでその場合には、CPU-DMAを使って転送します。そのため、再生データが
+    WorkRAM-L の領域にある場合、以下のような制約があります。
+    ・再生データは偶数アドレスから配置されているものとして扱います。
+      (アドレスの下位1ビットを0にして使用します)
+      従って必ず再生データは、偶数アドレスに配置してください。
+    ・再生データがステレオで、8ビットの場合、左チャンネルのデータも偶数アドレス
+      から配置されているものとします。
+      このことは、ステレオデータを再生する場合、サンプル数を偶数にする必要が
+      あるという事を意味しています。
+    ・再生データが8192フレーム以上の場合に、バッファをラッピングする際に
+      ノイズが出ることがあります。
+      ですので8192フレームごとにデータを1バイト重複させて定義してください。
+      ただし、先頭は1536(600H)フレームオフセットされたところから始まります。
+      したがって、重複させる最初のデータは6656(1A00H)のデータとなります。
+    PCM構造体は、SGL Ver. 3.20以降とそれ以前のSGLとでは構造が異なります。
+    もし、古いバージョンのSGL用に作られたPCMデータは、PCM構造体の最後のメンバ
+    を追加する必要があります。ご注意ください。
+【参  照】
+    slPCMOff, slPCMParmChange, slPCMStat, slSndPCMNum
+    slSndFlush, DMASt_CPU0, DMASt_SCU0
+
+
+slPCMOff -- 関数
+    slPCMOff - PCMの演奏中止
+【書  式】
+    #include "sgl.h"
+
+    PCM *pcm;
+
+    Bool slPCMOff( pcm );
+【引  数】
+    PCM *pcm - 今鳴っているPCMデータの管理構造体。
+【返  数】
+    Bool - コマンドの発行が正しく行なわれたかを示すフラグ。
+【機  能】
+    指定されたチャンネルのPCM再生を中止します。
+    成功すればTRUEを、失敗すればFALSEを返値として返します。
+【用  例】
+    slPCMOff( pcm );
+【参  照】
+    slPCMOn, slPCMParmChange, slPCMStat, slSndPCMNum
+    slSndFlush
+
+
+slPCMParmChange -- 関数
+    slPCMParmChange - PCMパラメータの変更
+【書  式】
+    #include "sgl.h"
+
+    PCM *pcm;
+
+    Bool slPCMParmChange( pcm );
+【引  数】
+    PCM *pcm - 変更したいPCMデータの管理構造体。
+【返  数】
+    Bool - コマンドの発行が正しく行なわれたかを示すフラグ。
+【機  能】
+    PCM再生用の各パラメータの変更をします。
+    成功すればTRUEを、失敗すればFALSEを返値として返します。
+【用  例】
+    extern PCM pcm;
+
+    pcm.pitch += 100;
+    slPCMParmChange( pcm );
+【参  照】
+    slPCMOn, slPCMOff, slPCMStat, slSndPCMNum
+    slSndFlush
+
+
+slPCMStat -- 関数
+    slPCMStat - PCMの再生状態の調査
+【書  式】
+    #include "sgl.h"
+
+    PCM *pcm;
+
+    Bool slPCMStat( pcm );
+【引  数】
+    PCM *pcm - 調査したいPCMデータの管理構造体。
+【返  数】
+    Bool - コマンドの発行が正しく行なわれたかを示すフラグ。
+【機  能】
+    指定されたチェンネルのPCMが再生中であるか調べ、フラグを返します。
+    再生中であればTRUE、終了していればFALSEが返ります。
+【用  例】
+    if ( slPCMStat( pcm ) == TRUE) {
+      /* 再生中 */
+    } else {
+      /* 再生終了 */
+    }
+【参  照】
+    slPCMOn, slPCMOff, slPCMParmChange, slSndPCMNum
+    slSndFlush
+
+
+slSndPCMNum -- 関数
+    slSndPCMNum - 空いているPCMポートを調べる
+【書  式】
+    #include "sgl.h"
+
+    Uint8 mode;
+
+    Sint8 slSndPCMNum( mode );
+【引  数】
+    Uint8 mode - モード(ステレオかモノラルか)(後述)
+【返  数】
+    Sint8 - 空いているPCMチャネルの番号。
+【機  能】
+    空いているPCMチャンネル番号を返します。
+    空きがない場合には-1が、正常終了した場合には0～7が返されます。
+    mode には _Stereo または _Mono を指定します。
+    PCMは最大8音まで鳴らすことができますが、ステレオ再生を行う場合、
+    2音分必要になりますので、4つしか鳴らしていなくても、8音になっている
+    ことがありますので注意してください。
+【用  例】
+    if ( slSndPCMNum( _Stereo ) != -1 ) {
+      slPCMOn( ... )
+    }
+【参  照】
+    slPCMOn, slPCMOff, slPCMParmChange, slPCMStat
+    DMASt_CPU0, DMASt_SCU0
+
+
+★エフェクト/ミキサ
+slSndEffect -- 関数
+    slSndEffect - エフェクトの変更
+【書  式】
+    #include "sgl.h"
+
+    Uint8 effect;
+
+    Bool slSndEffect( effect );
+【引  数】
+    Uint8 efct - エフェクト番号。
+【返  数】
+    Bool - コマンドの発行が正しく行なわれたかを示すフラグ。
+【機  能】
+    DSPによるサウンドエフェクトを切り替えます。
+    成功すればTRUEを、失敗すればFALSEを返値として返します。
+【用  例】
+    エフェクトが何も出力されないミキサを0、もともとのミキサを1とすると、
+    slSndMixParmChange( 0, 127, 0 );
+    slSndEffect( 1 );
+    for ( i = 0 ; i < 60 ; ++i ) slSynch();
+    slSndMixParmChange( 1, 127, 0 );
+    これは、エフェクトチェンジの際にノイズの発生を抑えるやり方の一例です。
+【注  意】
+    エフェクトチェンジする時エフェクトの種類によってはかなりのノイズが発生
+    する場合があります。
+    これを抑える方法として、まず予め、エフェクトが一切出力されないような
+    ミキサを作っておき、エフェクトチェンジする前に、
+    slSndMixParmChange関数で、そのエフェクトに切替えておきます。
+    その後、slSndEffectを実行し、エフェクトを切り替え、その後音が
+    安定するまで、1秒程度ウエイトをおきます。その後再び、
+    slSndMixParmChange関数を使って元のミキサに戻します。
+    ただし、最初に、エフェクトの出力しないミキサに切替える時にわずかにノイズが
+    のる可能性もあります。その場合、slSndVolume関数で、トータルボリューム
+    を下げることで誤魔化す事が出来ますが、この場合全ての音源に影響を
+    あたえるので注意が必要です。
+【参  照】
+    slSndMixParmChange, slSndVolume, slSndFlush
+
+
+slSndMixParmChange -- 関数
+    slSndMixParmChange - ミキサーの変更
+【書  式】
+    #include "sgl.h"
+
+    Uint8 mix;
+    Uint8 vol;
+    Sint8 pan;
+
+    Bool slSndMixParmChange( mix, vol, pan );
+【引  数】
+    Uint8 mix - ミキサー番号
+    Uint8 vol - 音量
+    Sint8 pan - パン
+【返  数】
+    Bool - コマンドの発行が正しく行なわれたかを示すフラグ。
+【機  能】
+    ミキサのパラメータを変更します。
+     vol は0～127(下位4ビットは無効)、panは、(左 -128～0～+127 右)
+    (下位3ビットは無効) をセットします。
+    成功すれば、TRUEを、失敗すればFALSEを返値として返します。
+【用  例】
+    slSndMixParmChange( 1, 127, 0 );
+【参  照】
+    slSndFlush
+
+
+★コマンド発行
+slSoundRequest -- 関数
+    slSoundRequest - サウンドドライバへのコマンド発行
+【書  式】
+    #include "sgl.h"
+
+    const char *form;
+    /* arg1, arg2, ... */
+
+    Sint8 slSoundRequest( form[], ...);
+【引  数】
+    const char *form - 次の引数のフォーマット
+    arg1, arg2, ...  - パラメータ
+【返  数】
+    Sint8 - 関数の実行状態(ステータス)
+【機  能】
+    サウンドドライバに直接渡すデータをセットします。
+    form には これに続くデータの個々のサイズを文字列データで表します。
+    ただし、先頭のデータはファンクションコードとし、文字列には含みません。
+    戻り値は フォーム文字列に不当な文字があった場合、-2、
+    ワードデータを奇数アドレスからセットしようとした場合、-1を返します。
+    正常終了した場合0を返します。
+【用  例】
+    Uint16 Lev;
+    Uint8  *data;
+    Uint16 StreamBuf;
+    Uint16 StreamSize;
+    Uint16 Pitch;
+
+    StreamBuf = ( Uint16 )( data >> 4 );
+    Lev       = 7; /* Set Volume to max */
+
+    slSoundRequest( "bbwwwbb", SND_PCM_START, _Stereo | _PCM16Bit, Lev << 5 | 0,
+                    StreamBuf, StreamSize, Pitch, 0, 0 );
+    この場合、SND_PCM_START がファンクションコードとなり、文字列には
+    含まれません。
+    _Stereo | _PCM16Bit, Lev << 5 | 0 はそれぞれバイトデータ、
+    StreamBuf >> 4, StreamSize, Pitchはそれぞれワードデータとして
+    サウンドドライバに渡されます。
+【参  照】
+    slSndFlush
+
+
+slDSPOff -- 関数
+    slDSPOff - DSPの停止
+【書  式】
+    #include "sgl.h"
+
+    Bool slDSPOff( void );
+【引  数】
+    void - 何も与えません。
+【返  数】
+    Bool - コマンドの発行が正しく行なわれたかを示すフラグ。
+【機  能】
+    DSPを初期化(停止)します。
+    成功すればパラメータをセットしたコマンドバッファのアドレスを、失敗すれば
+    FALSEを返値として返します。
+【用  例】
+    slDSPOff();
+【参  照】
+    slSndFlush, SoundRdCount
+
+
+slSndVolume -- 関数
+    slSndVolume - 全体の音量の変更
+【書  式】
+    #include "sgl.h"
+
+    Uint8 vol;
+
+    Bool slSndVolume( vol );
+【引  数】
+    Uint8 vol - サウンド全体の音量。
+【返  数】
+    Bool - コマンドの発行が正しく行なわれたかを示すフラグ。
+【機  能】
+    サウンド出力全体の音量をセットします。
+    volは0から127(ただし、下位4ビットは無効)を指定します。
+    また、0の場合、音は出力されません。
+    音量の変更に成功すればTRUEを、失敗すればFALSEを返値として返します。
+【用  例】
+    slSndVolume( 10 << 3 );
+【参  照】
+    slSoundAllOff -- 関数
+    slSoundAllOff - 全てのシーケンスの演奏中止
+【書  式】
+    #include "sgl.h"
+
+    Bool slSoundAllOff( void );
+【引  数】
+    void - 何も与えません。
+【返  数】
+    Bool - コマンドの発行が正しく行なわれたかを示すフラグ。
+【機  能】
+    すべてのサウンドシーケンスを停止します。
+    成功すればTRUEを、失敗すればFALSEを返値として返します。
+【用  例】
+    slSoundAllOff();
+【注  意】
+    この関数を実行するとサウンドコマンドバッファにあった未処理のサウンド
+    処理は全て取り消されます。
+    また、実行はslSynchを待たずに即座に行なわれます。
+【参  照】
+    slSoundAllPause, slSoundAllCont, slSndFlush, SoundRdCount
+    slSoundAllPause -- 関数
+    slSoundAllPause - 全シーケンスの演奏を一時停止
+【書  式】
+    #include "sgl.h"
+
+    void slSoundAllPause( void );
+【引  数】
+    void - 何も与えません。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    演奏中の全シーケンス(BGM含む)を一時停止します。(ただし、PCMストリームは
+    止まりません)
+【用  例】
+    slSoundAllPause();
+【参  照】
+    slSoundAllCont, slSoundAllOff, slSndFlush, SoundRdCount
+    slSoundAllCont -- 関数
+    slSoundAllCont - 全シーケンスの演奏再開
+【書  式】
+    #include "sgl.h"
+
+    void slSoundAllCont( void );
+【引  数】
+    void - 何も与えません。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    一時停止中の全シーケンス(BGM含む)を再開します。
+【用  例】
+    slSoundAllCont();
+【参  照】
+    slSoundAllPause, slSoundAllOff, slSndFlush, SoundRdCount
+    slSndFlush -- 関数
+    slSndFlush - コマンドリクエストの送出
+【書  式】
+    #include "sgl.h"
+
+    void slSndFlush( void );
+【引  数】
+    void - 何も与えません。
+【返  数】
+    void - 何も返しません。
+【機  能】
+     サウンドコントロールバッファに残っているコントロールコマンドをサウンド
+     ドライバに出力します。
+     通常、サウンドコントロールコマンドはシステムが用意したバッファにセット
+     されており、バッファがいっぱいになるか、あるいは、slSynch()関数が実行
+     された時にサウンドドライバに対し、出力されます。
+     ただし、以下の関数においてはバッファは直ちに出力されます。
+        slSndMapChange()
+        slDSPOff()
+        slPCMOff()
+        slSoundRequest()
+        slSoundAllPause()
+        slSoundAllCont()
+    また、以下の関数を実行した場合、バッファ内のコマンドは破棄されます。
+        slSoundAllOff()
+【用  例】
+    slSndFlush();
+【参  照】
+    slBGMOn, slBGMPause, slBGMCont, slBGMOff
+    slBGMFade, slBGMTempo, slBGMStat, slSoundAllOff
+    slDSPOff, slSndVolume, slSequenceOn, slSequenceOff
+    slSequenceFade, slSequenceTempo, slSequencePause, slSequenceCont
+    slSequencePan, slSequenceReset, slSequenceStat, slSndMapChange
+    slSndSeqNum, slSndPCMNum, slCDDAOn, slCDDAOff
+    slPCMOn, slPCMOff, slPCMParmChange, slPCMStat
+    slSndEffect, slSndMixParmChange, slSoundRequest, slSoundAllPause
+    slSoundAllCont

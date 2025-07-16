@@ -1,0 +1,28 @@
+
+             -------------------------------------------------------
+                       HELP INFORMATION  of SH C Compiler 
+             -------------------------------------------------------
+  1. Compiler specification:
+     shc [-option [...]]  operand [,[...]] 
+     operand:==filename [-option [...]]
+  2. Compiler options:
+   (1) OPtimize=[0|1]                   Compiler optimization. (ON:1,OFF:0)
+   (2) SHow=<sub-option> [,[...]]       Output list specification.
+       <sub-option>:==[NO]SOurce|[NO]Object|[NO]STatistics|[NO]Include|
+                      [NO]Expansion|Width=<width>|Length=<length>
+   (3) Listfile[=<list-file-name>]      List file name specification.
+       NOListfile                       No list file.
+   (4) OBjectfile=<object-file-name>    Object file name specification.
+   (5) Code=[Machinecode|Asmcode]       Mode of output object.
+   (6) DEBug|NODEBug                    Debug information output.
+   (7) DEFine=<sub-option> [,[...]]     Macro definition.
+       <sub-option>:==<macro>|<macro>=<id>|<macro>=<constant>
+   (8) Include=<include-path> [,[...]]  Include file search directory.
+   (9) SEction=<sub-option> [,[...]]    Section name specification.
+       <sub-option>:==Program=<id>|Const=<id>|Data=<id>|Bss=<id>
+  (10) CPu=[7000|7600]                  Target CPU specification.
+  (11) Pic=[0|1]                        Position independent code. (ON:1,OFF:0)
+  (12) STring=[Const|Data]              Strings assign section.
+  (13) COMment=[Nest|NONest]            Permission of comment nest.
+  (14) SPeed|NOSPeed                    Optimization policy. (speed|size)
+  (15) Help                             Display this information.

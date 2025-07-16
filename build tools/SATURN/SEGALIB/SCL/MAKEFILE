@@ -1,0 +1,36 @@
+CC = gcc
+AS = gasm
+AR = ar
+
+GCC     = ../../gccsh
+
+LIBDIR  = ../lib
+INCDIR  = ../include
+OBJDIR  = .
+SRCDIR  = .
+CFLAGS  = -Wall -m2 -D_SH -DMODEL_S -I$(GCC)/include -I$(INCDIR)
+ASFLAGS =
+ARFLAGS = rv
+
+include	$(SRCDIR)/objects
+
+all: $(TARGET) $(LIBDIR)/$(TARGET)
+
+$(TARGET): $(OBJS) sega_scl.h
+	$(AR) $(ARFLAGS) $(_ARFLAGS) $@ $?
+
+$(LIBDIR)/$(TARGET): $(TARGET)
+	cp $(TARGET) $(LIBDIR)
+
+.SUFFIXES:
+.SUFFIXES: .a .o .src .c
+
+$(OBJDIR)/%.o: $(SRCDIR)/%.c
+	$(CC) -c $(CFLAGS) $(_CFLAGS) -o $@ $<
+
+$(OBJDIR)/%.o: $(SRCDIR)/%.src
+	$(AS) $< $(ASFLAGS) $(_ASFLAGS) -o $@
+
+clean:
+	del *.o
+

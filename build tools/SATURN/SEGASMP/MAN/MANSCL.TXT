@@ -1,0 +1,168 @@
+*******************************************************************************
+●ファイル記号名称	 :manscl.txt
+●対象ライブラリ記号名称 :scl
+●対象ライブラリ名称	 :VDP2ライブラリ
+●バージョン　　	 :1.00
+●作成者		 :K.M
+●作成日		 :1994-07-29
+●最終修正日             :1997-06-21
+●その他のメッセージ　	 :なし
+*******************************************************************************
+
+1.サンプルの動作内容と使用方法
+        以下は、E7000 ICE使用時の手順です。
+	●smpscl1
+		[タイトル]	256色カラー画像をNBG0に表示
+		[動作内容]	320X224の256色カラー画像をセル形式で表示する。
+				パッド１の方向キー以外を押すとモザイクがかかり
+				ます。STARTボタンで初期状態に戻ります。
+		[使用方法]	(1)以下のコマンドでブートＲＯＭを初期化。
+                                    RS [RET]
+                                    G  [RET]
+                                    [CTRL-C]
+                                (2)smpscl1.abs を 6002000H 番地にロードします。
+                                    l ;r:smpscl1.abs [RET]
+				(3)実行
+				    G 6002000 [RET] で実行。
+				(4)パッド操作について
+				  [PAD1]	START:初期状態
+						Rボタン:モザイク  2x2
+						Lボタン:モザイク  4x4
+						Xボタン:モザイク  6x6
+						Yボタン:モザイク  8x8
+						Zボタン:モザイク 10x10
+						Aボタン:モザイク 12x12
+						Bボタン:モザイク 14x14
+						Cボタン:モザイク 16x16
+					上キー:フェードアウト(カラーオフセット)
+		                        下キー:フェードイン(カラーオフセット)
+		[使用ファンクション]
+				SCL_Vdp2Init
+				SCL_SetColRamMode
+				SCL_SetFrameInterval
+				SCL_DisplayFrame
+				SCL_SetBack
+				SCL_AllocColRam
+				SCL_SetColRam
+				SCL_InitConfigTb
+				SCL_SetConfig
+				SCL_SetCycleTable
+				SCL_SetPriority
+				SCL_Open
+				SCL_Close
+				SCL_MoveTo
+				SCL_Scale
+				SCL_SetMosaic
+		[備考]		関数"SetVblank"と変数"PadData1","PadData2"は、
+				割り込み処理登録のサンプルとして、ディレクトリ
+				"V_BLANK"の中にあります。
+
+	●smpscl3
+		[タイトル]	ノーマルスクロール２面の表示と
+                                ラインパラメータテーブルの使用
+		[動作内容]	ノーマルスクロール画像を２面セル形式で表示する。
+				一方をラインパラメータで変形させる。
+		[使用方法]	(1)以下のコマンドでBOOT ROMから初期化。
+                                    RS [RET]
+                                    G  [RET]
+                                    [CTRL-C]
+                                (2)smpscl3.abs を 6002000H 番地にロードします。
+                                    L ;R:smpscl3.abs [RET]
+				(3)実行
+				    G 6002000 [RET] で実行。
+		[使用ファンクション]
+				SCL_Vdp2Init
+				SCL_SetFrameInterval
+				SCL_SetColRamMode
+				SCL_InitConfigTb
+				SCL_SetConfig
+				SCL_SetCycleTable
+				SCL_SetPriority
+				SCL_Open
+				SCL_Close
+				SCL_MoveTo
+				SCL_Move
+				SCL_Scale
+				SCL_DisplayFrame
+				SCL_InitLineParamTb
+				SCL_SetLineParam
+		[備考]		関数"SetVblank"と変数"PadData1","PadData2"は、
+				割り込み処理登録のサンプルとして、ディレクトリ
+				"V_BLANK"の中にあります。
+
+
+	●smpscl5
+		[タイトル]	回転スクロール２面(RBG0,RBG1)表示
+		[動作内容]	文字を256色ビットマップでRBG0に
+				表示する。
+				ラインカラー画面を挿入した256色カラー画像を
+				セル形式でRBG0に表示する。
+				PAD1動かせます。
+		[使用方法]	(1)以下のコマンドでブートＲＯＭを初期化。
+                                    RS [RET]
+                                    G  [RET]
+                                    [CTRL-C]
+                                (2)smpscl5.abs を 6002000H 番地にロードします。
+                                    L ;R:smpscl2.abs [RET]
+				(3)実行
+				    G 6002000 [RET] で実行。
+				(4)パッド操作について
+				  [PAD1]　スクロール面の操作
+				           START:回転角度と位置の初期化
+			                  上キー:Ｙ方向移動
+					  下キー:　　〃
+					  左キー:Ｘ方向移動
+					  右キー:　　〃
+					 Rボタン:Ｚ方向移動
+					 Lボタン:　　〃
+					 Xボタン:Ｘ回転
+					 Yボタン:画面回転
+					 Zボタン:Ｚ回転
+					 Aボタン:RBG0を選択
+					 Bボタン:RBG1プライオリティを選択
+					 Cボタン:RBG0とRBG1のプライオリティを変更
+					　　　(RBG0より上か下か)
+		[使用ファンクション]
+				SCL_Vdp2Init
+				SCL_SetSpriteMode
+				SCL_SetColRamMode
+				SCL_SetBack
+				SCL_InitRotateTable
+				SCL_InitVramConfigTb
+				SCL_SetVramConfig
+				SCL_InitConfigTb
+				SCL_SetConfig
+				SCL_SetPriority
+				SCL_AllocColRam
+				SCL_SetColRam
+				SCL_SetShadowBit
+				SCL_SetLncl
+				SCL_EnableLineCol
+				SCL_SetColMixRate
+				SCL_SetFrameInterval
+				SCL_Open
+				SCL_Close
+				SCL_MoveTo
+				SCL_Move
+				SCL_RotateTo
+				SCL_Rotate
+				SCL_Scale
+				SCL_DisplayFrame
+		[備考]		関数"SetVblank"と変数"PadData1","PadData2"は、
+				割り込み処理登録のサンプルとして、ディレクトリ
+				"V_BLANK"の中にあります。
+
+
+2.注意事項
+
+	なし
+
+3.修正履歴
+
+  1997/06/21  ・ソースコードのファイル名等をSGLのサンプルに準じた形とし、
+                統一しました。
+              ・SH-Cでのコンパイルオプションを見直し、除算器割り込み
+                オプションを -div=cpu  としました。
+
+********************************** end of file ********************************
+

@@ -1,0 +1,387 @@
+
+
+ビットマップグラフィックス関数について
+slInitBitMap -- 関数
+slInitBitMapNbg0 -- マクロ
+slInitBitMapNbg1 -- マクロ
+slInitBitMapRbg0 -- マクロ
+    slInitBitMap - ビットマップグラフィックスの使用宣言と初期化。
+【書  式】
+    #include "sgl.h"
+
+    Uint16 mode;
+    Uint16 size;
+    void   *addr_A;
+
+    Bool slInitBitMap( mode, size, addr_A );
+    Bool slInitBitMapNbg0( size, addr_A );
+    Bool slInitBitMapNbg1( size, addr_A );
+    Bool slInitBitMapRbg0( size, addr_A );
+【引  数】
+    Uint16 mode    - 描画する画面(後述)。
+    Uint16 size    - 画面サイズ(後述)。
+    void   *addr_A - ビットマップとして使用するVRAMの先頭(絶対)アドレス(後述)。
+【返  数】
+    Bool - エラーコード(後述)。
+【機  能】
+    ビットマップ画面を256色モードで設定します。
+    スクリーンクリアは行ないません。
+    modeには、
+      bmNBG0、bmNBG1、bmRBG0
+    のいずれか
+    sizeには、
+      BM_512x256、BM_512x512、BM_1024x256、BM_1024x512
+    のいずれかを指定します。
+    addr_Aは、20000Hバウンダリでなければなりません。
+    本関数の中で slBitMapNbg0、slBitMapNbg1、
+    slBitMapRbg0が実行されます。
+    画面の中心位置が原点に設定されます。
+【用  例】
+    slInitSystem( TV_320x224, NULL, 1 );
+    slInitBitMap( bmNBG1, BM_512x256, ( void * )0x25e00000 );
+
+    slScrAutoDisp( NBG0ON| NBG1ON| NBG2OFF| NBG3OFF);
+【参  照】
+    slBitMapNbg0, slBitMapNbg1, slBitMapRbg0
+
+
+slBitMapBase -- 関数
+    slBitMapBase - ビットマップグラフィックスの中心点の設定。
+【書  式】
+    #include "sgl.h"
+
+    Sint16 pos_x;
+    Sint16 pos_y;
+
+    void slBitMapBase( pos_x, pos_y );
+【引  数】
+    Sint16 pos_x - ビットマップ画面の原点のX座標。
+    Sint16 pos_y - ビットマップ画面の原点のY座標。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    ビットマップ画面の原点位置を設定します。
+    スクリーンの左上を(0,0)として指定します。
+【用  例】
+    中心座標を画面の中央最下部にする。
+    slInitSystem( TV_320x224, NULL, 1 );
+    slInitBitMap( bmNBG1, BM_512x256, ( void * )0x25e00000 );
+    slBitMapBase( 160, 224 );
+【参  照】
+    slInitBitMap
+
+
+slLocateBitMap -- 関数
+    slLocateBitMap - 座標アドレス変換
+【書  式】
+    #include "sgl.h"
+
+    Sint16 pos_x;
+    Sint16 pos_y;
+
+    Sint8  *slLocateBitMap( pos_x, pos_y );
+【引  数】
+    Sint16 pos_x - アドレスを求めたい位置のX座標。
+    Sint16 pos_y - アドレスを求めたい位置のY座標。
+【返  数】
+    Sint8* - 指定した位置のVRAM(絶対)アドレス。
+【機  能】
+    指定位置のVRAM上でのアドレスを返します。
+    画面外であった場合には NULLを返します。
+【用  例】
+    slLocateBitMapで取得したアドレスへデータをブロック転送する。
+    addr = slLocateBitMap( 10, 10 );
+    slDMACopy( addr, dest, size );
+【参  照】
+    slClearBitMap -- 関数
+    slClearBitMap - ビットマップグラフィックス面をクリア。
+【書  式】
+    #include "sgl.h"
+
+    Sint8 col;
+
+    void slClearBitMap( col );
+【引  数】
+    Sint8 col - パレット番号。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    ビットマップ画面を指定されたカラーでクリアします。
+【用  例】
+    slClearBitMap( 6 );
+【参  照】
+    slBMPset -- 関数
+    slBMPset - ビットマップグラフィックス面に点を打つ。
+【書  式】
+    #include "sgl.h"
+
+    Sint16 pos_x;
+    Sint16 pos_y;
+    Sint8  col;
+
+    Bool slBMPset( pos_x, pos_y, col );
+【引  数】
+    Sint16 pos_x - 描画したい位置のX座標。
+    Sint16 pos_y - 描画したい位置のY座標。
+    Sint8  col;
+【返  数】
+    Bool - エラーコード(後述)。
+【機  能】
+    指定された位置に点を描画します。
+    画面外であった場合には FALSE を返します。
+【用  例】
+    (10,10)に点を打つ。
+    if ( slBMPset( 10, 10, 3 ) == FALSE ) {
+      slPrint( "Error occurred.", slLocate( 9, 2 ) );
+    }
+【参  照】
+    slBMPoint, slBMCircle, slBMLine, slBMBox
+    slBMBoxFill
+
+
+slBMPoint -- 関数
+    slBMPoint - ビットマップ座標のパレット値を得る。
+【書  式】
+    #include "sgl.h"
+
+    Sint16 pos_x;
+    Sint16 pos_y;
+
+    Sint8 slBMPoint( pos_x, pos_y );
+【引  数】
+    Sint16 pos_x - パレットコードを知りたい位置のX座標。
+    Sint16 pos_y - パレットコードを知りたい位置のY座標。
+【返  数】
+    Sint8 パレットコード
+【機  能】
+    指定された位置の点を読み出し、パレットコードを返します。
+    画面外であった場合には0が返ります。
+【用  例】
+    ドット(10,5)のRGBコードを知る。
+    rgb = *( Uint16 * )( 0x25f00000 + slBMPoint( 10, 5 ) );
+【参  照】
+    slBMPoint, slBMCircle, slBMBox, slBMBoxFill
+    slBMPset
+
+
+slBMCircle -- 関数
+    slBMCircle - ビットマップグラフィック面に円を描く。
+【書  式】
+    #include "sgl.h"
+
+    Sint16 pos_x;
+    Sint16 pos_y;
+    Sint16 size;
+    Sint8  col;
+
+    void slBMCircle( pos_x, pos_y, size, col );
+【引  数】
+    Sint16 pos_x - 表示したい位置のX座標。
+    Sint16 pos_y - 表示したい位置のY座標。
+    Sint16 size  - 円の半径。
+    Sint8  col   - 表示したい色のパレットコード。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    指定された位置を中心とした円を描画します。
+【用  例】
+    原点を中心とした半径20の円を描く。
+    slBMCircle( 0, 0, 20, 120 );
+【参  照】
+    slBMPoint, slBMPset, slBMLine, slBMBox
+    slBMBoxFill
+
+
+slBMLine -- 関数
+    slBMLine - ビットマップグラフィック面に線を描く。
+【書  式】
+    #include "sgl.h"
+
+    Sint16 pos_s_x;
+    Sint16 pos_s_y;
+    Sint16 pos_e_x;
+    Sint16 pos_e_y;
+    Sint8  col;
+
+    Bool slBMLine( pos_s_x, pos_s_y, pos_e_x, pos_e_y, col );
+【引  数】
+    Sint16 pos_s_x - 線の始点のX座標。
+    Sint16 pos_s_y - 線の始点のY座標。
+    Sint16 pos_e_x - 線の終点のX座標。
+    Sint16 pos_e_y - 線の終点のY座標
+    Sint8  col     - パレットコード。
+【返  数】
+    Bool - エラーコード(後述)。
+【機  能】
+    指定された2点間を結ぶ直線を描画します。
+    画面外であった場合 FALSE を返します。
+【用  例】
+    (10,54)を始点(-3,35)を終点とする線を描く。
+    slBMLine( 10, 54, -3, 35 );
+【参  照】
+    slBMPoint, slBMCircle, slBMPset, slBMBox
+    slBMBoxFill
+
+
+slBMBox -- 関数
+    slBMBox - ビットマップグラフィック面に四角形(長方形)を描く。
+【書  式】
+    #include "sgl.h"
+
+    Sint16 pos_s_x;
+    Sint16 pos_s_y;
+    Sint16 pos_e_x;
+    Sint16 pos_e_y;
+    Sint8  col;
+
+    Bool slBMBox( pos_s_x, pos_s_y, pos_e_x, pos_e_y, col );
+【引  数】
+    Sint16 pos_s_x - 描画する四角形の左上点のX座標。
+    Sint16 pos_s_y - 描画する四角形の左上点のY座標。
+    Sint16 pos_e_x - 描画する四角形の右下点のX座標。
+    Sint16 pos_e_y - 描画する四角形の右下点のY座標。
+    Sint8  col     - 描画する色のパレットコード。
+【返  数】
+    Bool - エラーコード(後述)。
+【機  能】
+    指定された点を2頂点とする長方形を描画します。
+    画面外であった場合 FALSE を返します。
+【用  例】
+    左上(120,35)右下(47,100)とする四角形を描く。
+    slBMBox( 120, 35, 47, 100, 1 );
+【参  照】
+    slBMPoint, slBMCircle, slBMLine, slBMPset
+    slBMBox
+
+
+slBMBoxFill -- 関数
+    slBMBoxFill - ビットマップグラフィック面に四角形を描き、中を塗りつぶす。
+【書  式】
+    #include "sgl.h"
+
+    Sint16 pos_s_x;
+    Sint16 pos_s_y;
+    Sint16 pos_e_x;
+    Sint16 pos_e_y;
+    Sint8  col;
+
+    Bool slBMBoxFill( pos_s_x, pos_s_y, pos_e_x, pos_e_y, col );
+【引  数】
+    Sint16 pos_s_x - 描画する四角形の左上点のX座標。
+    Sint16 pos_s_y - 描画する四角形の左上点のY座標。
+    Sint16 pos_e_x - 描画する四角形の右下点のX座標。
+    Sint16 pos_e_y - 描画する四角形の右下点のY座標。
+    Sint8  col     - 描画する色のパレットコード。
+【返  数】
+    Bool - エラーコード(後述)。
+【機  能】
+    指定された点を2頂点とする長方形を描画します。
+    長方形の内部も描画します。
+    画面外であった場合 FALSE を返します。
+【用  例】
+    左上(120,35)右下(47,100)とする四角形を書き中を塗りつぶす。
+    slBMBoxFill( 120, 35, 47, 100, 1 );
+【参  照】
+    slBMPoint, slBMCircle, slBMLine, slBMPset
+    slBMBox
+
+
+slBMGet -- 関数
+    slBMGet - 四角形領域のビットマップデータの取得。
+【書  式】
+    #include "sgl.h"
+
+    Sint16 pos_s_x;
+    Sint16 pos_s_y;
+    Sint16 pos_e_x;
+    Sint16 pos_e_y;
+    Sint8  addr_A;
+
+    Bool slBMGet( pos_s_x, pos_s_y, pos_e_x, pos_e_y, addr_A );
+【引  数】
+    Sint16 pos_s_x - 取得する四角形の左上点のX座標。
+    Sint16 pos_s_y - 取得する四角形の左上点のY座標。
+    Sint16 pos_e_x - 取得する四角形の右下点のX座標。
+    Sint16 pos_e_y - 取得する四角形の右下点のY座標。
+    Sint8  addr_A  - 領域のデータを収めるバッファのアドレス。
+【返  数】
+    Bool - エラーコード(後述)。
+【機  能】
+    指定された点を2頂点とする長方形内のビットマップデータをバッファにコピー
+    します。長方形の一部が画面外であった場合、その部分のデータはコピー
+    されません。
+    長方形全体が画面外であった場合 FALSE を返します。
+【用  例】
+    左上(20,20)右下(30,50)とする四角形の中をバッファにしまう
+    Uint8 buffer[ 10 * 30 ];
+    slBMGet( 20, 20, 30, 50, buffer );
+【参  照】
+    slBMPut, slBMSprPut
+
+
+slBMPut -- 関数
+    slBMPut - ビットマップグラフィック面中の四角形領域へのデータ転送。
+【書  式】
+    #include "sgl.h"
+
+    Sint16 pos_s_x;
+    Sint16 pos_s_y;
+    Sint16 pos_e_x;
+    Sint16 pos_e_y;
+    Sint8  *addr_A;
+
+    Bool slBMPut( pos_s_x, pos_s_y, pos_e_x, pos_e_y, addr_A );
+【引  数】
+    Sint16 pos_s_x - 描画する四角形の左上点のX座標。
+    Sint16 pos_s_y - 描画する四角形の左上点のY座標。
+    Sint16 pos_e_x - 描画する四角形の右下点のX座標。
+    Sint16 pos_e_y - 描画する四角形の右下点のY座標。
+    Sint8  *addr_A - 元のデータのあるアドレス。
+【返  数】
+    Bool - エラーコード(後述)。
+【機  能】
+    指定された点を2頂点とする長方形内にバッファのビットマップデータをコピー
+    します。長方形の一部が画面外であった場合、その部分のデータはコピー
+    されません。
+    長方形全体が画面外であった場合 FALSE を返します。
+【用  例】
+    Uint8 buffer[ 50 * 50 ];
+
+    slDMACopy( buffer, dest, 50 * 50 );
+    slBMPut( 34, 56, 84, 106, buffer );
+【参  照】
+    slBMGet, slBMSprPut
+
+
+slBMSprPut -- 関数
+    slBMSprPut - ビットマップグラフィック面中の四角形領域へのデータ転送。
+【書  式】
+    #include "sgl.h"
+
+    Sint16 pos_s_x;
+    Sint16 pos_s_y;
+    Sint16 pos_e_x;
+    Sint16 pos_e_y;
+    Sint8  *addr_A;
+
+    Bool slBMSprPut( pos_s_x, pos_s_y, pos_e_x, pos_e_y, addr_A );
+【引  数】
+    Sint16 pos_s_x - 描画する四角形の左上点のX座標。
+    Sint16 pos_s_y - 描画する四角形の左上点のY座標。
+    Sint16 pos_e_x - 描画する四角形の右下点のX座標。
+    Sint16 pos_e_y - 描画する四角形の右下点のY座標。
+    Sint8  *addr_A - 元のデータのあるアドレス。
+【返  数】
+    Bool - エラーコード(後述)。
+【機  能】
+    指定された点を2頂点とする長方形内にバッファのビットマップデータをコピー
+    します。ただし、スペース部分(パレットコード0)はコピーしません、
+    長方形の一部が画面外であった場合、その部分のデータはコピーされません。
+    長方形全体が画面外であった場合 FALSE を返します。
+【用  例】
+    Uint8 buffer[ 50 * 50 ];
+
+    slDMACopy( buffer, dest, 50 * 50 );
+    slBMPut( 34, 56, 84, 106, buffer );
+【参  照】
+    slBMGet, slBMPut

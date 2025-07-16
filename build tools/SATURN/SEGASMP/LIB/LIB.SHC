@@ -1,0 +1,7 @@
+-optimize=1
+-cpu=sh2
+-string=const
+-div=CPU
+-include=..\..\sh\include,..\..\segalib\include
+-macsave=0
+

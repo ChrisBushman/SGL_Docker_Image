@@ -1,0 +1,8 @@
+-cpu	= sh2
+-st	= const
+-sec	= p=SEGA_P,c=SEGA_C,d=SEGA_D,b=SEGA_B
+-div	= cpu
+-macsave= 0
+-i	=..\..\..\sh\include,..\..\..\segalib\include
+-op	= 1
+

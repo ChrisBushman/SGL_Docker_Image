@@ -1,0 +1,2 @@
+VCDMKDAT.EXE
+VCDBUILD jvc.scr

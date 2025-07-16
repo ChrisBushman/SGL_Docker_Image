@@ -1,0 +1,11 @@
+#
+#■このファイルは makefile から include されます。
+#  TARGET にはライブラリのファイル名を指定してください。
+#  OBJS にはライブラリを作るための dependencies を指定してください。
+#
+TARGET=	sega_dbg.a
+
+OBJS=	$(OBJDIR)/dbg_disp.o\
+		$(OBJDIR)/dbg_moni.o\
+		$(OBJDIR)/dbg_intr.o
+

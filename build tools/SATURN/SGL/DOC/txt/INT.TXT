@@ -1,0 +1,175 @@
+slSynch -- 関数
+    slSynch - 次のビデオ表示を待つ。
+【書  式】
+    #include "sgl.h"
+
+    void slSynch( void );
+【引  数】
+    void - 何も与えません。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    次のビデオ表示が始まる(2フレームの場合は始めのフレーム)のを待ちます。
+    前の処理において、処理落ちが起きている場合にはすぐに終了します。
+【用  例】
+    slInitSystem( TV_320x224, NULL, 2 );
+                    :
+    while( -1 ) {
+           :
+      slSynch();
+    }
+【参  照】
+    slInitSynch, SynchConst, SynchCount, PauseFlag
+    WinPtr, Resolution, NbPCMBf, PCMBufFlag
+    FRT_Count, VDP2_TVSTAT, RandWork
+
+
+slInitSynch -- 関数
+    slInitSynch - 次のビデオ表示を待つ。
+【書  式】
+    #include "sgl.h"
+
+    void slInitSynch( void );
+【引  数】
+    void - 何も与えません。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    割り込み待ちカウンタを初期化し、次のビデオ表示が始まるのを必ず待って
+    から、終了します。
+【用  例】
+    slInitSystem( TV_320x224, NULL, -1 );
+                    :
+    while( -1 ) {
+           :
+      slInitSynch();
+    }
+【注  意】
+    処理が落ちた場合、次のフレームまで必ず待ちます。
+【参  照】
+    slSynch, SynchConst, SynchCount, PauseFlag
+    WinPtr, Resolution, NbPCMBf, PCMBufFlag
+    FRT_Count, VDP2_TVSTAT, RandWork
+
+
+slIntFunction -- 関数
+    slIntFunction - V-Blankin割り込みへの関数登録。
+【書  式】
+    #include "sgl.h"
+
+    void ( *func ( void ) );
+
+    void slIntFunction( func );
+【引  数】
+    void ( *func ( void ) ) - ブランキング中に実行する関数へのポインタ。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    ブランキング開始割り込み処理の中で実行される関数を登録します。
+    登録されたユーザー関数はスクロールデータの転送の後に実行されます。
+    登録されている関数を抹消したい場合には NULLを指定します。
+【用  例】
+    void intfunc() {
+      call1();
+      call2();
+      call3();
+    }
+    slIntFunction( intfunc );
+
+    void intfunc() {
+      res = slDivFX( arg1, arg2 );
+              :
+    }
+    slIntFunction( intfunc ); /*NG!!! intfunc()は除算器を使っている。 */
+                              /* mathパッケージの関数(固定小数の演算や
+                                   マトリクスの演算)は基本的に除算器を
+                                 使っていると考えてください。            */
+【注  意】
+    割り込み処理の中で実行されるため、関数内で、除算器を使用することは
+    許されません。
+【参  照】
+    slSynchFunction, UserFunction
+
+
+slSynchFunction -- 関数
+    slSynchFunction - V-Blank Wait時実行関数の登録と削除。
+【書  式】
+    #include "sgl.h"
+
+    void ( *func( void ) );
+
+    void slSynchFunction( func );
+【引  数】
+    void ( *func( void ) ) - 割り込みを待つ間に実行したい関数へのポインタ。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    slSynch関数でブランキング割り込みを待つ間に実行する関数を登録し
+    ます。登録されている関数を抹消したい場合には NULLを指定します。
+【用  例】
+    void syncfunc() {
+      call1();
+      call2();
+    }
+    slSynchFunction( syncfunc );
+【参  照】
+    slSynch, slInitSynch
+
+
+slTransferEntry -- 関数
+    slTransferEntry - SCU-DMAの転送リストへの登録。
+【書  式】
+    #include "sgl.h"
+
+    void   *src;
+    void   *dest;
+    Uint16 size;
+
+    Bool slTransferEntry( src, dest, size );
+【引  数】
+    void   *src  - 転送元アドレス。
+    void   *dest - 転送先アドレス。
+    Uint16 size  - 転送サイズ。
+【返  数】
+    Bool - エラーコード(後述)。
+【機  能】
+    次のブランキング割り込みの中で実行されるDMA転送リストに追加します。
+    転送エントリーがバッファをオーバーすると、 FALSEが返ります。
+【用  例】
+    void   *src  = ( void * )( 0x6090000 );
+    void   *dest = ( void * )( 0x25e00000 );
+    Uint16 size  = 0x20000;
+    slTransferEntry( src, dest, size );
+
+    void   *src  = ( void * )( 0x25f00000 );
+    void   *dest = ( void * )( 0x25e00000 );
+    Uint16 size  = 0x1000;
+    slTransferEntry( src, dest, size ); /*NG 同一バス間の転送は出来ない。 */
+【注  意】
+    SCUのDMAの間接モードを使用するため、転送元と転送先とはバス
+    が異なっている必要があります。
+    バスには次の3つがあり、それぞれはSCUを介して接続されています。
+    CPU-Bus : IPLROM、WORK RAM、Backup RAM、SMPC
+    A-Bus   : CD、カートリッジ
+    B-Bus   : VDP1、VDP2、SCSP
+【参  照】
+    TransCount, TransRequest
+
+
+slNoOperation -- 関数
+    slNoOperation - 何もしない
+【書  式】
+    #include "sgl.h"
+
+    void slNoOperation( void );
+【引  数】
+    void - 何も与えません。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    何もしません。割り込み登録関数の取消時や、ウエイトをかける場合などに
+    に御利用ください。
+【用  例】
+    slIntFunction( slNoOperation );
+【参  照】
+    slIntFunction, slSynchFunction

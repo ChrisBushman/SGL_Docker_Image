@@ -1,0 +1,460 @@
+
+
+★セルの設定
+slCharNbg0 -- 関数
+
+
+
+slCharNbg1 -- 関数
+slCharNbg2 -- 関数
+slCharNbg3 -- 関数
+slCharRbg0 -- 関数
+    slChslCharNbg0, slCharNbg1, slCharNbg2, slCharNbg3, slCharRbg0
+                           - スクロール面のキャラクタサイズと色数の設定。
+【書  式】
+    #include "sgl.h"
+
+    Uint16 type;
+    Uint16 size;
+
+    void slCharNbg0( type, size );
+    void slCharNbg1( type, size );
+    void slCharNbg2( type, size );
+    void slCharNbg3( type, size );
+    void slCharRbg0( type, size );
+【引  数】
+    Uint16 type - キャラクタ色数(後述)。
+    Uint16 size - キャラクタサイズ(後述)。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    それぞれのスクロール面のキャラクタサイズ及びスクロールに使用される色数の
+    設定を行ないます。
+    パラメータの説明。
+    type: 
+         COL_TYPE_16   : パレット形式 16色
+         COL_TYPE_256  : パレット形式 256色
+         COL_TYPE_2048 : パレット形式 2048色
+         COL_TYPE_32768: RGB形式 32768色
+         COL_TYPE_1M   : RGB形式 1677万色
+    size: 
+         CHAR_SIZE_1x1 : キャラクタサイズを1×1セルに。
+         CHAR_SIZE_2x2 : キャラクタサイズを2×2セルに。
+【用  例】
+    NBG1を256色パレット形式、キャラクタサイズを1×1セルにする。
+    slCharNbg1( COL_TYPE_256, CHAR_SIZE_1x1);
+【参  照】
+    slPageNbg0, slPageNbg1, slPageNbg2, slPageNbg3
+    slPageRbg0, slPlaneNbg0, slPlaneNbg1, slPlaneNbg2
+    slPlaneNbg3, slPlaneRA, slPlaneRB, slMapNbg0
+    slMapNbg1, slMapNbg2, slMapNbg3, sl1MapRA
+    sl1MapRB, slOverPatRA, slOverPatRA, sl16MapRA
+    sl16MapRB, VDP2_CHCTLA, VDP2_CHCTLB
+
+
+slPageNbg0 -- 関数
+slPageNbg1 -- 関数
+slPageNbg2 -- 関数
+slPageNbg3 -- 関数
+slPageRbg0 -- 関数
+    slPageNbg0, slPageNbg1, slPageNbg2, slPageNbg3, slPageRbg0
+                                        - スクロール面のページ設定。
+【書  式】
+    #include "sgl.h"
+
+    void   *celaddr;
+    void   *coladdr;
+    Uint16 type;
+
+    void slPageNbg0( celaddr, coladdr, type );
+    void slPageNbg1( celaddr, coladdr, type );
+    void slPageNbg2( celaddr, coladdr, type );
+    void slPageNbg3( celaddr, coladdr, type );
+    void slPageRbg0( celaddr, coladdr, type );
+【引  数】
+    void   *celaddr - セルデータのVRAM上先頭アドレス。
+    void   *coladdr - カラーデータのVRAM上先頭アドレス。
+    Uint16 type       - パターンネームデータ(後述)。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    それぞれのスクロール面のページ設定を行ないます。
+    celaddrには、VDP2の先頭(25E00000H)からのオフセット、又は、絶対アドレス
+    どちらでも構いません。(下位20ビットのみが有効です。)
+    coladdrは、カラーRAMの先頭(25F00000H)からのオフセット又は、絶対アドレス
+    どちらでも構いません。(下位12ビットのみが有効です。)
+     typeには、以下のパラメータが入ります。
+       PNB_1WORD            : 1ワード 下位10ビット
+       PNB_1WORD | CN_12BIT : 1ワード 下位12ビット
+       PNB_2WORD            : 2ワード 下位16ビット
+【用  例】
+    slPageNbg1( ( void * )0x20000, 0, PNB_1WORD| CN_10BIT);
+【参  照】
+    slCharNbg0, slCharNbg1, slCharNbg2, slCharNbg3
+    slCharRbg0, slPlaneNbg0, slPlaneNbg1, slPlaneNbg2
+    slPlaneNbg3, slPlaneRA, slPlaneRB, slMapNbg0
+    slMapNbg1, slMapNbg2, slMapNbg3, sl1MapRA
+    sl1MapRB, slOverPatRA, slOverPatRA, sl16MapRA
+    sl16MapRB, VDP2_RAMCTL, VDP2_PNCN0, VDP2_PNCN1
+    VDP2_PNCN2, VDP2_PNCN3, VDP2_PNCR, nbg0_char_adr
+    nbg1_char_adr, nbg2_char_adr, nbg3_char_adr, nbg0_char_adr
+    ra_char_adr, rb_char_adr
+
+
+slPlaneNbg0 -- 関数
+slPlaneNbg1 -- 関数
+slPlaneNbg2 -- 関数
+slPlaneNbg3 -- 関数
+slPlaneRA   -- 関数
+slPlaneRB   -- 関数
+    slPlaneNbg0, slPlaneNbg1, slPlaneNbg2, slPlaneNbg3, slPlaneRA, slPlaneRB
+                                - スクロール面のプレーンサイズを設定。
+【書  式】
+    #include "sgl.h"
+
+    Uint16 type;
+
+    void slPlaneNbg0( type );
+    void slPlaneNbg1( type );
+    void slPlaneNbg2( type );
+    void slPlaneNbg3( type );
+    void slPlaneRA( type );
+    void slPlaneRB( type );
+【引  数】
+    Uint16 type - プレーンサイズ(後述)
+【返  数】
+    void - 何も返しません。
+【機  能】
+    それぞれのスクロール面のプレーンサイズを設定します。
+    typeには、以下のパラメータが入ります。
+       PL_SIZE_1x1 : 横1×縦1
+       PL_SIZE_2x1 : 横2×縦1
+       PL_SIZE_2x2 : 横2×縦2
+【用  例】
+    slPlaneNBG0( PL_SIZE_2x2);
+【注  意】
+【参  照】
+    slCharNbg0, slCharNbg1, slCharNbg2, slCharRbg0
+    slPageNbg0, slPageNbg1, slPageNbg2, slPageNbg3
+    slPageRbg0, slMapNbg0, slMapNbg1, slMapNbg2
+    slMapNbg3, sl1MapRA, sl1MapRB, slOverPatRA
+    sl16MapRB, VDP2_PLSZ
+
+
+slOverRA -- 関数
+slOverRB -- 関数
+    slOverRA, slOverRB - 回転スクロール面の画面オーバー処理モードの設定。
+【書  式】
+    #include "sgl.h"
+
+    Uint16 type;
+
+    void slOverRA( type );
+    void slOverRB( type );
+【引  数】
+    Uint16 type - 画面オーバー処理モード(後述)
+【返  数】
+    void - 何も返しません。
+【機  能】
+    それぞれの回転スクロール面の画面オーバー処理モードを設定します。
+    typeには、以下の値を指定します。
+        0 : エリア外は、表示エリアに設定された画像を繰り返す。
+        1 : エリア外は、指定したキャラクタパターンを繰り返す。
+        2 : エリア外は、すべて透明。
+        3 : 縦512×横512のエリア外はすべて透明。
+    slOverRAは、係数テーブルAの、slOverRBは係数テーブルBの設定をします。
+【用  例】
+    slOverRA( 3 );
+【参  照】
+    slCharRbg0, slPageRbg0, slPlaneRA, slPlaneRB
+    sl1MapRA, sl1MapRB, slOverPatRA, sl16MapRB
+    VDP2_PLSZ
+
+
+slMapNbg0 -- 関数
+slMapNbg1 -- 関数
+slMapNbg2 -- 関数
+slMapNbg3 -- 関数
+    slMapNbg0, slMapNbg1, slMapNbg2, slMapNbg3
+                               - ノーマルスクロール面のマップ設定。
+【書  式】
+    #include "sgl.h"
+
+    void *map_a, *map_b, *map_c, *map_d;
+
+    void slMapNbg0( map_a, map_b, map_c, map_d );
+    void slMapNbg1( map_a, map_b, map_c, map_d );
+    void slMapNbg2( map_a, map_b, map_c, map_d );
+    void slMapNbg3( map_a, map_b, map_c, map_d );
+【引  数】
+    void *map_a - プレーンAのパターンネームデータテーブルのVRAM上先頭アドレス。
+    void *map_b - プレーンBのパターンネームデータテーブルのVRAM上先頭アドレス。
+    void *map_c - プレーンCのパターンネームデータテーブルのVRAM上先頭アドレス。
+    void *map_d - プレーンDのパターンネームデータテーブルのVRAM上先頭アドレス。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    それぞれのノーマルスクロール面のマップ設定を行ないます。
+     プレーンの構成は次の通りです。
+              (0,0)
+                ┌─┬─┐
+                │ A│ B│
+                ├─┼─┤
+                │ C│ D│
+                └─┴─┘
+    尚、map_a、map_b、map_c、map_dはいずれも、VDP2の先頭(25E00000H)からの
+    オフセット又は、絶対アドレスの指定が出来ます。(下位20ビットのみ有効です。)
+【用  例】
+    slMapNbg0( ( void * )0x50000, ( void * )0x25e50000, ( void * )0x50000,
+               ( void * )0x50000 );
+【参  照】
+    slCharNbg0, slCharNbg1, slCharNbg2, slCharNbg3
+    slPageNbg0, slPageNbg1, slPageNbg2, slPageNbg3
+    slPlaneNbg0, slPlaneNbg1, slPlaneNbg2, slPlaneNbg3
+    VDP2_CHCTLA, VDP2_CHCTLB, VDP2_PNCN0, VDP2_PNCN1
+    VDP2_PNCN2, VDP2_PNCN3, VDP2_MPOFN, VDP2_MPABN0
+    VDP2_MPCDN0, VDP2_MPABN1, VDP2_MPCDN1, VDP2_MPABN2
+    VDP2_MPCDN2, VDP2_MPABN3, VDP2_MPCDN3, nbg0_page_adr
+    nbg1_page_adr, nbg2_page_adr, nbg3_page_adr
+
+
+sl1MapRA -- 関数
+sl1MapRB -- 関数
+    sl1MapRA, sl1MapRB - 回転パラメータを使用する回転スクロールのマップの設定。
+【書  式】
+    #include "sgl.h"
+
+    void *addr_A;
+
+    void sl1MapRA( addr_A );
+    void sl1MapRB( addr_A );
+【引  数】
+    void *addr_A - 回転パラメータのパターンネームデータテーブルのVRAM上
+                 先頭アドレス
+【返  数】
+    void - 何も返しません。
+【機  能】
+    それぞれの回転パラメータを使用する回転スクロールのマップを設定します。
+【用  例】
+    sl1MapRA( ( void * )( 0x25e20000 ) );
+【参  照】
+    slCharRbg0, slPageRbg0, slPlaneRA, slPlaneRB
+    slOverPatRA, sl16MapRA, sl16MapRB, VDP2_RAMCTL
+    VDP2_CHCTLB, VDP2_PNCR, VDP2_MPOFR, VDP2_MPABRA
+    VDP2_MPCDRA, VDP2_MPEFRA, VDP2_MPGHRA, VDP2_MPIJRA
+    VDP2_MPKLRA, VDP2_MPMNRA, VDP2_MPOPRA, VDP2_MPABRB
+    VDP2_MPCDRB, VDP2_MPEFRB, VDP2_MPGHRB, VDP2_MPIJRB
+    VDP2_MPKLRB, VDP2_MPMNRB, VDP2_MPOPRB, ra_page_adr
+    slOverPatRA -- 関数
+slOverPatRB -- 関数
+    slOverPatRA, slOverPatRB
+               - 回転スクロールのマップ外キャラクタのパターンネームを定義。
+【書  式】
+    #include "sgl.h"
+
+    Uint16 pname;
+
+    void slOverPatRA( pname );
+    void slOverPatRB( pname );
+【引  数】
+    Uint16 pname - 回転スクロールのマップ外キャラクタのパターンネーム。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    回転スクロールのマップ外キャラクタのパターンネームをセットします。
+【用  例】
+    /* パターンネームデータ2 Wordの場合。*/
+    slOverRA( 1 );
+    slOverPatRA( 2 << 30 | 0 << 28 | 4 << 16 | 0x240 );
+    /*                    ^^^^^^^   ^^^^^^^   ^^^^^^^   ^^^^^               */
+    /*           上下反転↑ 特殊機能なし↑   ↑パレットNo4 ↑キャラクタ240H */
+【注  意】
+    この関数で指定するパターンネームデータは、slOverRA関数でモード
+    1を設定した時のみ有効です。それ以外の設定をしていた場合この関数の設定
+    する、パターンネームデータは無効になります。
+【参  照】
+    slCharRbg0, slPageRbg0, slPlaneRA, slPlaneRB
+    sl1MapRA, sl1MapRB, sl16MapRA, sl16MapRB
+    VDP2_OVPNRA, VDP2_OVPNRB
+
+
+sl16MapRA -- 関数
+sl16MapRB -- 関数
+    sl16MapRA, sl16MapRB - 回転スクロールのマップ16ページ分を定義。
+【書  式】
+    #include "sgl.h"
+
+    Uint8 map[ 16 ];
+
+    void sl16MapRA( map );
+    void sl16MapRB( map );
+【引  数】
+    Uint8 map[ 16 ] - 16ページ分のマップナンバー(詳細後述)。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    回転スクロールのマップ16ページ分をセットします。
+    引数として渡す配列に16ページ分のマップナンバーをセットしておきます。
+    ページナンバーにはVRAMの先頭から0x800単位で数えたものを入れてください)
+         ABCD
+         EFGH
+         IJKL
+         MNOP
+    上記の4x4ページ分をABC ... NOPの順に配列にセットしておきます。
+【用  例】
+      #define　　MAPOFFSET  (RBG0_MAP_ADR-VDP_VRAM_A0)/0x800
+      #define    DD    4+MAPOFFSET
+      Uint8    map[16] = {
+         0*DD, 1*DD, 2*DD, 3*DD,
+         4*DD, 5*DD, 6*DD, 7*DD,
+         8*DD, 9*DD,10*DD,11*DD,
+        12*DD,13*DD,14*DD,15*DD,
+      };
+      #undef    DD
+      sl16MapRA(map);
+【注  意】
+    sl16MapRA関数に渡すページナンバーのテーブルが実際のVRAMと
+    合致していないために正しく動作していないケースが良く見られます。
+    sl16MapRA関数, sl16MapRB関数ではテーブルに入っている
+    ページナンバーがVRAMの先頭から数えた通し番号になっているものとして、
+    テーブルの0番目の要素を0x800倍し、その値をアドレスとして登録します。
+    例えば、
+      #define    RBG0_CEL_ADR    (VDP2_VRAM_A0)
+      #define    RBG0_MAP_ADR    (VDP2_VRAM_B0)
+      #define    RBG0_COL_ADR    (VDP2_COLRAM)
+      #define    RBG0_KTB_ADR    (VDP2_VRAM_A1)
+      #define    RBG0_PRA_ADR    (VDP2_VRAM_A1+ 0x1fe00)
+    という例のように、VRAM-B0バンクにパターンネームがある場合、テーブルには
+    128,132,136...といった値が設定されなければなりません。
+    (0,4,8...というデータをセットするケースが多いようです)
+      #define　　MAPOFFSET  (RBG0_MAP_ADR-VDP_VRAM_A0)/0x800
+      #define    DD    4+MAPOFFSET
+      Uint8    map[16] = {
+         0*DD, 1*DD, 2*DD, 3*DD,
+         4*DD, 5*DD, 6*DD, 7*DD,
+         8*DD, 9*DD,10*DD,11*DD,
+        12*DD,13*DD,14*DD,15*DD,
+      };
+      #undef    DD
+      sl16MapRA(map);
+  　上記のような方法で設定すれば、正しく設定することができます。
+【参  照】
+    slCharRbg0, slPageRbg0, slPlaneRA, slPlaneRB
+    slOverPatRA, sl1MapRA, sl1MapRB, VDP2_CHCTLB
+    VDP2_PNCR, VDP2_MPABRB
+
+
+★アスキー文字
+slScrAscSet -- 関数
+    slScrAscSet - アスキー文字の設定。
+【書  式】
+    #include "sgl.h"
+
+    void *addr_A;
+
+    void slScrAscSet( addr_A );
+【引  数】
+    void *addr_A - アスキーをセットするVRAM上アドレス
+【返  数】
+    void - 何も返しません。
+【機  能】
+    デフォルトのアスキー文字(256色モード用・128セル)を指定されたアドレス
+    にセットします。
+    addr_Aは絶対アドレスで指定してください。
+【用  例】
+    slScrAscSet( ( void * )0x25e00000 );
+【注  意】
+    引数に直値で指定した場合は問題ありませんが、
+    slScrAscSet( symb );                 <-- (A)
+    *( Uint32 * )( symb ) = 0x20000000;  <-- (B)
+    の様にシンボルで指定した場合でそのシンボルをあとで使用したりする場合、
+    (B)の動作が正しく行なわれない場合があります。(コンパイラのオプティマイズ
+    レベル等にもよりますが。)この関数を使用する場合このような使い方は極力
+    避けるようにしてください。
+【参  照】
+    setASC_1to8, setASC_1to4, SGL_ASCII_CG, slPrint
+    slPrintFX, slPrintHex, slDispHex
+
+
+setASC_1to8 -- 関数
+    setASC_1to8 - 1ピクセルが1ビットに圧縮されたASCIIキャラクタのデータの展開。
+【書  式】
+    #include "sgl.h"
+
+    Uint8  *src;
+    void   *dst;
+    Uint32 cel;
+    Uint8  pal;
+
+    void setASC_1to8( src, dst ,cell ,pal );
+【引  数】
+    Uint8  *src_A - 元データのアドレス。
+    void   *dst_A - 転送先アドレス。
+    Uint32 cel    - 展開するキャラクタ数。
+    Uint8  pal    - 展開するキャラクタのベースパレットナンバー。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    1ピクセルが1(4)ビットに圧縮されたASCIIキャラクタのデータをスクロールの
+    256色モード用のキャラクタデータに展開します。
+    各ピクセルは パレット番号が0または1になります。
+【用  例】
+    Uint8 src[] = {
+             :
+    } 
+    setASC_1to8( src, ( void * )0x25e20000, sizeof( src ), 2 );
+【参  照】
+    slScrAscSet, setASC_1to4, SGL_ASCII_CG, slPrint
+    slPrintFX, slPrintHex, slDispHex
+
+
+setASC_1to4 -- 関数
+    setASC_1to4 - 1ピクセルが1ビットに圧縮されたASCIIキャラクタのデータの展開
+【書  式】
+    #include "sgl.h"
+
+    Uint8  *src;
+    void   *dst;
+    Uint32 cel;
+    Uint8  pal;
+    Sint32 skip;
+
+    void setASC_1to4( src, dst, cel, pal, skip );
+【引  数】
+    Uint8  *src_A - 元データのアドレス。
+    void   *dst_A - 転送先アドレス。
+    Uint32 cel    - 展開するキャラクタ数。
+    Uint8  pal    - 展開するキャラクタのベースパレットナンバー。
+    Sint32 skip   - skip には 1セル分の展開の後、何バイト分スキップするか。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    1ピクセルが1ビットに圧縮されたASCIIキャラクタのデータをスクロールの
+    16色モード用のキャラクタデータに展開します。各ピクセルはパレット番号が
+    0または1になります。
+    skipには、slPrint等の256色モード専用の関数を16色モードで使用する
+    場合にはCG_Size/2 を指定します。
+【用  例】
+    Uint8 src[] = {
+             :
+    } 
+    setASC_1to4( src, ( void * )0x25e20000, sizeof( src ), 
+                 2, sizeof( src ) / 2 );
+【参  照】
+    slScrAscSet, setASC_1to8, SGL_ASCII_CG, slPrint
+    slPrintFX, slPrintHex, slDispHex
+
+
+SGL_ASCII_CG -- グローバル変数
+    SGL_ASCII_CG - SGLがデフォルトで持っているASCIIキャラクタ。
+【書  式】
+    #include "sgl.h"
+
+    Uint8 SGL_ASCII_CG[]
+【機  能】
+  SGLがデフォルトのキャラクタデータとして持っている ASCIIキャラクタの
+  データで、上記の setASC_1to8関数により展開しています。
+  キャラクタ数は128です。
+【参  照】
+    slScrAscSet, setASC_1to8, setASC_1to4, slPrint
+    slPrintFX, slPrintHex, slDispHex

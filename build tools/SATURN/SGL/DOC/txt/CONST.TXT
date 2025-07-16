@@ -1,0 +1,108 @@
+
+
+◎定数マクロ
+NULL -- 定数マクロ
+    NULL - NULLポインタ
+【機  能】
+    #define NULL ((void *)0)
+
+
+DI -- 定数マクロ
+    DI - 割り込み禁止用マスク
+【機  能】
+    #define  DI  15
+
+
+EI -- 定数マクロ
+    EI - 割り込み許可用マスク。
+【機  能】
+    #define  EI  0
+
+MAX_NEST -- 定数マクロ
+    MAX_NEST - マトリクスのネストできる数。
+【機  能】
+    #define MAX_NEST 20
+
+WORK_SIZE -- 定数マクロ
+    WORK_SIZE -- イベントのWORK [a]構造体の大きさ。
+【機  能】
+    #define  WORK_SIZE  0x40
+
+
+EVENT_SIZE -- 定数マクロ
+    EVENT_SIZE - イベントのEVENT [a]構造体の大きさ
+【機  能】
+    #define  EVENT_SIZE  0x80
+
+
+M_PI -- 定数マクロ
+    M_PI - πを表す定数マクロ
+【機  能】
+    #define  M_PI  3.1415926535897932
+
+
+CD_Black         -- マクロ定数
+CD_DarkRed       -- マクロ定数
+CD_DarkGreen     -- マクロ定数
+CD_DarkYellow    -- マクロ定数
+CD_DarkBlue      -- マクロ定数
+CD_DarkPurple    -- マクロ定数
+CD_DarkMagenta   -- マクロ定数
+CD_DarkWhite     -- マクロ定数
+CD_MediumRed     -- マクロ定数
+CD_MediumGreen   -- マクロ定数
+CD_MediumYellow  -- マクロ定数
+CD_MediumBlue    -- マクロ定数
+CD_MediumPurple  -- マクロ定数
+CD_MediumMagenta -- マクロ定数
+CD_MediumWhite   -- マクロ定数
+CD_SemiRed       -- マクロ定数
+CD_SemiGreen     -- マクロ定数
+CD_SemiYellow    -- マクロ定数
+CD_SemiBlue      -- マクロ定数
+CD_SemiPurple    -- マクロ定数
+CD_SemiMagenta   -- マクロ定数
+CD_SemiWhite     -- マクロ定数
+CD_Red           -- マクロ定数
+CD_Green         -- マクロ定数
+CD_Yellow        -- マクロ定数
+CD_Blue          -- マクロ定数
+CD_Purple        -- マクロ定数
+CD_Magenta       -- マクロ定数
+CD_White         -- マクロ定数
+    CD_Black、CD_DarkRed、CD_DarkGreen、CD_DarkYellow、CD_DarkBlue、
+    CD_DarkPurple、CD_DarkMagenta、CD_DarkWhite、CD_MediumRed、CD_MediumGreen、
+    CD_MediumYellow、CD_MediumBlue、CD_MediumPurple、CD_MediumMagenta、
+    CD_MediumWhite、CD_SemiRed、CD_SemiGreen、CD_SemiYellow、CD_SemiBlue、
+    CD_SemiPurple、CD_SemiMagenta、CD_SemiWhite、CD_Red、CD_Green、CD_Yellow、
+    CD_Blue、CD_Purple、CD_Magenta、CD_White - サンプルカラーデータ
+【機  能】
+    #define  CD_Black          ( 0 << 10) | ( 0 << 5) | (0)  | RGB_Flag
+    #define  CD_DarkRed        ( 0 << 10) | ( 0 << 5) | (8)  | RGB_Flag
+    #define  CD_DarkGreen      ( 0 << 10) | ( 8 << 5) | (0)  | RGB_Flag
+    #define  CD_DarkYellow     ( 0 << 10) | ( 8 << 5) | (8)  | RGB_Flag
+    #define  CD_DarkBlue       ( 8 << 10) | ( 0 << 5) | (0)  | RGB_Flag
+    #define  CD_DarkPurple     ( 8 << 10) | ( 0 << 5) | (8)  | RGB_Flag
+    #define  CD_DarkMagenta    ( 8 << 10) | ( 8 << 5) | (0)  | RGB_Flag
+    #define  CD_DarkWhite      ( 8 << 10) | ( 8 << 5) | (8)  | RGB_Flag
+    #define  CD_MediumRed      ( 0 << 10) | ( 0 << 5) | (16) | RGB_Flag
+    #define  CD_MediumGreen    ( 0 << 10) | (16 << 5) | (0)  | RGB_Flag
+    #define  CD_MediumYellow   ( 0 << 10) | (16 << 5) | (16) | RGB_Flag
+    #define  CD_MediumBlue     (16 << 10) | ( 0 << 5) | (0)  | RGB_Flag
+    #define  CD_MediumPurple   (16 << 10) | ( 0 << 5) | (16) | RGB_Flag
+    #define  CD_MediumMagenta  (16 << 10) | (16 << 5) | (0)  | RGB_Flag
+    #define  CD_MediumWhite    (16 << 10) | (16 << 5) | (16) | RGB_Flag
+    #define  CD_SemiRed        ( 0 << 10) | ( 0 << 5) | (24) | RGB_Flag
+    #define  CD_SemiGreen      ( 0 << 10) | (24 << 5) | (0)  | RGB_Flag
+    #define  CD_SemiYellow     ( 0 << 10) | (24 << 5) | (24) | RGB_Flag
+    #define  CD_SemiBlue       (24 << 10) | ( 0 << 5) | (0)  | RGB_Flag
+    #define  CD_SemiPurple     (24 << 10) | ( 0 << 5) | (24) | RGB_Flag
+    #define  CD_SemiMagenta    (24 << 10) | (24 << 5) | (0)  | RGB_Flag
+    #define  CD_SemiWhite      (24 << 10) | (24 << 5) | (24) | RGB_Flag
+    #define  CD_Red            ( 0 << 10) | ( 0 << 5) | (31) | RGB_Flag
+    #define  CD_Green          ( 0 << 10) | (31 << 5) | (0)  | RGB_Flag
+    #define  CD_Yellow         ( 0 << 10) | (31 << 5) | (31) | RGB_Flag
+    #define  CD_Blue           (31 << 10) | ( 0 << 5) | (0)  | RGB_Flag
+    #define  CD_Purple         (31 << 10) | ( 0 << 5) | (31) | RGB_Flag
+    #define  CD_Magenta        (31 << 10) | (31 << 5) | (0)  | RGB_Flag
+    #define  CD_White          (31 << 10) | (31 << 5) | (31) | RGB_Flag

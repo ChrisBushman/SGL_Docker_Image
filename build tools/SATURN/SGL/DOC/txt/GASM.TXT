@@ -1,0 +1,54 @@
+●ＳＧＬのアセンブラソースについて
+　SGLを含めたSEGASATURN用の提供アセンブラプログラムは、すべてSHアセンブラで
+  アセンブルできるようにプログラムが記述されています。これは、ソースファイル
+  を一元管理するためです。GNUのアセンブラでアセンブルする場合、
+  awk(パターン記述言語)を使用して、GNUアセンブラで使用できるように
+  変換しています。
+　変換ツール名はgasmで、UNIXではCシェルスクリプト、DOS環境ではバッチファイル
+  で作成しており、SHアセンブラ用プログラムからGNUアセンブラでアセンブル
+  できるようにコンバートして、オブジェクトファイルを生成するまでを行ないます。
+　gasmでは以下の内容を実行します。
+　(1)　コメントの削除(comment.awk)
+　　 awkを使用して ; で始まるコメント部分を削除します。
+　(2)　キーワードの変換(operand.awk、register.awk、macro.awk)
+　　 awkを使用して大文字で記述されている命令、レジスタ名などを小文字に
+     変換します。
+　(3)　セクションの書式変更(section.awk)
+　　 awkを使用してセクションの記述方法の変更を行ないます。
+　(4)　GNUのgasp(GNU Assembler Preprocessor)の実行
+　　 gaspを使用してas(GNU Assembler)でアセンブルできる形式に変更します。
+　(5)　EQUとASSIGNの前後のコード削除
+　　 awkを使用してEQUとASSIGNの前後の空白、タブを削除します。
+　(6)　GNUのgasp(GNU Assembler Preprocessor)の再実行
+　(7)　リテラルプールの確保(pool.awk)
+　　 awkを使用してASでアセンブルできるように変換します。
+　(8)　GNUのas(GNU Assembler)の実行
+　　 オブジェクトファイルを生成します。
+
+●PC用のAWKについて
+　AWK(パターン記述言語)は、UNIXで標準的なツールでありますが、DOSでは
+  あまり使用されていないツールです。
+　今回、saturn/awkディレクトリにフリーウェアであるgwak.exeとgawk_emx.exeの
+  二種類のawkを提供しました。二種類のawkを提供した理由は、環境によって
+  AWKツールが動作環境上のエラーが発生する場合があるためです。弊社の環境では
+  以下のような結果がでています。
+　　・MS-DOS環境----------------------　gawk_emx.exeが動作
+　　・Windows3.1のMS-DOSプロンプト----　gawk_emx.exeが動作
+　　・Windows95のMS-DOSプロンプト-----　gawk.exeが動作
+　そこで、アセンブラソースファイルをコンバートするgasmのバッチファイルとして、
+  gawk.exeを使用するgasm.batとgawk_emx.exeを使用するgasm_emx.batを提供して
+  使用環境によって選択して使用できるようにしました。
+　サンプルプログラムでは、sampleディレクトリのsys内(IPを作成するサンプル)の
+  メイクファイルを二種類(makefileとmakefile.emx)用意しています。
+
+●PC版のgasmを実行する場合
+　環境変数AWKENVにAWKツールおよびスクリプトファイルがあるディレクトリを設定して
+  ください。saturn\awkディレクトリにあるawkenv.batでは、C:saturn\awkを環境変数
+  awkenvに設定するようになっています。
+
+
+
+
+
+
+

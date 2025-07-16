@@ -1,0 +1,256 @@
+◆◆◆ SGLシステム変数一覧 ◆◆◆
+
+
+000：EventTop  EVENT  * 先頭に登録されているイベント
+004：EventLast  EVENT  * 末尾に登録されているイベント
+008：EventNow  EVENT  * 実行中のイベント
+00C：EventCount  Uint16  イベントの残数
+00E：WorkCount  Uint16  ワークの残数
+010：MainMode  Uint8  メインシーケンスモード
+011：SubMode  Uint8  サブシーケンスモード
+012：SynchConst  Sint8  ビデオ同期カウント
+013：SynchCount  Sint8  ビデオ同期カウント
+014：UserFunction  void (*)() ブランキング中に実行するユーザー関数
+018：TransCount  Uint16  ブランキング中の転送エントリー数
+01A：TransRequest  Uint8  ブランキング中の転送のリクエスト
+01B：PauseFlag  Uint8  スプライト、スクロールのポーズ用フラグ
+01C：mtptr  MATRIX  * カレントマトリクスポインタ
+020：MatrixCount  Uint8  マトリクスのネストカウント
+021：PrintColor  Uint8  テキスト表示用カラーパレット
+022：IntCount  Uint16  割り込みカウント
+024：MsPbufPtr  Uint32  * 頂点座標演算バッファポインタ(Master)
+028：SlPbufPtr  Uint32  * 頂点座標演算バッファポインタ(Slave)
+02C：SpritePtr  Uint16  * スプライトデータ転送ポインタ
+030：MsSdataPtr  Uint16  * スプライトデータセットポインタ(Master)
+034：SlSdataPtr  Uint16  * スプライトデータセットポインタ(Master)
+038：ZbufPtr  void ** Zバッファポインタ
+03C：FormTbl  TEXTURE  * テクスチャデータテーブル
+040：SprbufBias  Uint32  スプライトデータバッファ切り替え
+044：ComRdPtr  Uint32  * コマンドリードポインタ
+048：ComWrPtr  Uint32  * コマンドセット(ライト)ポインタ
+04C：MsLightVector  VECTOR  光源ベクトル(Master)
+058：SlLightVector  VECTOR  光源ベクトル(Master)
+064：ColorOffset  Uint8  * カラーオフセットテーブルポインタ
+068：MsScreenDist  FIXED  スクリーン位置(Master)
+06C：SlScreenDist  FIXED  スクリーン位置(Slave)
+070：MsZlimit  Sint16  表示リミットZ位置(Master)
+072：WindowNumber  Uint8  ウィンドウ使用数
+073：WinUseFlag  Uint8  ウィンドウ使用フラグ
+074：TotalPolygons  Uint16  演算ポリゴン数
+076：TotalVertices  Uint16  演算頂点数
+078：MsScreenLeft  Sint16  スクリーン左位置
+07A：MsScreenTop  Sint16  スクリーン上位置
+07C：MsScreenRight  Sint16  スクリーン右位置
+07E：MsScreenBottom  Sint16  スクリーン下位置
+080：MsScreenSizeX  Uint16  スクリーン横サイズ(Master)
+082：MsScreenSizeY  Uint16  スクリーン縦サイズ(Master)
+084：MsWindowSizeX  Uint16  ウィンドウサイズ(Master)
+086：MsWindowSizeY  Uint16  ウィンドウサイズ(Master)
+088：MXPolygons  Uint16  最大ポリゴン数
+08A：MXVertices  Uint16  最大頂点数
+08C：FrameSizeX  Uint16  フレームバッファサイズ
+08E：FrameSizeY  Uint16  フレームバッファサイズ
+090：MsWinXAdder  Sint16  ウィンドウチェック用加算データ(Master)
+092：MsWinYAdder  Sint16  ウィンドウチェック用加算データ(Master)
+094：SlWinXAdder  Uint16  ウィンドウチェック用加算データ(Slave)
+096：SlWinYAdder  Uint16  ウィンドウチェック用加算データ(Slave)
+098：MsClipXAdder  Sint16  クリッピング用加算データ(横)(Master)
+09A：MsClipYAdder  Sint16  クリッピング用加算データ(縦)(Master)
+09C：SlClipXAdder  Sint16  クリッピング用加算データ(横)(Slave)
+09E：SlClipYAdder  Sint16  クリッピング用加算データ(縦)(Slave)
+0A0：SlZlimit  Sint16  表示リミットZ位置(Slave)
+0A2：WinPtr  Uint16  ウィンドウデータセットオフセット
+0A4：DispPolygons  Uint16  表示ポリゴン数
+0A6：DMAEndFlag  Uint8  DMA転送終了フラグ
+0A8：DMASetFlag  Uint8  DMAテーブルセットフラグ
+0AA：PutCount  Uint16  slPutPolygon(),sl...Sprite()呼び出し回数
+0AC：MsZdpsftcnt  Uint8  画面表示リミットシフトカウンタ(Master)(未使用)
+0AD：SlZdpsftcnt  Uint8  画面表示リミットシフトカウンタ(Slave)(未使用)
+0B0：Resolution  Uint8  画面モード
+0B1：NbPCMBf  Uint8  PCMバッファの数(2000H単位)
+0B2：PCMBufFlag  Sint16  PCMバッファの空き状況フラグ
+0B4：SoundRdCount  Uint8  サウンドバッファ読み出しカウンタ
+0B5：SoundWrCount  Uint8  サウンドバッファエントリーカウンタ
+0B6：FRT_Count  Sint16  FRTカウンタ。slSynch毎に更新
+0B7：SCUMC_ID  Uint8  SCUメモリーコピーのチャンネルナンバー
+0B8：DMASt_CPU0  Uint8  CPU D.M.A.のステータス(CH0)
+0BA：DMASt_CPU1  Uint8  CPU D.M.A.のステータス(CH1)
+0BB：DMASt_SCU0  Uint8  SCU D.M.A.のステータス(CH0)
+0BC：DMASt_SCU1  Uint8  SCU D.M.A.のステータス(CH1)
+0BD：DMASt_SCU2  Uint8  SCU D.M.A.のステータス(CH2)
+0BE：dummy1  Uint16  システム予約
+0C0：VDP2_TVMD  Uint16  TV画面モード
+0C2：VDP2_EXTEN  Uint16  外部信号イネーブル
+0C4：VDP2_TVSTAT  Uint16  画面ステータス
+0C6：VDP2_VRSIZE  Uint16  VRAMサイズ
+0C8：VDP2_HCNT  Uint16  Hカウンタ
+0CA：VDP2_VCNT  Uint16  Vカウンタ
+0CE：VDP2_RAMCTL  Uint16  RAMコントロール
+0D0：VDP2_CYCA0L  Uint16  VRAMサイクルパターン(バンクA0、T0ー3)
+0D2：VDP2_CYCA0U  Uint16  VRAMサイクルパターン(バンクA0、T4ー7)
+0D4：VDP2_CYCA1L  Uint16  VRAMサイクルパターン(バンクA1、T0ー3)
+0D6：VDP2_CYCA1U  Uint16  VRAMサイクルパターン(バンクA1、T4ー7)
+0D8：VDP2_CYCB0L  Uint16  VRAMサイクルパターン(バンクB0、T0ー3)
+0DA：VDP2_CYCB0U  Uint16  VRAMサイクルパターン(バンクB0、T4ー7)
+0DC：VDP2_CYCB1L  Uint16  VRAMサイクルパターン(バンクB1、T0ー3)
+0DE：VDP2_CYCB1U  Uint16  VRAMサイクルパターン(バンクB1、T4ー7)
+0E0：VDP2_BGON  Uint16  画面表示イネーブル
+0E2：VDP2_MZCTL  Uint16  モザイクコントロール
+0E4：VDP2_SFSEL  Uint16  特殊機能コードセレクト
+0E6：VDP2_SFCODE  Uint16  特殊機能コード
+0E8：VDP2_CHCTLA  Uint16  キャラクタコントロール(NBG0、NBG1)
+0EA：VDP2_CHCTLB  Uint16  キャラクタコントロール(NBG2、NBG3、RBG0)
+0EC：VDP2_BMPNA  Uint16  ビットマップパレットナンバー(NBG0、1)
+0EE：VDP2_BMPNB  Uint16  ビットマップパレットナンバー(RBG0)
+0F0：VDP2_PNCN0  Uint16  パターンネームコントロール(NBG0)
+0F2：VDP2_PNCN1  Uint16  パターンネームコントロール(NBG1)
+0F4：VDP2_PNCN2  Uint16  パターンネームコントロール(NBG2)
+0F6：VDP2_PNCN3  Uint16  パターンネームコントロール(NBG3)
+0F8：VDP2_PNCR  Uint16  パターンネームコントロール(RBG0)
+0FA：VDP2_PLSZ  Uint16  プレーンサイズ
+0FC：VDP2_MPOFN  Uint16  マップオフセット(NBG0ー3)
+0FE：VDP2_MPOFR  Uint16  マップオフセット(回転パラメータA、B)
+100：VDP2_MPABN0  Uint16  マップ(NBG0プレーンA、B)
+102：VDP2_MPCDN0  Uint16  マップ(NBG0プレーンC、D)
+104：VDP2_MPABN1  Uint16  マップ(NBG1プレーンA、B)
+106：VDP2_MPCDN1  Uint16  マップ(NBG1プレーンC、D)
+108：VDP2_MPABN2  Uint16  マップ(NBG2プレーンA、B)
+10A：VDP2_MPCDN2  Uint16  マップ(NBG2プレーンC、D)
+10C：VDP2_MPABN3  Uint16  マップ(NBG3プレーンA、B)
+10E：VDP2_MPCDN3  Uint16  マップ(NBG3プレーンC、D)
+110：VDP2_MPABRA  Uint16  マップ(回転パラメータAプレーンA、B)
+112：VDP2_MPCDRA  Uint16  マップ(回転パラメータAプレーンC、D)
+114：VDP2_MPEFRA  Uint16  マップ(回転パラメータAプレーンE、F)
+116：VDP2_MPGHRA  Uint16  マップ(回転パラメータAプレーンG、H)
+118：VDP2_MPIJRA  Uint16  マップ(回転パラメータAプレーンI、J)
+11A：VDP2_MPKLRA  Uint16  マップ(回転パラメータAプレーンK、L)
+11C：VDP2_MPMNRA  Uint16  マップ(回転パラメータAプレーンM、N)
+11E：VDP2_MPOPRA  Uint16  マップ(回転パラメータAプレーンO、P)
+120：VDP2_MPABRB  Uint16  マップ(回転パラメータBプレーンA、B)
+122：VDP2_MPCDRB  Uint16  マップ(回転パラメータBプレーンC、D)
+124：VDP2_MPEFRB  Uint16  マップ(回転パラメータBプレーンE、F)
+126：VDP2_MPGHRB  Uint16  マップ(回転パラメータBプレーンG、H)
+128：VDP2_MPIJRB  Uint16  マップ(回転パラメータBプレーンI、J)
+12A：VDP2_MPKLRB  Uint16  マップ(回転パラメータBプレーンK、L)
+12C：VDP2_MPMNRB  Uint16  マップ(回転パラメータBプレーンM、N)
+12E：VDP2_MPOPRB  Uint16  マップ(回転パラメータBプレーンO、P)
+130：VDP2_SCXN0  FIXED  画面スクロール値(NBG0、水平方向固定小数)
+130：VDP2_SCXIN0  Sint16  画面スクロール値(NBG0、水平方向整数部)
+130：Nbg0_PosX  Sint16  NBG0 表示位置 (X)
+132：VDP2_SCXDN0  Uint16  画面スクロール値(NBG0、水平方向小数部)
+134：VDP2_SCYN0  FIXED  画面スクロール値(NBG0、垂直方向固定小数)
+134：VDP2_SCYIN0  Uint16  画面スクロール値(NBG0、垂直方向整数部)
+134：Nbg0_PosY  Uint16  NBG0 表示位置 (Y)
+136：VDP2_SCYDN0  Uint16  画面スクロール値(NBG0、垂直方向小数部)
+138：VDP2_ZMXN0  FIXED  座標増分(NBG0、水平方向固定小数)
+138：VDP2_ZMXIN0  Uint16  座標増分(NBG0、水平方向整数部)
+138：Nbg1_PosX  Uint16  NBG1 表示位置 (X)
+13A：VDP2_ZMXDN0  Uint16  座標増分(NBG0、水平方向小数部)
+13C：VDP2_ZMYN0  FIXED  座標増分(NBG0、垂直方向固定小数)
+13C：VDP2_ZMYIN0  Uint16  座標増分(NBG0、垂直方向整数部)
+13C：Nbg1_PosY  Uint16  NBG1 表示位置 (Y)
+13E：VDP2_ZMYDN0  Uint16  座標増分(NBG0、垂直方向小数部)
+140：VDP2_SCXN1  FIXED  画面スクロール値(NBG1、水平方向固定小数)
+140：VDP2_SCXIN1  Uint16  画面スクロール値(NBG1、水平方向整数部)
+142：VDP2_SCXDN1  Uint16  画面スクロール値(NBG1、水平方向小数部)
+144：VDP2_SCYN1  FIXED  画面スクロール値(NBG1、垂直方向固定小数)
+144：VDP2_SCYIN1  Uint16  画面スクロール値(NBG1、垂直方向整数部)
+146：VDP2_SCYDN1  Uint16  画面スクロール値(NBG1、垂直方向小数部)
+148：VDP2_ZMXN1  FIXED  座標増分(NBG1、水平方向固定小数)
+148：VDP2_ZMXIN1  Uint16  座標増分(NBG1、水平方向整数部)
+14A：VDP2_ZMXDN1  Uint16  座標増分(NBG1、水平方向小数部)
+14C：VDP2_ZMYN1  FIXED  座標増分(NBG1、垂直方向固定小数)
+14C：VDP2_ZMYIN1  Uint16  座標増分(NBG1、垂直方向整数部)
+14E：VDP2_ZMYDN1  Uint16  座標増分(NBG1、垂直方向小数部)
+150：VDP2_SCXN2  Uint16  画面スクロール値(NBG2、水平方向)
+152：VDP2_SCYN2  Uint16  画面スクロール値(NBG2、垂直方向)
+154：VDP2_SCXN3  Uint16  画面スクロール値(NBG3、水平方向)
+156：VDP2_SCYN3  Uint16  画面スクロール値(NBG3、垂直方向)
+158：VDP2_ZMCTL  Uint16  縮小イネーブル
+15A：VDP2_SCRCTL  Uint16  ライン&縦セルスクロールコントロール
+15C：VDP2_VCSTA  Uint16 * 縦セルスクロールテーブルアドレス
+160：VDP2_LSTA0  Sint16 * NBG0用ラインスクロールテーブルアドレス
+164：VDP2_LSTA1  Sint16 * NBG1用ラインスクロールテーブルアドレス
+168：VDP2_LCTA  Uint16 * ラインカラー画面テーブルアドレス
+16C：VDP2_BKTA  Uint16 * バック画面テーブルアドレス
+170：VDP2_RPMD  Uint16  回転パラメータモード
+172：VDP2_RPRCTL  Uint16  回転パラメータリードコントロール
+174：VDP2_KTCTL  Uint16  係数テーブルコントロール
+176：VDP2_KTAOF  Uint16  係数テーブルアドレスオフセット
+178：VDP2_OVPNRA  Uint16  画面オーバーパターンネーム
+17A：VDP2_OVPNRB  Uint16  画面オーバーパターンネーム
+17C：VDP2_RPTA  Sint32 * 回転パラメータテーブルアドレス
+180：VDP2_WPSX0  Uint16  ウィンドウポジション(H start)
+182：VDP2_WPSY0  Uint16  ウィンドウポジション(V start)
+184：VDP2_WPEX0  Uint16  ウィンドウポジション(H stop)
+186：VDP2_WPEY0  Uint16  ウィンドウポジション(V stop)
+188：VDP2_WPSX1  Uint16  ウィンドウポジション(H start)
+18A：VDP2_WPSY1  Uint16  ウィンドウポジション(V start)
+18C：VDP2_WPEX1  Uint16  ウィンドウポジション(H stop)
+18E：VDP2_WPEY1  Uint16  ウィンドウポジション(V stop)
+190：VDP2_WCTLA  Uint16  ウィンドウコントロール
+192：VDP2_WCTLB  Uint16  ウィンドウコントロール
+194：VDP2_WCTLC  Uint16  ウィンドウコントロール
+196：VDP2_WCTLD  Uint16  ウィンドウコントロール
+198：VDP2_LWTA0  Uint16 * ラインウィンドウテーブルアドレス
+19C：VDP2_LWTA1  Uint16 * ラインウィンドウテーブルアドレス
+1A0：VDP2_SPCTL  Uint16  スプライトコントロール
+1A2：VDP2_SDCTL  Uint16  シャドウコントロール
+1A4：VDP2_CRAOFA  Uint16  カラーRAMアドレスオフセット(NBG0ー3)
+1A6：VDP2_CRAOFB  Uint16  カラーRAMアドレスオフセット(RBG0、スプライト)
+1A8：VDP2_LNCLEN  Uint16  ラインカラー画面イネーブル
+1AA：VDP2_SFPRMD  Uint16  特殊プライオリティモード
+1AC：VDP2_CCCTL  Uint16  カラー演算コントロール
+1AE：VDP2_SFCCMD  Uint16  特殊カラー演算モード
+1B0：VDP2_PRISA  Uint16  プライオリティナンバー
+1B2：VDP2_PRISB  Uint16  プライオリティナンバー
+1B4：VDP2_PRISC  Uint16  プライオリティナンバー
+1B6：VDP2_PRISD  Uint16  プライオリティナンバー
+1B8：VDP2_PRINA  Uint16  プライオリティナンバー
+1BA：VDP2_PRINB  Uint16  プライオリティナンバー
+1BC：VDP2_PRIR  Uint16  プライオリティナンバー
+1BE：dummy2  Uint16  システム予約
+1C0：VDP2_CCRSA  Uint16  カラー演算割合(スプライト0、1)
+1C2：VDP2_CCRSB  Uint16  カラー演算割合(スプライト2、3)
+1C4：VDP2_CCRSC  Uint16  カラー演算割合(スプライト4、5)
+1C6：VDP2_CCRSD  Uint16  カラー演算割合(スプライト6、7)
+1C8：VDP2_CCRNA  Uint16  カラー演算割合(NBG0、1)
+1CA：VDP2_CCRNB  Uint16  カラー演算割合(NBG2、3)
+1CC：VDP2_CCRR  Uint16  カラー演算割合(RGB0)
+1CE：VDP2_CCRLB  Uint16  カラー演算割合(ラインカラー画面、バック画面)
+1D0：VDP2_CLOFEN  Uint16  カラーオフセットイネーブル
+1D2：VDP2_CLOFSL  Uint16  カラーオフセットセレクト
+1D4：VDP2_COAR  Uint16  カラーオフセットA(Red)
+1D6：VDP2_COAG  Uint16  カラーオフセットA(Green)
+1D8：VDP2_COAB  Uint16  カラーオフセットA(Blue)
+1DA：VDP2_COBR  Uint16  カラーオフセットB(Red)
+1DC：VDP2_COBG  Uint16  カラーオフセットB(Green)
+1DE：VDP2_COBB  Uint16  カラーオフセットB(Blue)
+1E0：ScrRotPtr  ROTSCROLL * 操作する回転パラメータのアドレス
+1E4：nbg0_char_adr  void * NBG0用CGアドレス
+1E8：nbg1_char_adr  void * NBG1用CGアドレス
+1EC：nbg2_char_adr  void * NBG2用CGアドレス
+1F0：nbg3_char_adr  void * NBG3用CGアドレス
+1F4：ra_char_adr  void * RBG0(パラメータA)用CGアドレス
+1F8：rb_char_adr  void * RBG0(パラメータB)用CGアドレス
+1FC：nbg0_page_adr  void * NBG0用パターンネームアドレス
+200：nbg1_page_adr  void * NBG1用パターンネームアドレス
+204：nbg2_page_adr  void * NBG2用パターンネームアドレス
+208：nbg3_page_adr  void * NBG3用パターンネームアドレス
+20C：ra_page_adr  void * RBG0(パラメータA)用パターンネームアドレス
+210：rb_page_adr  void * RBG0(パラメータB)用パターンネームアドレス
+214：rpara_vram_adr  void * 回転パラメータセットアドレス
+218：k_table_adr  void * 係数テーブルセットアドレス
+21C：RotScrParA  ROTSCROLL  回転パラメータA
+284：RotScrParB  ROTSCROLL  回転パラメータB
+2EC：Nbg2_PosX  FIXED  NBG2 表示位置 (X)
+2F0：Nbg2_PosY  FIXED  NBG2 表示位置 (Y)
+2F4：Nbg3_PosX  FIXED  NBG3 表示位置 (X)
+2F8：Nbg3_PosY  FIXED  NBG3 表示位置 (Y)
+2FC：Window_data  Uint16 [22] ウィンドウコントロールデータバッファ(2つ分)
+328：Center_data  Uint16 [10] ウィンドウ中心コントロールデータバッファ(2つ分)
+33C：RandWork  Uint32  乱数生成用ワーク
+340：CDReadExec  void* () CD読み込みサーバー関数
+344：DMA_TRANS  Uint32 [10] CPU D.M.A. パラメータ
+36C：SOUND  void *[3] サウンドバッファポインタ
+378：PERIPHERAL  Uint32 [12] ペリフェラルコントロールデータ

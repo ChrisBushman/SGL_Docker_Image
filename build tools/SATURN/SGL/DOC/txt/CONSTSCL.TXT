@@ -1,0 +1,1141 @@
+VDP2_VRAM_A0 -- マクロ定数
+    VDP2_VRAM_A0 - VDP2のVRAM A0の先頭アドレス
+【機  能】
+    #define  VDP2_VRAM_A0  0x25e00000
+
+
+VDP2_VRAM_A1 -- マクロ定数
+    VDP2_VRAM_A1 - VDP2のVRAM A1の先頭アドレス
+【機  能】
+    #define  VDP2_VRAM_A1  0x25e20000
+
+
+VDP2_VRAM_B0 -- マクロ定数
+    VDP2_VRAM_B0 - VDP2のVRAM B0の先頭アドレス
+【機  能】
+    #define  VDP2_VRAM_B0  0x25e40000
+
+
+VDP2_VRAM_B1 -- マクロ定数
+    VDP2_VRAM_B1 - VDP2のVRAM B1の先頭アドレス
+【機  能】
+    #define  VDP2_VRAM_B1  0x25e60000
+
+
+CGN01_RAM -- マクロ定数
+    CGN01_RAM - SGLデフォルトのノーマルスクロール0、1用CGデータアドレス
+【機  能】
+    #define  CGN01_RAM  VDP2_VRAM_B1
+
+
+NBG0_MAP -- マクロ定数
+    NBG0_MAP - SGLデフォルトのノーマルスクロール0のマップデータアドレス
+【機  能】
+    #define  NBG0_MAP  (CGN01_RAM+0x16000)
+
+
+NBG1_MAP -- マクロ定数
+    NBG1_MAP - SGLデフォルトのノーマルスクロール1のマップデータアドレス
+【機  能】
+    #define  NBG1_MAP  (CGN01_RAM+0x18000)
+
+
+KTBL0_RAM -- マクロ定数
+    KTBL0_RAM -  SGLデフォルトの回転スクロール用係数テーブルアドレス
+【機  能】
+    #define  KTBL0_RAM  VDP2_VRAM_A1
+
+
+BACK_CRAM -- マクロ定数
+    BACK_CRAM - SGLデフォルトのバックカラーアドレス
+【機  能】
+    #define  BACK_CRAM  (KTBL0_RAM + 0x1fffe)
+
+
+RBG_PARA_ADR -- マクロ定数
+    RBG_PARA_ADR - SGLデフォルトの回転パラメータテーブルAのアドレス
+【機  能】
+    #define  RBG_PARA_ADR  (KTBL0_RAM + 0x1ff00)
+
+
+RBG_PARB_ADR -- マクロ定数
+    RBG_PARB_ADR - SGLデフォルトの回転パラメータテーブルBのアドレス
+【機  能】
+    #define  RBG_PARB_ADR  (RBG_PARA_ADR+ 0x80)
+
+
+CGR0_RAM -- マクロ定数
+    CGR0_RAM - SGLデフォルトの回転スクロール用CGデータアドレス
+【機  能】
+    #define  CGR0_RAM    VDP2_VRAM_A0
+
+
+RBG0_MAP -- マクロ定数
+    RBG0_MAP - SGLデフォルトの回転スクロールのマップデータアドレス
+【機  能】
+    #define  RBG0_MAP  VDP2_VRAM_B0
+
+
+VDP2_COLRAM -- マクロ定数
+    VDP2_COLRAM - カラーRAMの先頭アドレス
+【機  能】
+    #define  VDP2_COLRAM  0x25f00000
+
+
+CG_Size -- マクロ定数
+    CG_Size - 1セルの大きさ(CG)
+【機  能】
+    #define  CG_Size  (8*8)
+
+
+CG16Size -- マクロ定数
+    CG16Size - 16色モードの時の1セルの大きさ
+【機  能】
+    #define  CG16Size  (8*8/2)
+
+
+CG256Size -- マクロ定数
+    CG256Size - 256色モードの時の1セルの大きさ
+【機  能】
+    #define  CG256Size  (8*8)
+
+
+CG2048Size -- マクロ定数
+    CG2048Size - 2048色モードの時の1セルの大きさ
+【機  能】
+    #define  CG2048Size  (8*8*2)
+
+
+CG32KSize -- マクロ定数
+    CG32KSize - 32000色RGBモードの時の1セルの大きさ
+【機  能】
+    #define  CG32KSize  (8*8*2)
+
+
+Line -- マクロ定数
+    Line - 1ラインの大きさ
+【機  能】
+    #define  Line  64
+
+
+Page -- マクロ定数
+    Page - 1ページの大きさ
+【機  能】
+    #define  Page  (64*Line)
+
+
+EXLTEN -- マクロ定数
+    EXLTEN - 外部ラッチイネーブル
+【機  能】
+    #define  EXLTEN  0x0200
+【参  照】
+    slExtSignal
+
+
+EXSYEN -- マクロ定数
+    EXSYEN - 外部同期イネーブル
+【機  能】
+    #define  EXSYEN  0x0100
+【参  照】
+    slExtSignal
+
+
+DASEL -- マクロ定数
+    DASEL - 画像表示エリアを規格領域一杯に
+【機  能】
+    #define  DASEL  0x0002
+【参  照】
+    slExtSignal
+
+
+EXBGEN -- マクロ定数
+    EXBGEN - 外部画面データを入力可に
+【機  能】
+    #define  EXBGEN  0x0001
+【参  照】
+    slExtSignal
+
+
+CRM16_1024 -- マクロ定数
+    CRM16_1024 - カラーRAMモード16ビット1024色
+【機  能】
+    #define  CRM16_1024  0
+【参  照】
+    slColRAMMode
+
+
+CRM16_2048 -- マクロ定数
+    CRM16_2048 - カラーRAMモード16ビット2048色
+【機  能】
+    #define  CRM16_2048  1
+【参  照】
+    slColRAMMode
+
+
+CRM32_1024 -- マクロ定数
+    CRM32_1024 - カラーRAMモード32ビット1024色
+【機  能】
+    #define  CRM32_1024  2
+【参  照】
+    slColRAMMode
+
+
+COL_TYPE_16 -- マクロ定数
+    COL_TYPE_16 - カラータイプ16色パレットモード
+【機  能】
+    #define  COL_TYPE_16  0x00
+【参  照】
+    slCharNbg0, slCharNbg1, slCharNbg2, slCharNbg1
+    slCharRbg0
+
+
+COL_TYPE_256 -- マクロ定数
+    COL_TYPE_256 - カラータイプ256色パレットモード
+【機  能】
+    #define  COL_TYPE_256  0x10
+【参  照】
+    slCharNbg0, slCharNbg1, slCharNbg2, slCharNbg1
+    slCharRbg0
+
+
+COL_TYPE_2048 -- マクロ定数
+    COL_TYPE_2048 - カラータイプ2048色パレットモード
+【機  能】
+    #define  COL_TYPE_2048  0x20
+【参  照】
+    slCharNbg0, slCharNbg1, slCharNbg2, slCharNbg1
+    slCharRbg0
+
+
+COL_TYPE_32768 -- マクロ定数
+    COL_TYPE_32768 - カラータイプ32000色RGBモード
+【機  能】
+    #define  COL_TYPE_32768  0x30
+【参  照】
+    slCharNbg0, slCharNbg1, slCharNbg2, slCharNbg1
+    slCharRbg0
+
+
+COL_TYPE_1M -- マクロ定数
+    COL_TYPE_1M - カラータイプ1600万色RGBモード
+【機  能】
+    #define  COL_TYPE_1M  0x40
+【参  照】
+    slCharNbg0, slCharNbg1, slCharNbg2, slCharNbg1
+    slCharRbg0
+
+
+CHAR_SIZE_1x1 -- マクロ定数
+    CHAR_SIZE_1x1 - キャラクタサイズ1×1セル
+【機  能】
+    #define  CHAR_SIZE_1x1  0
+【参  照】
+    slCharNbg0, slCharNbg1, slCharNbg2, slCharNbg1
+    slCharRbg0
+
+
+CHAR_SIZE_2x2 -- マクロ定数
+    CHAR_SIZE_2x2 - キャラクタサイズ2×2セル
+【機  能】
+    #define  CHAR_SIZE_2x2  1
+【参  照】
+    slCharNbg0, slCharNbg1, slCharNbg2, slCharNbg1
+    slCharRbg0
+
+
+PNB_2WORD -- マクロ定数
+    PNB_2WORD - パターンネームサイズ2ワード
+【機  能】
+    #define  PNB_2WORD  0
+【参  照】
+    slPageNbg0, slPageNbg1, slPageNbg2, slPageNbg3
+    slPageRbg0
+
+
+PNB_1WORD -- マクロ定数
+    PNB_1WORD - パターンネームサイズ1ワード
+【機  能】
+    #define  PNB_1WORD  0x8000
+【参  照】
+    slPageNbg0, slPageNbg1, slPageNbg2, slPageNbg3
+    slPageRbg0
+
+
+CN_10BIT -- マクロ定数
+    CN_10BIT - キャラクタナンバ補助モード10ビット
+【機  能】
+    #define  CN_10BIT  0
+【参  照】
+    slPageNbg0, slPageNbg1, slPageNbg2, slPageNbg3
+    slPageRbg0
+
+
+CN_12BIT -- マクロ定数
+    CN_12BIT - キャラクタナンバ補助モード12ビット
+【機  能】
+    #define  CN_12BIT  0x4000
+【参  照】
+    slPageNbg0, slPageNbg1, slPageNbg2, slPageNbg3
+    slPageRbg0
+
+
+PL_SIZE_1x1 -- マクロ定数
+    PL_SIZE_1x1 - プレーンサイズ1×1
+【機  能】
+    #define  PL_SIZE_1x1  0
+【参  照】
+    slPlaneNbg0, slPlaneNbg1, slPlaneNbg2, slPlaneNbg3
+    PL_SIZE_2x1 -- マクロ定数
+    PL_SIZE_2x1 - プレーンサイズ2×1
+【機  能】
+    #define  PL_SIZE_2x1  1
+【参  照】
+    slPlaneNbg0, slPlaneNbg1, slPlaneNbg2, slPlaneNbg3
+    PL_SIZE_2x2 -- マクロ定数
+    PL_SIZE_2x2 - プレーンサイズ2×2
+【機  能】
+    #define  PL_SIZE_2x2  3
+【参  照】
+    slPlaneNbg0, slPlaneNbg1, slPlaneNbg2, slPlaneNbg3
+    NBG0ON -- マクロ定数
+    NBG0ON - NBG0を有効
+【機  能】
+    #define  NBG0ON  (1<<0)
+【参  照】
+    slScrDisp, slScrAutoDisp, slScrTransparent, slColorCalc
+    slColorCalcOn, slColOffsetOn, slColOffsetOff, slColOffsetAUse
+    slShadowOn, slColOffsetBUse, slLineColDisp, slScrMosaicOn
+    NBG1ON -- マクロ定数
+    NBG1ON - NBG1を有効
+【機  能】
+    #define  NBG1ON  (1<<1)
+【参  照】
+    slScrDisp, slScrAutoDisp, slScrTransparent, slColorCalc
+    slColorCalcOn, slColOffsetOn, slColOffsetOff, slColOffsetAUse
+    slShadowOn, slColOffsetBUse, slLineColDisp, slScrMosaicOn
+    NBG2ON -- マクロ定数
+    NBG2ON - NBG2を有効
+【機  能】
+    #define  NBG2ON  (1<<2)
+【参  照】
+    slScrDisp, slScrAutoDisp, slScrTransparent, slColorCalc
+    slColorCalcOn, slColOffsetOn, slColOffsetOff, slColOffsetAUse
+    slColOffsetBUse, slLineColDisp, slScrMosaicOn, slShadowOn
+    NBG3ON -- マクロ定数
+    NBG3ON - NBG3を有効
+【機  能】
+    #define  NBG3ON  (1<<3)
+【参  照】
+    slScrDisp, slScrAutoDisp, slScrTransparent, slColorCalc
+    slColorCalcOn, slColOffsetOn, slColOffsetOff, slColOffsetAUse
+    slColOffsetBUse, slLineColDisp, slScrMosaicOn, slShadowOn
+    RBG0ON -- マクロ定数
+    RBG0ON - RBG0を有効
+【機  能】
+    #define  RBG0ON  (1<<4)
+【参  照】
+    slScrDisp, slScrAutoDisp, slScrTransparent, slColorCalc
+    slColorCalcOn, slColOffsetOn, slColOffsetOff, slColOffsetAUse
+    slColOffsetBUse, slLineColDisp, slScrMosaicOn, slShadowOn
+    LNCLON -- マクロ定数
+    LNCLON - ラインカラー画面を有効
+【機  能】
+    #define  LNCLON  (1<<5)
+【参  照】
+    slColorCalc, slColorCalcOn, slColOffsetOn, slColOffsetOff
+    slColOffsetAUse, slColOffsetBUse, slLineColDisp, slScrMosaicOn
+    SPRON -- マクロ定数
+    SPRON - スプライト画面を有効
+【機  能】
+    #define  SPRON  (1<<6)
+【参  照】
+    slColorCalc, slColorCalcOn, slColOffsetOn, slColOffsetOff
+    slColOffsetAUse, slColOffsetBUse, slScrMosaicOn
+
+
+BACKON -- マクロ定数
+    BACKON - バックカラー画面を有効
+【機  能】
+    #define  BACKON  (1<<5)
+【参  照】
+    slShadowOn
+
+
+NBG0OFF -- マクロ定数
+    NBG0OFF - NBG0を無効
+【機  能】
+    #define  NBG0OFF  (1<<16)
+【参  照】
+    slScrDisp, slScrAutoDisp, slScrTransparent
+
+
+NBG1OFF -- マクロ定数
+    NBG1OFF - NBG1を無効
+【機  能】
+    #define  NBG1OFF  (1<<17)
+【参  照】
+    slScrDisp, slScrAutoDisp, slScrTransparent
+
+
+NBG2OFF -- マクロ定数
+    NBG2OFF - NBG2を無効
+【機  能】
+    #define  NBG2OFF  (1<<18)
+【参  照】
+    slScrDisp, slScrAutoDisp, slScrTransparent
+
+
+NBG3OFF -- マクロ定数
+    NBG3OFF - NBG3を無効
+【機  能】
+    #define  NBG3OFF  (1<<19)
+【参  照】
+    slScrDisp, slScrAutoDisp, slScrTransparent
+
+
+RBG0OFF -- マクロ定数
+    RBG0OFF - RBG0を無効
+【機  能】
+    #define  RBG0OFF  (1<<20)
+【参  照】
+    slScrDisp, slScrAutoDisp, slScrTransparent
+
+
+ZOOM_1 -- マクロ定数
+    ZOOM_1 - 縮小制限1倍まで
+【機  能】
+    #define  ZOOM_1  0
+【参  照】
+    slZoomModeNbg0, slZoomModeNbg1
+
+
+ZOOM_HALF -- マクロ定数
+    ZOOM_HALF - 縮小制限1/2倍まで
+【機  能】
+    #define  ZOOM_HALF  1
+【参  照】
+    slZoomModeNbg0, slZoomModeNbg1
+
+
+ZOOM_QUARTER -- マクロ定数
+    ZOOM_QUARTER - 縮小制限1/4倍まで
+【機  能】
+    #define  ZOOM_QUARTER  2
+【参  照】
+    slZoomModeNbg0, slZoomModeNbg1
+
+
+K_OFF -- マクロ定数
+    K_OFF - 係数テーブル読み込まない
+【機  能】
+    #define  K_OFF  0
+【参  照】
+    slKtableRA
+
+
+K_ON -- マクロ定数
+    K_ON - 係数テーブルを読み込む
+【機  能】
+    #define  K_ON  1
+【参  照】
+    slKtableRA
+
+
+K_2WORD -- マクロ定数
+    K_2WORD - 係数データ2ワード
+【機  能】
+    #define  K_2WORD  0
+【参  照】
+    slKtableRA
+
+
+K_1WORD -- マクロ定数
+    K_1WORD - 係数データ1ワード
+【機  能】
+    #define  K_1WORD  2
+【参  照】
+    slKtableRA
+
+
+K_MODE0 -- マクロ定数
+    K_MODE0 - 回転係数モード0
+【機  能】
+    #define  K_MODE0  0
+【参  照】
+    slKtableRA
+
+
+K_MODE1 -- マクロ定数
+    K_MODE1 - 回転係数モード1
+【機  能】
+    #define  K_MODE1  4
+【参  照】
+    slKtableRA
+
+
+K_MODE2 -- マクロ定数
+    K_MODE2 - 回転係数モード2
+【機  能】
+    #define  K_MODE2  8
+【参  照】
+    slKtableRA
+
+
+K_MODE3 -- マクロ定数
+    K_MODE3 - 回転係数モード3
+【機  能】
+    #define  K_MODE3  12
+【参  照】
+    slKtableRA
+
+
+K_LINECOL -- マクロ定数
+    K_LINECOL - 係数データからラインカラーデータを使用する。
+【機  能】
+    #define  K_LINECOL  0x10
+【参  照】
+    slKtableRA
+
+
+K_DOT -- マクロ定数
+    K_DOT - 係数データをドット毎に読み込む
+【機  能】
+    #define  K_DOT  0x20
+【参  照】
+    slKtableRA
+
+
+K_LINE -- マクロ定数
+    K_LINE - 係数データをライン毎に読み込む
+【機  能】
+    #define  K_LINE  0
+【参  照】
+    slKtableRA
+
+
+K_FIX -- マクロ定数
+    K_FIX - 係数データは一回のみ読み込む
+【機  能】
+    #define  K_FIX  0x40
+【参  照】
+    slKtableRA
+
+
+RA -- マクロ定数
+    RA - 回転パラメータAを使用
+【機  能】
+    #define  RA  0
+【参  照】
+    slCurRpara, slRparaMode
+
+
+RB -- マクロ定数
+    RB - 回転パラメータBを使用
+【機  能】
+    #define  RB  1
+【参  照】
+    slCurRpara, slRparaMode
+
+
+K_CHANGE -- マクロ定数
+    K_CHANGE - 係数データを切替えて使う
+【機  能】
+    #define  K_CHANGE  2
+【参  照】
+    slRparaMode
+
+
+W_CHANGE -- マクロ定数
+    W_CHANGE - ウインドウで係数データを切替える
+【機  能】
+    #define  W_CHANGE  3
+【参  照】
+    slRparaMode
+
+
+LnRd_Xst -- マクロ定数
+    LnRd_Xst - Xstをライン毎に読み込む
+【機  能】
+    #define  LnRd_Xst  0x01
+【参  照】
+    slRparaReadCtrlRA, slRparaReadCtrlRB
+
+
+LnRd_Yst -- マクロ定数
+    LnRd_Yst - Ystをライン毎に読み込む
+【機  能】
+    #define  LnRd_Yst  0x02
+【参  照】
+    slRparaReadCtrlRA, slRparaReadCtrlRB
+
+
+LnRd_KAst -- マクロ定数
+    LnRd_KAst - KAstをライン毎に読み込む
+【機  能】
+    #define  LnRd_KAst  0x04
+【参  照】
+    slRparaReadCtrlRA, slRparaReadCtrlRB
+
+
+CC_RATE -- マクロ定数
+    CC_RATE - カラー演算比率に従って加算
+【機  能】
+    #define  CC_RATE  0
+【参  照】
+    slColorCalc, slColorCalcMode
+
+
+CC_ADD -- マクロ定数
+    CC_ADD - そのまま加算
+【機  能】
+    #define  CC_ADD  0x100
+【参  照】
+    slColorCalc, slColorCalcMode
+
+
+CC_TOP -- マクロ定数
+    CC_TOP - トップ画像で割合を指定
+【機  能】
+    #define  CC_TOP  0
+【参  照】
+    slColorCalc, slColorCalcMode
+
+
+CC_2ND -- マクロ定数
+    CC_2ND - セカンド画像で割合を指定
+【機  能】
+    #define  CC_2ND  0x200
+【参  照】
+    slColorCalc, slColorCalcMode
+
+
+CC_EXT -- マクロ定数
+    CC_EXT - 拡張カラー演算を使用
+【機  能】
+    #define  CC_EXT  0x400
+【参  照】
+    slColorCalc, slColorCalcMode
+
+
+grdNBG0 -- マクロ定数
+    grdNBG0 - NBG0に対してぼかしの指定をする
+【機  能】
+    #define  grdNBG0  0xa000
+【参  照】
+    slGradationOn
+
+
+grdNBG1 -- マクロ定数
+    grdNBG1 - NBG1に対してぼかしの指定をする
+【機  能】
+    #define  grdNBG1  0xc000
+【参  照】
+    slGradationOn
+
+
+grdNBG2 -- マクロ定数
+    grdNBG2 - NBG2に対してぼかしの指定をする
+【機  能】
+    #define  grdNBG2  0xd000
+【参  照】
+    slGradationOn
+
+
+grdNBG3 -- マクロ定数
+    grdNBG3 - NBG3に対してぼかしの指定をする
+【機  能】
+    #define  grdNBG3  0xe000
+【参  照】
+    slGradationOn
+
+
+grdRBG0 -- マクロ定数
+    grdRBG0 - RBG0に対してぼかしの指定をする
+【機  能】
+    #define  grdRBG0  0x9000
+【参  照】
+    slGradationOn
+
+
+grdSPR -- マクロ定数
+    grdSPR - スプライト画面に対してぼかしの指定をする
+【機  能】
+    #define  grdSPR  0x8000
+【参  照】
+    slGradationOn
+
+
+COL_R -- マクロ定数
+    COL_R - 
+【機  能】
+    #define  COL_R  (1<<0)
+
+
+COL_G -- マクロ定数
+    COL_G - 
+【機  能】
+    #define  COL_G  (1<<5)
+
+
+COL_B -- マクロ定数
+    COL_B - 
+【機  能】
+    #define  COL_B  (1<<10)
+【参  照】
+    CC_pr_CN -- マクロ定数
+    CC_pr_CN - プライオリティがカラー演算条件ナンバより小さい又は同じ
+【機  能】
+    #define  CC_pr_CN  0
+【参  照】
+    slSpriteCCalcCond
+
+
+CC_PR_CN -- マクロ定数
+    CC_PR_CN - プライオリティがカラー演算条件ナンバと同じ
+【機  能】
+    #define  CC_PR_CN  1
+【参  照】
+    slSpriteCCalcCond
+
+
+CC_PR_cn -- マクロ定数
+    CC_PR_cn - プライオリティがカラー演算条件ナンバより大きい又は同じ
+【機  能】
+    #define  CC_PR_cn  2
+【参  照】
+    slSpriteCCalcCond
+
+
+CC_MSB -- マクロ定数
+    CC_MSB - MSBがONの時
+【機  能】
+    #define  CC_MSB  3
+【参  照】
+    slSpriteCCalcCond
+
+
+SPR_PAL -- マクロ定数
+    SPR_PAL - パレットのみモード
+【機  能】
+    #define  SPR_PAL  0
+【参  照】
+    slSpriteColMode
+
+
+SPR_PAL_RGB -- マクロ定数
+    SPR_PAL_RGB - パレットRGB混在モード
+【機  能】
+    #define  SPR_PAL_RGB  1
+【参  照】
+    slSpriteColMode
+
+
+scnNBG0 -- マクロ定数
+    scnNBG0 - NBG0を使用
+【機  能】
+    #define  scnNBG0  1
+【参  照】
+    scnNBG1 -- マクロ定数
+    scnNBG1 - NBG1を使用
+【機  能】
+    #define  scnNBG1  0
+【参  照】
+    scnNBG2 -- マクロ定数
+    scnNBG2 - NBG2を使用
+【機  能】
+    #define  scnNBG2  3
+【参  照】
+    scnNBG3 -- マクロ定数
+    scnNBG3 - NBG3を使用
+【機  能】
+    #define  scnNBG3  2
+【参  照】
+    scnRBG0 -- マクロ定数
+    scnRBG0 - RBG0を使用
+【機  能】
+    #define  scnRBG0  5
+【参  照】
+    scnRBGA -- マクロ定数
+    scnRBGA - 回転パラメータAを使用
+【機  能】
+    #define  scnRBGA  5
+【参  照】
+    scnRBGB -- マクロ定数
+    scnRBGB - 回転パラメータBを使用
+【機  能】
+    #define  scnRBGB  4
+【参  照】
+    scnSPR -- マクロ定数
+    scnSPR - スプライト面を使用
+【機  能】
+    #define  scnSPR  4
+【参  照】
+    scnROT -- マクロ定数
+    scnROT - 回転パラメータウインドウを使用
+【機  能】
+    #define  scnROT  7
+【参  照】
+    scnCCAL -- マクロ定数
+    scnCCAL - カラー演算ウインドウを使用
+【機  能】
+    #define  scnCCAL  6
+【参  照】
+    scnLNCL -- マクロ定数
+    scnLNCL - ラインカラー画面を使用
+【機  能】
+    #define  scnLNCL  7
+【参  照】
+    scnBACK -- マクロ定数
+    scnBACK - バックカラー画面を使用
+【機  能】
+    #define  scnBACK  6
+【参  照】
+    scnSPR0 -- マクロ定数
+scnSPR1 -- マクロ定数
+scnSPR2 -- マクロ定数
+scnSPR3 -- マクロ定数
+scnSPR4 -- マクロ定数
+scnSPR5 -- マクロ定数
+scnSPR6 -- マクロ定数
+scnSPR7 -- マクロ定数
+    scnSPR0、scnSPR1、scnSPR2、scnSPR3、scnSPR4、scnSPR5、scnSPR5、scnSPR6、
+    scnSPR7 - スプライト画面を使用
+【機  能】
+    #define   scnSPR0  -7
+    #define   scnSPR1  -8
+    #define   scnSPR2  -5
+    #define   scnSPR3  -6
+    #define   scnSPR4  -3
+    #define   scnSPR5  -4
+    #define   scnSPR6  -1
+    #define   scnSPR7  -2
+【参  照】
+    bmNBG0 -- マクロ定数
+    bmNBG0 - ビットマップ画面のNBG0
+【機  能】
+    #define  bmNBG0  1
+【参  照】
+    slBitMapNbg0, slInitBitMap, slInitBitMapNbg0
+
+
+bmNBG1 -- マクロ定数
+    bmNBG1 - ビットマップ画面のNBG1
+【機  能】
+    #define  bmNBG1  0
+【参  照】
+    slBitMapNbg1, slInitBitMap, slInitBitMapNbg1
+
+
+bmRBG0 -- マクロ定数
+    bmRBG0 - ビットマップ画面のRBG0
+【機  能】
+    #define  bmRBG0  3
+【参  照】
+    slBitMapRbg0, slInitBitMap, slInitBitMapRbg0
+
+
+win_OR -- マクロ定数
+    win_OR - 複数ウインドウのブール和
+【機  能】
+    #define  win_OR  0x80
+【参  照】
+    slScrWindowMode
+
+
+win_AND -- マクロ定数
+    win_AND - 複数ウインドウのブール積
+【機  能】
+    #define  win_AND  0x00
+【参  照】
+    slScrWindowMode
+
+
+win0_IN -- マクロ定数
+    win0_IN - ウインドウ0の内側
+【機  能】
+    #define  win0_IN  0x03
+【参  照】
+    slScrWindowMode
+
+
+win0_OUT -- マクロ定数
+    win0_OUT - ウインドウ0の外側
+【機  能】
+    #define  win0_OUT  0x02
+【参  照】
+    slScrWindowMode
+
+
+win1_IN -- マクロ定数
+    win1_IN - ウインドウ1の内側
+【機  能】
+    #define  win1_IN  0x0c
+【参  照】
+    slScrWindowMode
+
+
+win1_OUT -- マクロ定数
+    win1_OUT - ウインドウ1の外側
+【機  能】
+    #define    win1_OUT    0x08
+【参  照】
+    slScrWindowMode
+
+
+spw_IN -- マクロ定数
+    spw_IN - スプライトウインドウの内側
+【機  能】
+    #define  spw_IN  0x30
+【参  照】
+    slScrWindowMode
+
+
+spw_OUT -- マクロ定数
+    spw_OUT - スプライトウインドウの外側
+【機  能】
+    #define  spw_OUT  0x20
+【参  照】
+    slScrWindowMode
+
+
+lineSZ1 -- マクロ定数
+    lineSZ1 - ラインスクロールのサイズを1ドット
+【機  能】
+    #define  lineSZ1  0x00
+【参  照】
+    slLineScrollMode
+
+
+lineSZ2 -- マクロ定数
+    lineSZ2 - ラインスクロールのサイズを2ドット
+【機  能】
+    #define  lineSZ2  0x10
+【参  照】
+    slLineScrollMode
+
+
+lineSZ4 -- マクロ定数
+    lineSZ4 - ラインスクロールのサイズを4ドット
+【機  能】
+    #define  lineSZ4  0x20
+【参  照】
+    slLineScrollMode
+
+
+lineSZ8 -- マクロ定数
+    lineSZ8 - ラインスクロールのサイズを8ドット
+【機  能】
+    #define  lineSZ8  0x30
+【参  照】
+    slLineScrollMode
+
+
+lineZoom -- マクロ定数
+    lineZoom - ラインズームを使用
+【機  能】
+    #define  lineZoom  0x08
+【参  照】
+    slLineScrollMode
+
+
+lineVScroll -- マクロ定数
+    lineVScroll - ライン垂直スクロールを使用
+【機  能】
+    #define  lineVScroll  0x04
+【参  照】
+    slLineScrollMode
+
+
+lineHScroll -- マクロ定数
+    lineHScroll - ライン水平スクロールを使用
+【機  能】
+    #define  lineHScroll  0x02
+【参  照】
+    slLineScrollMode
+
+
+VCellScroll -- マクロ定数
+    VCellScroll - 縦セルスクロールを使用
+【機  能】
+    #define  VCellScroll  0x01
+【参  照】
+    slLineScrollMode
+
+
+BM_512x256 -- マクロ定数
+    BM_512x256 - ビットマップ画面サイズ512×256
+【機  能】
+    #define  BM_512x256  0x02
+【参  照】
+    slBitMapNbg0, slBitMapNbg1, slBitMapRbg0, slInitBitMap
+    slInitBitMapNbg0
+
+
+BM_512x512 -- マクロ定数
+    BM_512x512 - ビットマップ画面サイズ512×512
+【機  能】
+    #define  BM_512x512  0x06
+【参  照】
+    slBitMapNbg0, slBitMapNbg1, slBitMapRbg0, slInitBitMap
+    slInitBitMapNbg0
+
+
+BM_1024x256 -- マクロ定数
+    BM_1024x256 - ビットマップ画面サイズ1024×256
+【機  能】
+    #define  BM_1024x256  0x0a
+【参  照】
+    slBitMapNbg0, slBitMapNbg1, slBitMapRbg0, slInitBitMap
+    slInitBitMapNbg0
+
+
+BM_1024x512 -- マクロ定数
+    BM_1024x512 - ビットマップ画面サイズ1024×512
+【機  能】
+    #define  BM_1024x512  0x0e
+【参  照】
+    slBitMapNbg0, slBitMapNbg1, slBitMapRbg0, slInitBitMap
+    slInitBitMapNbg0
+
+
+spPRI_Scrn -- マクロ定数
+    spPRI_Scrn - スクリーン単位の特殊プライオリティ
+【機  能】
+    #define  spPRI_Scrn  0
+【参  照】
+    slSpecialPrioModeNbg0, slSpecialPrioModeNbg1, slSpecialPrioModeNbg2, slSpecialPrioModeNbg3
+    slSpecialPrioModeRbg0
+
+
+spPRI_Char -- マクロ定数
+    spPRI_Char - セル単位の特殊プライオリティ
+【機  能】
+    #define  spPRI_Char  1
+【参  照】
+    slSpecialPrioModeNbg0, slSpecialPrioModeNbg1, slSpecialPrioModeNbg2, slSpecialPrioModeNbg3
+    slSpecialPrioModeRbg0
+
+
+spPRI_Dot -- マクロ定数
+    spPRI_Dot - ドット単位の特殊プライオリティ
+【機  能】
+    #define  spPRI_Dot  2
+【参  照】
+    slSpecialPrioModeNbg0, slSpecialPrioModeNbg1, slSpecialPrioModeNbg2, slSpecialPrioModeNbg3
+    slSpecialPrioModeRbg0
+
+
+spCCAL_Scrn -- マクロ定数
+    spCCAL_Scrn - 画面単位の特殊カラー演算
+【機  能】
+    #define  spCCAL_Scrn  0
+【参  照】
+    slSpecialCCalcModeNbg0, slSpecialCCalcModeNbg1, slSpecialCCalcModeNbg2, slSpecialCCalcModeNbg3
+    slSpecialCCalcModeRbg0
+
+
+spCCAL_Char -- マクロ定数
+    spCCAL_Char - セル単位の特殊カラー演算
+【機  能】
+    #define  spCCAL_Char  1
+【参  照】
+    slSpecialCCalcModeNbg0, slSpecialCCalcModeNbg1, slSpecialCCalcModeNbg2, slSpecialCCalcModeNbg3
+    slSpecialCCalcModeRbg0
+
+
+spCCAL_Dot -- マクロ定数
+    spCCAL_Dot - ドット単位の特殊カラー演算
+【機  能】
+    #define  spCCAL_Dot  2
+【参  照】
+    slSpecialCCalcModeNbg0, slSpecialCCalcModeNbg1, slSpecialCCalcModeNbg2, slSpecialCCalcModeNbg3
+    slSpecialCCalcModeRbg0
+
+
+spCCAL_MSB -- マクロ定数
+    spCCAL_MSB - MSBを使った特殊カラー演算
+【機  能】
+    #define  spCCAL_MSB  3
+【参  照】
+    slSpecialCCalcModeNbg0, slSpecialCCalcModeNbg1, slSpecialCCalcModeNbg2, slSpecialCCalcModeNbg3
+    slSpecialCCalcModeRbg0
+
+
+sfCOL_01 -- マクロ定数
+    sfCOL_01 - ドットカラーデータの下位4ビットが0、1の時
+【機  能】
+    #define  sfCOL_01  0x01
+【参  照】
+    slSpecialFuncCodeA, slSpecialFuncCodeB
+
+
+sfCOL_23 -- マクロ定数
+    sfCOL_23 - ドットカラーデータの下位4ビットが2、3の時
+【機  能】
+    #define  sfCOL_23  0x02
+【参  照】
+    slSpecialFuncCodeA, slSpecialFuncCodeB
+
+
+sfCOL_45 -- マクロ定数
+    sfCOL_45 - ドットカラーデータの下位4ビットが4、5の時
+【機  能】
+    #define  sfCOL_45  0x04
+【参  照】
+    slSpecialFuncCodeA, slSpecialFuncCodeB
+
+
+sfCOL_67 -- マクロ定数
+    sfCOL_67 - ドットカラーデータの下位4ビットが6、7の時
+【機  能】
+    #define  sfCOL_67  0x08
+【参  照】
+    slSpecialFuncCodeA, slSpecialFuncCodeB
+
+
+sfCOL_89 -- マクロ定数
+    sfCOL_89 - ドットカラーデータの下位4ビットが8、9の時
+【機  能】
+    #define  sfCOL_89  0x10
+【参  照】
+    slSpecialFuncCodeA, slSpecialFuncCodeB
+
+
+sfCOL_ab -- マクロ定数
+    sfCOL_ab - ドットカラーデータの下位4ビットがa、bの時
+【機  能】
+    #define  sfCOL_ab  0x20
+【参  照】
+    slSpecialFuncCodeA, slSpecialFuncCodeB
+
+
+sfCOL_cd -- マクロ定数
+    sfCOL_cd - ドットカラーデータの下位4ビットがc、dの時
+【機  能】
+    #define  sfCOL_cd  0x40
+【参  照】
+    slSpecialFuncCodeA, slSpecialFuncCodeB
+
+
+sfCOL_ef -- マクロ定数
+    sfCOL_ef - ドットカラーデータの下位4ビットがe、fの時
+【機  能】
+    #define  sfCOL_ef  0x80
+【参  照】
+    slSpecialFuncCodeA, slSpecialFuncCodeB
+
+
+Div_A -- マクロ定数
+    Div_A - VRAM Aを分割
+【機  能】
+    #define  Div_A  1
+【参  照】
+    slVRAMMode
+
+
+Div_B -- マクロ定数
+    Div_B - VRAM Bを分割
+【機  能】
+    #define  Div_B  2
+【参  照】
+    slVRAMMode

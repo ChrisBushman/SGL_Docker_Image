@@ -1,0 +1,58 @@
+Disc		GAME.DSK
+CatalogNo	0
+Session		CDROM
+LeadIn		MODE1
+EndLeadIn
+
+SystemArea	ip.BIN
+
+Track   MODE1
+   Volume ISO9660 DDS.PVD
+       PrimaryVolume    0:2:16
+       EndPrimaryVolume
+   EndVolume
+
+     File 0
+	FileSource       game.bin
+	EndFileSource
+    EndFile
+
+    File SDDRVS.TSK
+	FileSource       SDDRVS.TSK
+	EndFileSource
+    EndFile
+
+    File SMPSND5.MP
+	FileSource       SMPSND5.MP
+	EndFileSource
+    EndFile
+
+	PostGap 150
+EndTrack
+
+Track	CDDA
+    Pause 150
+    FileSource       SEGA_WRN.DA
+    EndFileSource
+EndTrack
+
+Track	CDDA
+    Pause 150
+    FileSource       SND8_1.DA
+    EndFileSource
+EndTrack
+
+Track	CDDA
+    Pause 150
+    FileSource       SND8_3.DA
+    EndFileSource
+EndTrack
+
+
+LeadOut CDDA
+    Empty 600
+EndLeadOut
+
+EndSession
+EndDisc
+

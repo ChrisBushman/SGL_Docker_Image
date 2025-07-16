@@ -1,0 +1,15 @@
+history of DBG
+1995-07-26  dbg_disp.c 27: vsprintf()を使用のために追加
+1995-07-27  dbg_disp.c 144: static Rgb16の宣言の記述を変更
+1996-07-26  dbg_disp.c 1026: putc()の定義を削除、_dbg_putchar()へ変更
+1995-07-26  dbg_disp.c 172: putc()のユーザー定義を削除
+                           （どうしてC標準関数を....）
+1995-07-26  dbg_disp.c 216: Uint16 mapId, col16が未使用未定義なので削除
+1995-07-26  dbg_disp.c 430: putc()を削除
+1995-07-26  dbg_disp.c 928: putc()を削除
+1995-07-26  dbg_disp.c 937: putc()を削除
+1995-07-26  dbg_disp.c 1027: putc()を削除
+1995-07-26  dbg_disp.c 1114: Uint16 mapId; は未使用未定義なので削除
+1995-07-26  dbg_moni.c 103:     Uint8  cmd[80];
+                             Uint32 adr1, adr2, size, type, nextDumpAdr, nextDumpType;は未使用未定義なので削除
+1995-07-26  dbg_moni.c 224: int i,jが未使用未定義なので削除

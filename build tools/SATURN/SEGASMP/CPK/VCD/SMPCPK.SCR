@@ -1,0 +1,30 @@
+Disc SMPCPK.DSK
+CatalogNo 0
+Session CDROM
+LeadIn MODE1
+EndLeadIn
+	Track MODE1
+		Volume ISO9660 SMPCPK.PVD
+			PrimaryVolume 0:2:16
+			EndPrimaryVolume
+		EndVolume
+		File SDDRVS.TSK
+			FileSource SDDRVS.TSK
+			EndFileSource
+		EndFile
+		File BOOTSND.MAP
+			FileSource BOOTSND.MAP
+			EndFileSource
+		EndFile
+		File SAMPLE.CPK
+			FileSource SAMPLE.CPK
+			EndFileSource
+		EndFile
+		PostGap 75
+	EndTrack
+LeadOut MODE1
+	Empty 300
+EndLeadOut
+EndSession
+EndDisc
+

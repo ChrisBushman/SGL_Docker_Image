@@ -1,0 +1,341 @@
+SMPC_MASK_STE -- マクロ定数
+    SMPC_MASK_STE - SETTIME実行済マスク
+【機  能】
+    #define  SMPC_MASK_STE  0x80
+
+
+SMPC_MASK_RESD -- マクロ定数
+    SMPC_MASK_RESD - リセットイネーブルマスク
+【機  能】
+    #define  SMPC_MASK_RESD  0x40
+
+
+SMPC_MASK_WEEK -- マクロ定数
+    SMPC_MASK_WEEK - RTC曜日マスク
+【機  能】
+    #define  SMPC_MASK_WEEK  0xf0
+
+
+SMPC_MASK_MONTH -- マクロ定数
+    SMPC_MASK_MONTH - RTC月マスク
+【機  能】
+    #define  SMPC_MASK_MONTH  0x0f
+
+
+SMPC_MASK_CTG1 -- マクロ定数
+    SMPC_MASK_CTG1 -  カートリッジコード1
+【機  能】
+    #define  SMPC_MASK_CTG1  0x02
+
+
+SMPC_MASK_CTG0 -- マクロ定数
+    SMPC_MASK_CTG0 - カートリッジコード0
+【機  能】
+    #define  SMPC_MASK_CTG0  0x01
+
+
+SMPC_MASK_DOTSEL -- マクロ定数
+    SMPC_MASK_DOTSEL - DOTSEL信号
+【機  能】
+    #define  SMPC_MASK_DOTSEL  0x4000
+
+
+SMPC_MASK_MSHNMI -- マクロ定数
+    SMPC_MASK_MSHNMI - MSHNMI信号
+【機  能】
+    #define  SMPC_MASK_MSHNMI  0x0800
+
+
+SMPC_MASK_SYSRES -- マクロ定数
+    SMPC_MASK_SYSRES - SYSRES信号
+【機  能】
+    #define  SMPC_MASK_SYSRES  0x0200
+
+
+SMPC_MASK_SNDRES -- マクロ定数
+    SMPC_MASK_SNDRES - SNDRES信号
+【機  能】
+    #define  SMPC_MASK_SNDRES  0x0100
+
+
+SMPC_MASK_CDRES -- マクロ定数
+    SMPC_MASK_CDRES - CDRES信号
+【機  能】
+    #define  SMPC_MASK_CDRES  0x0040
+
+
+SMPC_SUN -- マクロ定数
+    SMPC_SUN - RTC曜日番号(日曜日)
+【機  能】
+    #define  SMPC_SUN  (0 << 4)
+
+
+SMPC_MON -- マクロ定数
+    SMPC_MON - RTC曜日番号(月曜日)
+【機  能】
+    #define  SMPC_MON  (1 << 4)
+
+
+SMPC_TUE -- マクロ定数
+    SMPC_TUE - RTC曜日番号(火曜日)
+【機  能】
+    #define  SMPC_TUE  (2 << 4)
+
+
+SMPC_WED -- マクロ定数
+    SMPC_WED - RTC曜日番号(水曜日)
+【機  能】
+    #define  SMPC_WED  (3 << 4)
+
+
+SMPC_THU -- マクロ定数
+    SMPC_THU - RTC曜日番号(木曜日)
+【機  能】
+    #define  SMPC_THU  (4 << 4)
+
+
+SMPC_FRI -- マクロ定数
+    SMPC_FRI - RTC曜日番号(金曜日)
+【機  能】
+    #define  SMPC_FRI  (5 << 4)
+
+
+SMPC_SAT -- マクロ定数
+    SMPC_SAT - RTC曜日番号(土曜日)
+【機  能】
+    #define  SMPC_SAT  (6 << 4)
+
+
+PER_RESULT_MAX -- マクロ定数
+    PER_RESULT_MAX - 最大ペリフェラル数
+【機  能】
+    #define  PER_RESULT_MAX  30
+
+
+PER_ID_StnPad -- マクロ定数
+    PER_ID_StnPad - サターン標準パッド
+【機  能】
+    #define  PER_ID_StnPad  0x02
+
+
+PER_ID_StnLacing -- マクロ定数
+    PER_ID_StnLacing - サターンレーシングコントローラー
+【機  能】
+    #define  PER_ID_StnLacing  0x13
+
+
+PER_ID_StnAnalog -- マクロ定数
+    PER_ID_StnAnalog - サターンアナログジョイスティック
+【機  能】
+    #define  PER_ID_StnAnalog  0x15
+
+
+PER_ID_3DPad -- マクロ定数
+    PER_ID_3DPad - セガマルチコントローラー
+【機  能】
+    #define  PER_ID_3DPad  0x16
+
+
+PER_ID_StnMouse -- マクロ定数
+    PER_ID_StnMouse - サターンマウス
+【機  能】
+    #define  PER_ID_StnMouse  0x23
+
+
+PER_ID_StnShooting -- マクロ定数
+    PER_ID_StnShooting - サターンシューティングコントローラー
+【機  能】
+    #define  PER_ID_StnShooting  0x25
+
+
+PER_ID_StnKeyBoard -- マクロ定数
+    PER_ID_StnKeyBoard - サターンキーボード
+【機  能】
+    #define  PER_ID_StnKeyBoard  0x34
+
+
+PER_ID_MD3BtnPad -- マクロ定数
+    PER_ID_MD3BtnPad - メガドライブ3ボタンパッド
+【機  能】
+    #define  PER_ID_MD3BtnPad  0xe1
+
+
+PER_ID_MD6BtnPad -- マクロ定数
+    PER_ID_MD6BtnPad - メガドライブ6ボタンパッド
+【機  能】
+    #define  PER_ID_MD6BtnPad  0xe2
+
+
+PER_ID_ShuttleMouse -- マクロ定数
+    PER_ID_ShuttleMouse - シャトルマウス
+【機  能】
+    #define  PER_ID_ShuttleMouse  0xe3
+
+
+PER_ID_ExtDigital -- マクロ定数
+    PER_ID_ExtDigital - 拡張サイズデジタルデバイス
+【機  能】
+    #define  PER_ID_ExtDigital  0x00
+
+
+PER_ID_ExtAnalog -- マクロ定数
+    PER_ID_ExtAnalog - 拡張サイズアナログデバイス
+【機  能】
+    #define  PER_ID_ExtAnalog  0x10
+
+
+PER_ID_ExtPointing -- マクロ定数
+    PER_ID_ExtPointing - 拡張サイズポインティングデバイス
+【機  能】
+    #define  PER_ID_ExtPointing  0x20
+
+
+PER_ID_ExtKeyBoard -- マクロ定数
+    PER_ID_ExtKeyBoard - 拡張サイズキーボードデバイス
+【機  能】
+    #define  PER_ID_ExtKeyBoard  0x30
+
+
+PER_ID_ExtMegaDrive -- マクロ定数
+    PER_ID_ExtMegaDrive - 拡張サイズメガドライブデバイス
+【機  能】
+    #define  PER_ID_ExtMegaDrive  0xe0
+
+
+PER_ID_NotConnect -- マクロ定数
+    PER_ID_NotConnect - 未接続
+【機  能】
+    #define  PER_ID_NotConnect  0xff
+
+
+PER_DGT_KR -- マクロ定数
+    PER_DGT_KR - デジタルパッドの右ボタン
+【機  能】
+    #define  PER_DGT_KR  (1 << 15)
+
+
+PER_DGT_KL -- マクロ定数
+    PER_DGT_KL - デジタルパッドの左ボタン
+【機  能】
+    #define  PER_DGT_KL  (1 << 14)
+
+
+PER_DGT_KD -- マクロ定数
+    PER_DGT_KD - デジタルパッドの下ボタン
+【機  能】
+    #define  PER_DGT_KD  (1 << 13)
+
+
+PER_DGT_KU -- マクロ定数
+    PER_DGT_KU - デジタルパッドの上ボタン
+【機  能】
+    #define  PER_DGT_KU  (1 << 12)
+
+
+PER_DGT_ST -- マクロ定数
+    PER_DGT_ST - デジタルパッドのスタートボタン
+【機  能】
+    #define  PER_DGT_ST  (1 << 11)
+
+
+PER_DGT_TA -- マクロ定数
+    PER_DGT_TA - デジタルパッドのAボタン
+【機  能】
+    #define  PER_DGT_TA  (1 << 10)
+
+
+PER_DGT_TC -- マクロ定数
+    PER_DGT_TC - デジタルパッドのCボタン
+【機  能】
+    #define  PER_DGT_TC  (1 <<  9)
+
+
+PER_DGT_TB -- マクロ定数
+    PER_DGT_TB - デジタルパッドのBボタン
+【機  能】
+    #define  PER_DGT_TB  (1 <<  8)
+
+
+PER_DGT_TR -- マクロ定数
+    PER_DGT_TR - デジタルパッドのRボタン
+【機  能】
+    #define  PER_DGT_TR  (1 <<  7)
+
+
+PER_DGT_TX -- マクロ定数
+    PER_DGT_TX - デジタルパッドのXボタン
+【機  能】
+    #define  PER_DGT_TX  (1 <<  6)
+
+
+PER_DGT_TY -- マクロ定数
+    PER_DGT_TY - デジタルパッドのYボタン
+【機  能】
+    #define  PER_DGT_TY  (1 <<  5)
+
+
+PER_DGT_TZ -- マクロ定数
+    PER_DGT_TZ - デジタルパッドのZボタン
+【機  能】
+    #define  PER_DGT_TZ  (1 <<  4)
+
+
+PER_DGT_TL -- マクロ定数
+    PER_DGT_TL - デジタルパッドのLボタン
+【機  能】
+    #define  PER_DGT_TL  (1 <<  3)
+
+
+PER_KBD_CL -- マクロ定数
+    PER_KBD_CL - キーボードのCaps Lockキー
+【機  能】
+    #define  PER_KBD_CL  (1 << 6)
+
+
+PER_KBD_NL -- マクロ定数
+    PER_KBD_NL - キーボードのNum Lockキー
+【機  能】
+    #define  PER_KBD_NL  (1 << 5)
+
+
+PER_KBD_SL -- マクロ定数
+    PER_KBD_SL - キーボードのScroll Lockキー
+【機  能】
+    #define  PER_KBD_SL  (1 << 4)
+
+
+PER_KBD_MK -- マクロ定数
+    PER_KBD_MK - キーボードのMakeキー
+【機  能】
+    #define  PER_KBD_MK  (1 << 3)
+
+
+PER_KBD_BR -- マクロ定数
+    PER_KBD_BR - キーボードのBreakキー
+【機  能】
+    #define  PER_KBD_BR  (1 << 0)
+
+Smpc_Status -- グローバル変数
+    Smpc_Status - SMPC各種ステータスパラメータ
+【書  式】
+    #include "sgl.h"
+
+    extern  SmpcStatus*  Smpc_Status;
+
+Smpc_Peripheral -- グローバル変数
+    Smpc_Peripheral - ペリフェラル情報
+【書  式】
+    #include "sgl.h"
+
+    extern  PerDigital*  Smpc_Peripheral;
+
+Per_Connect1 -- グローバル変数
+Per_Connect2 -- グローバル変数
+    Per_Connect1、Per_Connect2 - ペリフェラル接続情報
+【書  式】
+    #include "sgl.h"
+
+    extern  Uint8  Per_Connect1
+    extern  Uint8  Per_Connect2;
+
+

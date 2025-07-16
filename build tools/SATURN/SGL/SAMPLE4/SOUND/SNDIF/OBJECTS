@@ -1,0 +1,6 @@
+# source_program
+SRCS = main.c polydata.c sampmap.c $(SGLDIR)/share/sgl_snd.c
+
+SYSOBJS = $(CMNDIR)/cinit.o $(SGLLDR)/sglarea.o
+OBJS = $(SRCS:.c=.o) $(SGLDIR)/share/sddrvs.o sampdat.o
+LIBS = -lsnd -lsgl_n -lint -lsys

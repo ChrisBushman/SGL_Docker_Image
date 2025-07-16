@@ -1,0 +1,47 @@
+†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£
+	hextool.txt -- document for HEXTOOL
+	Copyright(c) 1992 M.K
+	Written by M.K on Apr. 3,1992
+†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£
+†¢†¢†¢†¢†¢†¢†¢†¢†¢†¢†¢†¢†¢†¢†¢†¢†¢†¢†¢†¢
+œŽÀs–¼	“Ç‚Ý•û
+†¢†¢†¢†¢†¢†¢†¢†¢†¢†¢†¢†¢†¢†¢†¢†¢†¢†¢†¢†¢
+USAGE:	Žg—p–@
+FUNC:	‹@”\à–¾
+NOTE:	’ˆÓŽ–€
+BUG:	Œ»ÝA‚í‚©‚Á‚Ä‚¢‚éƒoƒO
+WRITE:	ì¬ŽÒAì¬“úAì¬ƒo[ƒWƒ‡ƒ“
+UPDATE:	C³ŽÒAC³“úAC³ƒo[ƒWƒ‡ƒ“
+SAMPLE:	ŽQl—á
+
+†¢†¢†¢†¢†¢†¢†¢†¢†¢†¢†¢†¢†¢†¢†¢†¢†¢†¢†¢†¢
+œS28TOBIN	ƒGƒXƒjƒCƒnƒ`ƒgƒDƒrƒ“
+†¢†¢†¢†¢†¢†¢†¢†¢†¢†¢†¢†¢†¢†¢†¢†¢†¢†¢†¢†¢
+USAGE:	s28tobin [-option] src_file dst_file
+	option: 0<n>  If exist blank, fill $00.
+	        f<n>  If exist blank, fill $ff.
+	        v     verbose
+	<n>:          minimum size(hex)
+FUNC:	ƒ‚ƒgƒ[ƒ‰ƒtƒH[ƒ}ƒbƒgƒtƒ@ƒCƒ‹‚ÌƒoƒCƒiƒŠƒtƒ@ƒCƒ‹‚Ö‚Ì•ÏŠ·
+NOTE:	
+BUG:	
+WRITE:	
+UPDATE:	
+SAMPLE:	
+	s28tobin -v06000 sample.s28 sample.bin
+†¢†¢†¢†¢†¢†¢†¢†¢†¢†¢†¢†¢†¢†¢†¢†¢†¢†¢†¢†¢
+œBINTOS28	ƒrƒ“ƒgƒDƒGƒXƒjƒCƒnƒ`
+†¢†¢†¢†¢†¢†¢†¢†¢†¢†¢†¢†¢†¢†¢†¢†¢†¢†¢†¢†¢
+USAGE:	bintos28 [-option] [src_file] [dst_file]
+	option: axxxxxx  address(6 hex digit)
+	        v        verbose
+FUNC:	ƒoƒCƒiƒŠƒtƒ@ƒCƒ‹‚Ìƒ‚ƒgƒ[ƒ‰ƒtƒH[ƒ}ƒbƒgƒtƒ@ƒCƒ‹‚Ö‚Ì•ÏŠ·
+NOTE:	
+BUG:	
+WRITE:	
+UPDATE:	
+SAMPLE:	
+
+†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£
+	end of file
+†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£†£

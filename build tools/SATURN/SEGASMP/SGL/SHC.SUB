@@ -1,0 +1,8 @@
+-optimize=0
+-cpu=sh2
+-string=const
+-div=cpu
+-include=..\..\..\sh\include,..\..\..\segalib\include,..\..\per\smpclib
+-def=_SH
+-macsave=0
+

@@ -1,0 +1,34 @@
+Disc SMPPCM.DSK
+CatalogNo 0
+Session CDROM
+LeadIn MODE1
+EndLeadIn
+	Track MODE1
+        Volume ISO9660 SMPPCM.PVD
+            PrimaryVolume 0:2:16
+            EndPrimaryVolume
+        EndVolume
+		File SDDRVS.TSK
+			FileSource ..\SND\SDDRVS.TSK
+			EndFileSource
+		EndFile
+		File BOOTSND.MAP
+			FileSource ..\SND\BOOTSND.MAP
+			EndFileSource
+		EndFile
+		File SAMPLE.AIF
+			FileSource SAMPLE.AIF
+			EndFileSource
+		EndFile
+		File SAMPLE.SAP
+			FileSource SAMPLE.SAP
+			EndFileSource
+		EndFile
+		PostGap 150
+	EndTrack
+LeadOut MODE1
+	Empty 300
+EndLeadOut
+EndSession
+EndDisc
+

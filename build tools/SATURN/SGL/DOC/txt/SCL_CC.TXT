@@ -1,0 +1,415 @@
+
+
+★ラインカラー
+slLineColTable -- 関数
+    slLineColTable - ラインカラーテーブルアドレスをレジスタにセット。
+【書  式】
+    #include "sgl.h"
+
+    void *addr;
+
+    void slLineColTable( addr );
+【引  数】
+    void *addr - VRAM上のラインカラーテーブルアドレス。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    ラインカラーテーブルアドレスをレジスタにセットします。
+    addrには、VDP2の先頭からのオフセット又は、絶対アドレスどちらも
+    使用できます。(下位20ビットのみ有効です。)
+【用  例】
+    slDMACopy( src, ( void * )0x25e20000, 256 * sizeof( Uint16 ) );
+                     :
+    slLineColTable( ( void * )0x25e20000 );
+【参  照】
+    slLine1ColSet, slLineColTable, slColorCalc, slColorCalcOn
+    slLineColDisp, slColorCalcMode, slColRateLNCL, VDP2_LCTA
+    slLine1ColSet -- 関数
+    slLine1ColSet - ラインカラー画面の設定。
+【書  式】
+    #include "sgl.h"
+
+    void   *addr;
+    Uint16 color;
+
+    void slLine1ColSet( addr, color );
+【引  数】
+    void   *addr - VRAM上のラインカラーテーブルアドレス
+    Uint16 color - カラー番号。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    ラインカラー画面を単一色にし、その色を設定します。
+    addrには、VDP2の先頭からのオフセット又は、絶対アドレスどちらも
+    使用できます。(下位20ビットのみ有効です。)
+【用  例】
+    NBG1にラインカラーを掛ける。(ラインカラーテーブルは、25E20000H)
+    slColorCalc( CC_RATE| CC_2ND| NBG1ON);
+    slColorCalcOn( NBG1ON);
+
+    slLine1ColSet( ( void * )0x20000, 128 );
+【参  照】
+    slLineColTable, slColorCalc, slColorCalcOn, slLineColDisp
+    slColorCalcMode, slColRateLNCL, VDP2_LCTA
+
+
+slLineColDisp -- 関数
+    slLineColDisp - トップ画像になった時にラインカラーの影響を受ける画面を
+                    設定。
+【書  式】
+    #include "sgl.h"
+
+    Uint16 mode;
+
+    void slLineColDisp( mode );
+【引  数】
+    Uint16 mode - トップ画像になった時にラインカラーの影響を受ける画面。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    トップ画像になった時にラインカラーの影響を受ける画面を設定します。
+    modeには、
+        NBG0ON、NBG1ON、NBG2ON、NBG3ON、RBG0ON、LNCLON
+    が入ります。
+    複数のスクロール面の描画設定を同時に行なう場合は、各面のモードを "|"で
+    つないで指定してください。
+    スプライトを設定したい場合には LNCLONを使用してください。
+    (これは他のレジスタとビット位置が異なっているためです)
+【用  例】
+    NBG1にラインカラーを掛ける。
+    slColorCalcMode( CC_RATE| CC_2ND);
+    slColorCalcOn( NBG1ON);
+    slLineColTable( ( void * )0x25e20000 );
+    slLineColDisp( NBG1ON);
+    slColRateLNCL( CLRate20_12);
+【参  照】
+    slLine1ColSet, slLineColTable, slColorCalc, slColorCalcOn
+    slColorCalcMode, slColRateLNCL, slLineColTable, VDP2_LNCLEN
+    ★カラー演算
+slColorCalc -- 関数
+    slColorCalc - カラー演算のためのパラメータを設定。
+【書  式】
+    #include "sgl.h"
+
+    Uint16 mode;
+
+    void slColorCalc( mode );
+【引  数】
+    Uint16 mode - カラー演算のためのパラメータ(後述)。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    カラー演算のためのパラメータを設定します。
+    modeは以下のパラメータを指定します。
+        CC_RATE| CC_ADD                                 : 演算方法
+        CC_TOP| CC_2ND                                  : 演算指定画面
+        CC_EXT                                           : 拡張カラー演算
+        NBG0ON| NBG1ON| NBG2ON| NBG3ON| RBG0ON| LNCLON| SPRON [constscl]: 登録面
+   使用する機能に応じて上記の値を "|" でつないで指定してください。
+【用  例】
+    NBG1にラインカラーを掛ける。
+    slColorCalc( CC_RATE| CC_2ND| NBG1ON);
+    slLineColTable( ( void * )0x25e20000 );
+    slLineColDisp( NBG1ON);
+    slColRateLNCL( CLRate20_12);
+
+    NBG0とNBG1での、拡張カラー演算。
+    slColorCalc( CC_RATE| CC_TOP| NBG0ON| NBG1ON| CC_EXT);
+    slColRateNbg0( CLRate6_26);
+    slColRateNbg1( CLRate12_20);
+    slPriorityNbg0( 7 );
+    slPriorityNbg1( 6 );
+    slPriorityNbg2( 5 );
+【注  意】
+    この関数は、slColorCalcModeとslColorCalcOnの両方
+    を実行するのと同じです。
+【参  照】
+    slLineColTable, slLine1ColSet, slLineColTable, slColorCalcOn
+    slColorCalcMode, slColRate, slColRateNbg0, slColRateNbg1
+    slColRateNbg2, slColRateNbg3, slColRateRbg0, slColRateLNCL
+    slColRateBACK, slColRateSpr0, slColRateSpr1, slColRateSpr2
+    slColRateSpr3, slColRateSpr4, slColRateSpr5, slColRateSpr6
+    slColRateSpr7, VDP2_CCCTL
+
+
+slColorCalcMode -- 関数
+    slColorCalcMode - カラー演算モードの設定。
+【書  式】
+    #include "sgl.h"
+
+    Uint16 mode;
+
+    void slColorCalcMode( mode );
+【引  数】
+    Uint16 mode - カラー演算モード(後述)。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    slColorCalc関数のモード設定部分のみを行う関数です。
+    slColorCalcOn関数と併用します。
+    modeは以下のパラメータを指定します。
+      CC_RATE| CC_ADD                                 : 演算方法
+      CC_TOP| CC_2ND                                  : 演算指定画面
+      CC_EXT                                           : 拡張カラー演算
+【用  例】
+    NBG1にラインカラーを掛ける。
+    slColorCalcMode( CC_RATE| CC_2ND);
+    slColorCalcOn( NBG1ON);
+    slLineColTable( ( void * )0x25e20000 );
+    slLineColDisp( NBG1ON);
+    slColRateLNCL( CLRate20_12);
+【参  照】
+    slLineColTable, slLine1ColSet, slLineColTable, slColorCalc
+    slColorCalcMode, slColRate, slColRateNbg0, slColRateNbg1
+    slColRateNbg2, slColRateNbg3, slColRateRbg0, slColRateLNCL
+    slColRateBACK, slColRateSpr0, slColRateSpr1, slColRateSpr2
+    slColRateSpr3, slColRateSpr4, slColRateSpr5, slColRateSpr6
+    slColRateSpr7, VDP2_CCCTL
+
+
+slColorCalcOn -- 関数
+    slColorCalcOn - カラー演算コントロールの影響を受ける画面の設定。
+【書  式】
+    #include "sgl.h"
+
+    Uint16 mode;
+
+    void slColorCalcOn( mode );
+【引  数】
+    Uint16 mode - カラー演算コントロールの影響を受ける画面
+【返  数】
+    void - 何も返しません。
+【機  能】
+    カラー演算コントロールの影響を受ける画面を設定します。
+    modeには、
+    NBG0ON、NBG1ON、NBG2ON、NBG3ON、RBG0ON、LNCLON、SPRON [constscl]
+    が入ります。
+    複数のスクロール面の描画設定を同時に行なう場合は、各面のモードを "|"で
+    つないで指定してください。
+【用  例】
+    NBG1にラインカラーを掛ける。
+    slColorCalcMode( CC_RATE| CC_2ND);
+    slColorCalcOn( NBG1ON);
+    slColRateNbg1( CLRate20_12);
+【参  照】
+    slLineColTable, slLine1ColSet, slLineColTable, slColorCalc
+    slColorCalcOn, slColRate, slColRateNbg0, slColRateNbg1
+    slColRateNbg2, slColRateNbg3, slColRateRbg0, slColRateLNCL
+    slColRateBACK, slColRateSpr0, slColRateSpr1, slColRateSpr2
+    slColRateSpr3, slColRateSpr4, slColRateSpr5, slColRateSpr6
+    slColRateSpr7, VDP2_CCCTL
+
+
+slGradationOn -- 関数
+    slGradationOn - ボカシ機能の設定。
+【書  式】
+    #include "sgl.h"
+
+    Uint16 mode;
+
+    void slGradationOn( mode );
+【引  数】
+    Uint16 mode - ボカシ機能を作用させる面(後述)。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    ボカシ機能を有効にし、作用する画面を指定します。
+    modeには、
+        grdNBG0、grdNBG1、grdNBG2、grdNBG3、grdRBG0、grdSPR、OFF
+    のいずれかのみ指定します。
+【用  例】
+    slColRAMMode( CRM16_1024);
+            :
+    slGradationOn( grdNBG0);
+    slColorCalc( CC_RATE| CC_TOP| NBG0ON);
+    slColRateNbg0( CLRate20_12 );
+【注  意】
+    ボカシ機能は、カラーRAMモードが0の場合にしか使えません。
+    また、ボカシ機能はカラー演算と併用しないと機能しませんので注意して
+    ください。
+    ボカシ機能を取り消す時は、引数に OFF を指定するか、
+    slGradationOff関数を利用してください。
+【参  照】
+    slLineColTable, slLine1ColSet, slLineColTable, slColorCalc
+    slColorCalcOn, slColorCalcMode, slColRate, slColRateNbg0
+    slColRateNbg1, slColRateNbg2, slColRateNbg3, slColRateRbg0
+    slColRateLNCL, slColRateBACK, slColRateSpr0, slColRateSpr1
+    slColRateSpr2, slColRateSpr3, slColRateSpr4, slColRateSpr5
+    slColRateSpr6, slColRateSpr7, slGradationOff, slColRAMMode
+    VDP2_CCCTL
+
+
+slGradationOff -- マクロ
+    slGradationOff - ボカシ機能を無効にする。
+【書  式】
+    #include "sgl.h"
+
+    void slGradationOff( void );
+【引  数】
+    void - 何も与えません。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    ボカシ機能を無効にします。
+【用  例】
+    slGradationOff();
+【参  照】
+    slLineColTable, slLine1ColSet, slLineColTable, slColorCalc
+    slColorCalcOn, slColorCalcMode, slColRate, slColRateNbg0
+    slColRateNbg1, slColRateNbg2, slColRateNbg3, slColRateRbg0
+    slColRateLNCL, slColRateBACK, slColRateSpr0, slColRateSpr1
+    slColRateSpr2, slColRateSpr3, slColRateSpr4, slColRateSpr5
+    slColRateSpr6, slColRateSpr7, slGradationOn
+
+
+slColRate -- 関数
+slColRateNbg0 -- マクロ
+slColRateNbg1 -- マクロ
+slColRateNbg2 -- マクロ
+slColRateNbg3 -- マクロ
+slColRateRbg0 -- マクロ
+slColRateLNCL -- マクロ
+slColRateBACK -- マクロ
+slColRateSpr0 -- マクロ
+slColRateSpr1 -- マクロ
+slColRateSpr2 -- マクロ
+slColRateSpr3 -- マクロ
+slColRateSpr4 -- マクロ
+slColRateSpr5 -- マクロ
+slColRateSpr6 -- マクロ
+slColRateSpr7 -- マクロ
+    slColRate, slColRateNbg0, slColRateNbg1, slColRateNbg2, slColRateNbg3, 
+    slColRateRbg0, slColRateLNCL, slColRateBACK, slColRateSpr0, slColRateSpr1,
+    slColRateSpr2,slColRateSpr3, slColRateSpr4, slColRateSpr5, slColRateSpr6,
+    slColRateSpr7 - カラー演算割合の指定。
+【書  式】
+    #include "sgl.h"
+
+    Uint16 rate;
+    Uint16 mode;
+
+    void slColRate( mode, rate );
+    void slColRateNbg0( rate );
+    void slColRateNbg1( rate );
+    void slColRateNbg2( rate );
+    void slColRateNbg3( rate );
+    void slColRateRbg0( rate );
+    void slColRateLNCL( rate );
+    void slColRateBACK( rate );
+    void slColRateSpr0( rate );
+    void slColRateSpr1( rate );
+    void slColRateSpr2( rate );
+    void slColRateSpr3( rate );
+    void slColRateSpr4( rate );
+    void slColRateSpr5( rate );
+    void slColRateSpr6( rate );
+    void slColRateSpr7( rate );
+【引  数】
+    Uint16 mode - カラー演算割合を指定する面(後述)。
+    Uint16 rate - カラー演算割合。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    各画面のカラー演算割合を指定します。
+    modeには、
+        scnNBG0、scnNBG1、scnNBG2、scnNBG3、scnRBG0、scnLNCL、scnBACK [constscl]
+    のいずれかを指定します。
+    rateはCLRate31_1～CLRate0_32の範囲で指定します。
+           rate               Top Screen : Second Screen
+           CLRate31_1          31:1
+           CLRate30_2          30:2
+           CLRate29_3          29:3
+           CLRate28_4          28:4
+           CLRate27_5          27:5
+           CLRate26_6          26:6
+           CLRate25_7          25:7
+           CLRate24_8          24:8
+           CLRate23_9          23:9
+           CLRate22_10         22:10
+           CLRate21_11         21:11
+           CLRate20_12         20:12
+           CLRate19_13         19:13
+           CLRate18_14         18:14
+           CLRate17_15         17:15
+           CLRate16_16         16:16
+           CLRate15_17         15:17
+           CLRate14_18         14:18
+           CLRate13_19         13:19
+           CLRate12_20         12:20
+           CLRate11_21         11:21
+           CLRate10_22         10:22
+           CLRate9_23           9:23
+           CLRate8_24           8:24
+           CLRate7_25           7:25
+           CLRate6_26           6:26
+           CLRate5_27           5:27
+           CLRate4_28           4:28
+           CLRate3_29           3:29
+           CLRate2_30           2:30
+           CLRate1_31           1:31
+           CLRate0_32           0:32
+【用  例】
+    slColRate( scnNBG0, CLRate29_3);
+    slColRateNbg2( CLRate2_30);
+【参  照】
+    slLineColTable, slLine1ColSet, slLineColTable, slColorCalc
+    slColorCalcOn, slColorCalcMode, slGradationOn, slGradationOff
+    VDP2_CCRNA
+
+
+★バックカラー画面
+slBackColTable -- 関数
+    slBackColTable - バック画面のカラーテーブルのセットとモードの切替。
+【書  式】
+    #include "sgl.h"
+
+    void *addr_A;
+
+    void slBackColTable( addr_A );
+【引  数】
+    void *addr_A - バック画面のカラーテーブルを示す絶対アドレス。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    バック画面のカラーテーブルをセットし、ラスター単位でカラーを切り替える
+    モードに設定します。
+【用  例】
+    ss_main() {
+      Uint16 col[ 256 ] = {
+        C_RGB( 3, 6, 6 ), ...
+      };
+         :
+      slDMACopy( col, ( void * )( 0x25e40000 ), 256 * sizeof( Uint16 ) );
+         :
+      slBackColTable( ( void * )( 0x25e40000 ) );
+         :
+【注  意】
+    この関数に与える引数は、VDP2のVRAMのアドレスを絶対アドレスで指定します。
+【参  照】
+    slBack1ColSet, VDP2_BKTA
+
+
+slBack1ColSet -- 関数
+    slBack1ColSet - バック画面の設定。
+【書  式】
+    #include "sgl.h"
+
+    void   *addr_A;
+    Uint16 color;
+    
+    void slBack1ColSet( addr_A, color );
+【引  数】
+    void   *addr_A - バックカラーを格納するVRAMの先頭アドレス(絶対アドレス)。
+    Uint16 color   - カラーデータをRGB各5ビットで指定。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    バック画面の設定を行ないます。バック画面とは、他の画面が全く描画されて
+    いない部分に表示される、最背面の描画面のことです。
+【用  例】
+    バック画面を白くする。
+    slBack1ColSet( ( void * )0x25e00000, 0x7fff
+【注  意】
+    VRAMはカラーRAMでなく、VDP2のVRAM領域を用います。
+【参  照】
+    slBackColTable, VDP2_BKTA

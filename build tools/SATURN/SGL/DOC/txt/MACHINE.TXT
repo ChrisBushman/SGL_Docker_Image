@@ -1,0 +1,11 @@
+nop -- インライン関数
+sleep -- インライン関数
+tas -- インライン関数
+set_sr -- インライン関数
+get_sr -- インライン関数
+get_imask -- インライン関数
+set_imask -- インライン関数
+set_vbr -- インライン関数
+get_vbr -- インライン関数
+set_gbr -- インライン関数
+get_gbr -- インライン関数

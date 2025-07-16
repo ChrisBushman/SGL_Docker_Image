@@ -1,0 +1,5 @@
+create  sega_int.lib
+add int_main.obj
+;add int_trmp.obj
+exit
+

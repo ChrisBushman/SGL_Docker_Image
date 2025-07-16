@@ -1,0 +1,9 @@
+-string=const
+-l
+-show=expansion
+-div=peripheral
+-cpu=sh2
+-include=..\..\..\sh\include,..\..\..\segalib\include,..\..\per\smpclib
+-def=_SH
+-macsave=0
+

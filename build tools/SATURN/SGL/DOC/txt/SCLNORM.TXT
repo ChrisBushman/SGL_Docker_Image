@@ -1,0 +1,385 @@
+slScrPosNbg0 -- 関数
+
+
+
+slScrPosNbg1 -- 関数
+slScrPosNbg2 -- 関数
+slScrPosNbg3 -- 関数
+    slScrPosNbg0, slScrPosNbg1, slScrPosNbg2, slScrPosNbg3
+                            - ノーマルスクロール面の配置座標を設定。
+【書  式】
+    #include "sgl.h"
+
+    FIXED pos_x, pos_y;
+
+    void slScrPosNbg0( pos_x, pos_y );
+    void slScrPosNbg1( pos_x, pos_y );
+    void slScrPosNbg2( pos_x, pos_y );
+    void slScrPosNbg3( pos_x, pos_y );
+【引  数】
+    FIXED pos_x - ノーマルスクロール配置座標のX成分(スクロール座標系)
+    FIXED pos_y - ノーマルスクロール配置座標のY成分(スクロール座標系)
+【返  数】
+    void - 何も返しません。
+【機  能】
+    それぞれのノーマルスクロール面の配置座標を設定します。
+【用  例】
+    slScrPosNbg0( toFIXED( 30.0 ), toFIXED( -19.4 ) );
+【参  照】
+    slScrMoveNbg0, slScrMoveNbg1, slScrMoveNbg2, slScrMoveNbg3
+    slScrScaleNbg0, slScrScaleNbg1, VDP2_SCXN0, VDP2_SCXIN0
+    VDP2_SCXDN0, VDP2_SCYN0, VDP2_SCYIN0, VDP2_SCYDN0
+    VDP2_SCXN2, VDP2_SCYN2, VDP2_SCXN3, Nbg1_PosX
+    Nbg1_PosY, Nbg2_PosX, Nbg2_PosY, Nbg3_PosX
+    Nbg3_PosY
+
+
+slScrMoveNbg0 -- 関数
+slScrMoveNbg1 -- 関数
+slScrMoveNbg2 -- 関数
+slScrMoveNbg3 -- 関数
+    slScrMoveNbg0、slScrMoveNbg1、slScrMoveNbg2、slScrMoveNbg3 
+                    - スクロールの表示位置を前の位置からの移動量で指定。
+【書  式】
+    #include "sgl.h"
+
+    FIXED pos_x, pos_y;
+
+    void slScrMoveNbg0( pos_x, pos_y );
+    void slScrMoveNbg1( pos_x, pos_y );
+    void slScrMoveNbg2( pos_x, pos_y );
+    void slScrMoveNbg3( pos_x, pos_y );
+【引  数】
+    FIXED pos_x - スクロールの表示位置の前の位置からのXの移動量。
+    FIXED pos_y - スクロールの表示位置の前の位置からのYの移動量。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    スクロールの表示位置を前の位置からの移動量で指定します。
+    (この関数は slScrPosNbg0、slScrPosNbg1、
+     slScrPosNbg2、slScrPosNbg3、で指定された表示位置に
+     加算していきます)
+    現在の表示位置はシステム変数 Nbg0_PosX, Nbg0_PosY, Nbg1_PosX, 
+    Nbg1_PosY, Nbg2_PosX, Nbg2_PosY, Nbg3_PosX, Nbg3_PosY
+    を参照してください。
+【用  例】
+    slScrMoveNbg1( toFIXED( 1.0 ), toFIXED( -2.0 ) );
+【参  照】
+    slScrPosNbg0, slScrPosNbg1, slScrPosNbg2, slScrPosNbg2
+    slScrScaleNbg0, slScrScaleNbg1, slZoomNbg0, slZoomNbg1
+    VDP2_SCXN0, VDP2_SCXIN0, VDP2_SCXDN0, VDP2_SCYN0
+    VDP2_SCYIN0, VDP2_SCYDN0, VDP2_SCXN1, VDP2_SCXIN1
+    VDP2_SCXDN1, VDP2_SCYN1, VDP2_SCYIN1, VDP2_SCYDN1
+    VDP2_SCXN2, VDP2_SCYN2, VDP2_SCXN3, Nbg1_PosX
+    Nbg1_PosY, Nbg2_PosX, Nbg2_PosY, Nbg3_PosX
+    Nbg3_PosY
+
+
+slLookR -- 関数
+    slLookR - 回転スクロール面の配置座標を設定。
+【書  式】
+    #include "sgl.h"
+
+    FIXED pos_x, pos_y;
+
+    void slLookR( pos_x, pos_y );
+【引  数】
+    FIXED pos_x - 回転スクロール配置座標のX成分(スクロール座標系)
+    FIXED pos_y - 回転スクロール配置座標のY成分(スクロール座標系)
+【返  数】
+    void - 何も返しません。
+【機  能】
+    回転スクロール面の配置座標を設定します。
+【用  例】
+    slLookR( toFIXED( 50.0 ), toFIXED( 100.0 ) );
+【参  照】
+    slDispCenterR, slZoomR, slScrScaleR, slZrotR
+    ScrRotPtr
+
+
+slDispCenterR -- 関数
+    slDispCenterR - 回転スクロール面の回転中心座標の設定。
+【書  式】
+    #include "sgl.h"
+
+    FIXED pos_x, pos_y;
+
+    void slDispCenterR( pos_x , pos_y );
+【引  数】
+    FIXED pos_x - 回転スクロール回転中心座標のX成分(スクロール座標系)
+    FIXED pos_y - 回転スクロール回転中心座標のY成分(スクロール座標系)
+【返  数】
+    void - 何も返しません。
+【機  能】
+    回転スクロール面の回転中心座標を設定します。
+【用  例】
+    slDispCenterR( toFIXED( 100.0 ), toFIXED( 100.0 ) );
+【参  照】
+    slLookR, slZoomR, slScrScaleR, slZrotR
+    ScrRotPtr
+
+
+slZoomNbg0 -- 関数
+slZoomNbg1 -- 関数
+    slZoomNbg0, slZoomNbg1 - 拡縮率の指定。
+【書  式】
+    #include "sgl.h"
+
+    FIXED scl_x, scl_y;
+
+    void slZoomNbg0( scl_x, scl_y );
+    void slZoomNbg1( scl_x, scl_y );
+【引  数】
+    FIXED scl_x - ノーマルスクロールのX軸方向に対する拡縮率の逆数(2倍なら1/2)
+    FIXED scl_y - ノーマルスクロールのY軸方向に対する拡縮率の逆数(2倍なら1/2)
+【返  数】
+    void - 何も返しません。
+【機  能】
+    ノーマルスクロール面のうち、拡縮可能な "NBG0,1" の拡縮率を指定します。
+【用  例】
+    NBG0のX成分を2倍、Y成分を1/2にする。
+    slZoomNbg0( toFIXED( 1/2 ), toFIXED( 2 ) );
+【注  意】
+    縮小を掛ける際には、それに合わせてサイクルパターンの設定をする必要が
+    あります。この際、slScrAutoDispでは縮小設定をサポートして
+    いませんので、slScrCycleSet及び、slScrDispを用いて
+    直接サイクルパターンの設定を行なう必要があります。サイクルパターンの
+    設定については、
+      VDP2ユーザーズマニュアル
+        3.3 表示期間中のVRAMアクセス方法
+    を御覧ください。
+【参  照】
+    slScrMoveNbg0, slScrMoveNbg1, slScrMoveNbg2, slScrMoveNbg3
+    slScrPosNbg0, slScrPosNbg1, slScrPosNbg2, slScrScaleNbg1
+    slZoomMode, slZoomModeNbg0, slZoomModeNbg1
+
+
+slZoomMode -- 関数
+slZoomModeNbg0 -- マクロ
+slZoomModeNbg1 -- マクロ
+    slZoomMode、slZoomModeNbg0, slZoomModeNbg1 - 縮小限界の指定。
+【書  式】
+    #include "sgl.h"
+
+    Uint16 type;
+    Uint16 mode;
+
+    void slZoomMode( scrn, mode );
+    void slZoomModeNbg0( type );
+    void slZoomModeNbg1( type );
+【引  数】
+    Uint16 mode - ズームを指定する面(後述)。
+    Uint16 type - ズームの限界(後述)。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    NBG0/NBG1をどこまで縮小するかを指定します。
+    modeには、
+        scnNBG0、scnNBG1
+    のいずれかを、
+    typeには、
+        ZOOM_1、ZOOM_HALF、ZOOM_QUARTER
+    のいずれかを指定します。
+【用  例】
+    void slZoomMode( scnNBG1, ZOOM_HALF);
+【注  意】
+    縮小設定する場合、色数の制限があります。
+    ZOOM_HALFを指定した場合、16色モード又は256色モードのみ。
+    ZOOM_QUARTERを指定した場合、16色モードにのみ対応しています。
+    それ以外のモードでの縮小設定は出来ませんので注意してください。
+【参  照】
+    slScrMoveNbg0, slScrMoveNbg1, slScrMoveNbg2, slScrMoveNbg3
+    slScrPosNbg0, slScrPosNbg1, slScrPosNbg2, slScrScaleNbg1
+    slZoomNbg0, slZoomNbg1, VDP2_ZMCTL
+
+
+slZoomR -- 関数
+    slZoomR - 回転スクロール面の拡縮率の設定。
+【書  式】
+    #include "sgl.h"
+
+    FIXED scl_x, scl_y;
+
+    void slZoomR( scl_x, scl_y );
+【引  数】
+    FIXED scl_x - 回転スクロールのX軸方向に対する拡縮率の逆数(2倍なら1/2)
+    FIXED scl_y - 回転スクロールのY軸方向に対する拡縮率の逆数(2倍なら1/2)
+【返  数】
+    void - 何も返しません。
+【機  能】
+    回転スクロール面の拡縮率を設定し、カレント回転パラメータに現在の状態を保存
+    します。
+【用  例】
+    slZoomR( toFIXED( 0.5 ), toFIXED( 2.0 ) );
+【注  意】
+    この関数はカレントの回転パラメータのkx、kyを操作します。
+【参  照】
+    slLookR, slDispCenterR, slScrScaleR, slZrotR
+    ScrRotPtr
+
+
+slScrScaleNbg0 -- 関数
+slScrScaleNbg1 -- 関数
+    slScrScaleNbg0, slScrScaleNbg1 - 拡縮率の指定。
+【書  式】
+    #include "sgl.h"
+
+    FIXED scl_x, scl_y;
+
+    void slScrScaleNbg0( scl_x, scl_y );
+    void slScrScaleNbg1( scl_x, scl_y );
+【引  数】
+    FIXED scl_x - ノーマルスクロールのX軸方向に対する拡縮率(2倍なら2)
+    FIXED scl_y - ノーマルスクロールのY軸方向に対する拡縮率(2倍なら2)
+【返  数】
+    void - 何も返しません。
+【機  能】
+    ノーマルスクロール面のうち、拡縮可能な "NBG0,1" の拡縮率を指定します。
+【用  例】
+    slScrScaleNbg1( toFIXED( 2 ), toFIXED( 1/3 ) );
+【注  意】
+    縮小を掛ける際には、それに合わせてサイクルパターンの設定をする必要が
+    あります。この際、slScrAutoDispでは縮小設定をサポートして
+    いませんので、slScrCycleSet及び、slScrDispを用いて
+    直接サイクルパターンの設定を行なう必要があります。サイクルパターンの
+    設定については、
+      VDP2ユーザーズマニュアル
+        3.3 表示期間中のVRAMアクセス方法
+    を御覧ください。
+【参  照】
+    slScrMoveNbg0, slScrMoveNbg1, slScrMoveNbg2, slScrMoveNbg3
+    slScrPosNbg0, slScrPosNbg1, slScrPosNbg2, slZoomModeNbg0
+    slZoomModeNbg1, slZoomNbg0, slZoomNbg1
+
+
+slScrScaleR -- 関数
+    slScrScaleR - 回転スクロール面の拡縮率の設定。
+【書  式】
+    #include "sgl.h"
+
+    FIXED scl_x, scl_y;
+
+    void slScrScaleR( scl_x, scl_y );
+【引  数】
+    FIXED scl_x - 回転スクロールのX軸方向に対する拡縮率(2倍なら2)
+    FIXED scl_y - 回転スクロールのY軸方向に対する拡縮率(2倍なら2)
+【返  数】
+    void - 何も返しません。
+【機  能】
+    回転スクロール面の拡縮率を設定し、カレント回転パラメータに現在の状態を保存
+    します。
+【用  例】
+    slScrScaleR( toFIXED( 2.0 ), toFIXED( 1.0 ) );
+【参  照】
+    slLookR, slZoomR, slDispCenterR, slZrotR
+    ScrRotPtr
+
+
+slScrMatConv -- 関数
+    slScrMatConv - カレントマトリクスをスクロール形式のマトリクスに変換。
+【書  式】
+    #include "sgl.h"
+
+    void slScrMatConv(void)
+【引  数】
+    void - 何も与えません。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    カレントマトリクスをスクロール形式のマトリクスに変換します。
+    本関数を使用するとカレントマトリクスが書き換えられます。
+【用  例】
+    slUnitMatrix( CURRENT);
+    slRotX( DEGtoANG( 10.0 ) );
+    slRotZ( DEGtoANG( 10.0 ) );
+    slTranslate( ... );
+    slScrMatConv();
+    slScrMatSet();
+【注  意】
+    このあと、slScrMatSet関数を実行することにより回転スクロールの
+    パラメータに反映されます。
+【参  照】
+    slScrMatSet, slZrotR, slInitMatrix, slPushMatrix
+    slPushUnitMatrix, slIncMatrixPtr, slPopMatrix, slDecMatrixPtr
+    slUnitMatrix, slUnitAngle, slUnitTranslate, slLoadMatrix
+    slCopyMatrix, slRegistMatrix, slGetMatrix, slGetTranslate
+    slLoadTranslate, slInversMatrix, slTransposeMatrix, mtptr
+    slScrTransparent -- 関数
+    slScrTransparent - 各スクロール面の透明色の扱いを指定。
+【書  式】
+    #include "sgl.h"
+
+    Uint16 mode;
+
+    void slScrTransparent( mode );
+【引  数】
+    Uint16 mode - 透明色設定する面('|'で複数指定可能)
+【返  数】
+    void - 何も返しません。
+【機  能】
+    各スクロール面の透明色の扱いを指定します。
+    modeには、
+        NBG0ON、NBG1ON、NBG2ON、NBG3ON、RBG0ON
+    が入ります。
+    複数のスクロール面の描画設定を同時に行なう場合は、各面のモードを "|"で
+    つないで指定してください。
+    ONに指定されたスクロール面のスペースがパレット0のカラーで表示されます。
+【用  例】
+    NBG2を透明色設定にする。
+    slScrTransparent( NBG2ON);
+【参  照】
+    VDP2_BGON
+
+
+slZrotR -- 関数
+    slZrotR - 回転スクロールのZ軸回転。
+【書  式】
+    #include "sgl.h"
+
+    ANGLE angz;
+    void slZrotR( angz );
+【引  数】
+    ANGLE angz - Z軸に対する回転スクロールの回転角値
+【返  数】
+    void - 何も返しません。
+【機  能】
+    回転スクロールのZ軸回転を行ないます。回転の正方向は軸に対して右向き
+    (時計回り)になります。関数slDispCenterRで指定した座標が、
+    回転中心になります。
+【用  例】
+    回転スクロールをZ軸を中心にして、時計と反対に、30度回転する。
+    slZrotR( DEGtoANG( 30.0 ) );
+【参  照】
+    slLookR, slZoomR, slDispCenterR, slScrScaleR
+    ScrRotPtr
+
+
+slScrMatSet -- 関数
+    slScrMatSet - RBG0の回転パラメータをセット。
+【書  式】
+    #include "sgl.h"
+
+    void slScrMatSet();
+【引  数】
+    void - 何も与えません。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    カレントマトリクスを利用して RBG0 の回転パラメータをセットします。
+【用  例】
+    カレントマトリクスを使ってRBG0の回転パラメータを設定。
+    slPushMatrix();
+    {
+      slRotY( ... );
+      slTranslate( ... );
+      slScrMatSet();
+    }
+    slPopMatrix();
+【参  照】
+    slScrMatConv, slZrotR, slInitMatrix, slPushMatrix
+    slPushUnitMatrix, slIncMatrixPtr, slPopMatrix, slDecMatrixPtr
+    slUnitMatrix, slUnitAngle, slUnitTranslate, slLoadMatrix
+    slCopyMatrix, slRegistMatrix, slGetMatrix, slGetTranslate
+    slLoadTranslate, slInversMatrix, slTransposeMatrix, mtptr
+    MsScreenSizeX, MsScreenSizeY, Resolution, VDP2_KTCTL
+    VDP2_KTAOF, ScrRotPtr, k_table_adr

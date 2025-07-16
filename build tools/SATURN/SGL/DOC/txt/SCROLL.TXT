@@ -1,0 +1,737 @@
+
+
+★TV画面出力
+slTVOn -- 関数
+    slTVOn - モニターへの出力を開始。
+【書  式】
+    #include "sgl.h"
+
+    void slTVOn();
+【引  数】
+    void - 何も与えません。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    モニターへの出力を開始します。
+【用  例】
+    slTVOffで中止したモニタへの出力を再開します。
+    slTVOff();
+       :
+    slTVOn();
+【注  意】
+    本関数を実行すると、直ちにVDP2のレジスタにセットされます。
+【参  照】
+    slTVOff, VDP2_TVMD
+
+
+slTVOff -- 関数
+    slTVOff - モニターへの出力を中止。
+【書  式】
+    #include "sgl.h"
+
+    void slTVOff();
+【引  数】
+    void - 何も与えません。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    モニターへの出力を中止します。
+    モニターには何も表示されなくなります。
+【用  例】
+    モニタへの出力を中止します。
+     slTVOff();
+【注  意】
+    本関数を実行すると、直ちにVDP2のレジスタにセットされます。
+    slInitSystem実行前にこの関数を使いトラブルが発生するという件が幾つか
+    報告されています。この関数を実行できるのは、slInitSystemを実行した
+    あとに限ります。
+【参  照】
+    slTVOn, VDP2_TVMD
+
+
+★外部信号と画面走査
+slGetHCount -- 関数
+    slGetHCount - VDP2のHカウンタを読み出す。
+【書  式】
+    #include "sgl.h"
+
+    Uint16 slGetHCount( void );
+【引  数】
+    void - 何も与えません。
+【返  数】
+    Uint16 - VDP2のHカウンタ値
+【機  能】
+    VDP2のHカウンタを読み出します。
+【用  例】
+    h_cnt = slGetHCount();
+【参  照】
+    slGetVCount, VDP2_EXTEN, VDP2_HCNT
+
+
+slGetVCount -- 関数
+    slGetVCount - VDP2のVカウンタを読み出す。
+【書  式】
+    #include "sgl.h"
+
+    Uint16 slGetVCount( void );
+【引  数】
+    void - 何も与えません。
+【返  数】
+    Uint16 - VDP2のVカウンタ値
+【機  能】
+    VDP2のVカウンタを読み出します。
+【用  例】
+    v_cnt = slGetVCount();
+【参  照】
+    slGetHCount, VDP2_EXTEN, VDP2_VCNT
+
+
+slExtSignal -- 関数
+    slExtSignal - 外部信号イネーブルレジスタを操作。
+【書  式】
+    #include "sgl.h"
+
+    Uint16 signal;
+    Uint16 mask;
+
+    void slExtSignal( signal, mask );
+【引  数】
+    Uint16 signal - セットしたい信号の名前。
+    Uint16 mask   - 操作したい信号の名前。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    外部信号イネーブルレジスタを操作します。
+    信号名は以下の4つです。
+    EXLTEN: HVカウンタの値をラッチするタイミングを外部信号に合わせる場合に
+             指定します。
+    EXSYEN: 外部同期信号に合わせてTV画面の表示を行なう場合に指定します。
+    DASEL: 画像表示エリアを規格領域一杯に使用する場合に指定します。
+    EXBGEN:外部画面データを入力する場合に指定します。
+【用  例】
+    slExtSignal( EXLTEN| DASEL, DASEL);
+【注  意】
+    この関数は、ST-Vなどの業務用やカラオケ機(Prologue)などで使われるもので、
+    SATURNで使用される事はありません。
+【参  照】
+    VDP2_EXTEN
+
+
+★ビットマップ画面
+slBitMapNbg0 -- 関数
+slBitMapNbg1 -- 関数
+slBitMapRbg0 -- 関数
+    slBitMapNbg0, slBitMapNbg1, slBitMapRbg0
+                    - スクロールのビットマップ画面の設定。
+【書  式】
+    #include "sgl.h"
+
+    Uint16 type;
+    Uint16 size;
+    void   *addr_A;
+
+    void slBitMapNbg0( type, size, addr_A );
+    void slBitMapNbg1( type, size, addr_A );
+    void slBitMapRbg0( type, size, addr_A );
+【引  数】
+    Uint16 type    - カラーモード。
+    Uint16 size    - ビットマップサイズ。
+    void   *addr_A - ビットマップデータをセットするV-RAMアドレス。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    NBG0/1画面をビットマップモードにし、ビットマップのサイズを設定します。
+    typeには、以下のパラメータを指定します。
+        COL_TYPE_16、COL_TYPE_256、COL_TYPE_2048、COL_TYPE_32768
+        COL_TYPE_1M
+    sizeには、以下のパラメータを指定します。
+        BM_512x256、BM_512x512、BM_1024x256、BM_1024x512
+    addr_Aには、ビットマップデータをセットするV-RAMアドレスをセットします。
+    これは0x20000バウンダリのアドレスでなければなりません。
+【用  例】
+    slBitMapNbg0( COL_TYPE_256, BM_1024x256, ( void * )( 0x25e40000 ) );
+【参  照】
+    slBMPaletteNbg0, slBMPaletteNbg1, slBMPaletteRbg0, VDP2_CHCTLA
+    VDP2_CHCTLB, VDP2_MPOFN, VDP2_MPOFR, nbg0_page_adr
+    nbg1_page_adr, ra_page_adr
+
+
+slBMPaletteNbg0 -- 関数
+slBMPaletteNbg1 -- マクロ
+slBMPaletteRbg0 -- マクロ
+    slBMPaletteNbg0, slBMPaletteNbg1, slBMPaletteRbg0
+                           - ビットマップ画面のパレットナンバーを定義。
+【書  式】
+    #include "sgl.h"
+
+    Uint16 num;
+
+    void slBMPaletteNbg0( num );
+    void slBMPaletteNbg1( num );
+    void slBMPaletteRbg0( num );
+【引  数】
+    Uint16 num - ビットマップ画面を表示する場合のパレットナンバー。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    ビットマップ画面を表示する場合のパレットナンバーをセットします。
+【用  例】
+    16Bitカラーモードで0x25f00200で始まるパレットを使用。
+    slBMPaletteNbg1( 1 );
+【参  照】
+    slBitMapNbg0, slBitMapNbg1, slBitMapRbg0, VDP2_BMPNA
+    ★スプライト
+slSpriteWinMode -- 関数
+    slSpriteWinMode - プライトウィンドウの有効・無効の指定。
+【書  式】
+    #include "sgl.h"
+
+    Uint16 flag;
+
+    void slSpriteWinMode( flag );
+【引  数】
+    Uint16 flag - スプライトウィンドウの有効・無効を指定するフラグパラメータ。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    スプライトウィンドウの有効・無効を指定します。
+    flagには、
+        ON  : スプライトウィンドウ有効
+        OFF : スプライトウィンドウ無効
+    が入ります。
+【用  例】
+    スプライトウインドウの内側のみにNBG2の画面を表示させる。
+    /* スプライトのカラーモードをパレットオンリーのモードにする。 */
+    slSpriteColMode( SPR_PAL);
+    /* スプライトウインドウの使用を宣言。 */
+    slSpriteWinMode( ON );
+    /* NBG2をスプライトウインドウの内側に表示する。 */
+    slScrWindowModeNbg2( spw_IN);
+【注  意】
+    スプライトウインドウを使用する場合、スプライトのカラーモードがRGBパレット
+    混在モードの場合使用できませんので、slSpriteWinModeを用いて
+    パレットモードにして使ってください。
+【参  照】
+    slSpriteColMode, slScrWindowMode, slScrWindowModeNbg0, slScrWindowModeNbg1
+    slScrWindowModeNbg2, slScrWindowModeNbg3, slScrWindowModeRbg0, slScrWindowModeSPR
+    slScrWindowModeROT, slScrWindowModeCCAL, slSpriteType, VDP2_SPCTL
+    slSpriteCCalcCond -- 関数
+    slSpriteCCalcCond - スプライトカラー演算条件の指定。
+【書  式】
+    #include "sgl.h"
+
+    Uint16 cond;
+
+    void slSpriteCCalcCond( cond );
+【引  数】
+    Uint16 cond - スプライトカラー演算条件。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    スプライトカラー演算条件の指定をします。
+    condには以下のパラメータを指定します。
+      CC_pr_CN: プライオリティがカラー演算条件ナンバーと同じか小さい場合に
+                 カラー演算をします。 (Priority <= ConditionNumber)
+      CC_PR_CN: プライオリティがカラー演算条件ナンバーと同じ場合にカラー演
+                 算をします。 (Priority == ConditionNumber)
+      CC_PR_cn: プライオリティがカラー演算条件ナンバーと同じか大きい場合に
+                 カラー演算をします。 (Priority >= ConditionNumber)
+      CC_MSB:   カラーデータの最上位ビットが1の場合にカラー演算をします。
+【用  例】
+    あるスプライトをスプライトタイプ5で指定しそのプライオリティナンバを6と
+    する。
+    次に、カラー演算ナンバとプライオリティナンバと一致したスプライトのみ、
+    NBG0とカラー演算するよう指定する。 
+    SPR_ATTRattr = SPR_ATTRIBUTE[macro]( 0, 0x100 | ( 6 << 12 ) | ( 1 << 11 ),
+    /*                                          ^^^^^^^       ^^^^^^^*/
+    /*                      プライオリティナンバを6    カラー演算割合ビット */
+                                  No_Gouraud, CL256Bnk, sprNoflip | _ZmCC );
+                                 :
+    /* Set any sprite parameters. */
+    slSpriteType( 5 );
+    slPrioritySpr4( 6 );
+    slSpriteCCalcCond( CC_PR_CN);
+    slSpriteCCalcNum( 6 );
+
+    /* Set and Color calculation parameter. */
+    slColorCalc( CC_RATE| CC_2ND| NBG0ON| SPRON);
+    slColRateNbg0( CLRate20_12);
+                                 :
+    /* Display sprite. */
+    slPutSprite( &attr, pos, DEGtoANG( 90.0 ) );
+【参  照】
+    slSpriteType, slSpriteCCalcCond, slSpriteCCalcNum, slColorCalc
+    slColorCalcOn, slColorCalcMode, slColRateSpr0, slColRateSpr1
+    slColRateSpr2, slColRateSpr3, slColRateSpr4, slColRateSpr5
+    slColRateSpr6, slColRateSpr7, slColRate, slPrioritySpr0
+    slPrioritySpr1, slPrioritySpr2, slPrioritySpr3, slPrioritySpr4
+    slPrioritySpr5, slPrioritySpr6, slPrioritySpr7, VDP2_SPCTL
+    slSpriteCCalcNum -- 関数
+    slSpriteCCalcNum - スプライトカラー演算条件ナンバーの指定。
+【書  式】
+    #include "sgl.h"
+
+    Uint16 num;
+
+    void slSpriteCCalcNum( num );
+【引  数】
+    Uint16 num - スプライトカラー演算条件ナンバ。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    スプライトカラー演算条件ナンバーの指定をします。
+    num は 0から7の範囲で指定します。
+【用  例】
+    slSpriteCCalcCond( CC_PR_cn);
+    slSpriteCCalcNum( 2 );
+【参  照】
+    slSpriteType, slSpriteCCalcCond, slSpriteCCalcCond, slColorCalc
+    slColorCalcOn, slColorCalcMode, slColRateSpr0, slColRateSpr1
+    slColRateSpr2, slColRateSpr3, slColRateSpr4, slColRateSpr5
+    slColRateSpr6, slColRateSpr7, slColRate, slPrioritySpr0
+    slPrioritySpr1, slPrioritySpr2, slPrioritySpr3, slPrioritySpr4
+    slPrioritySpr5, slPrioritySpr6, slPrioritySpr7, VDP2_SPCTL
+    slSpriteColMode -- 関数
+    slSpriteColMode - スプライトのカラーモードの指定。
+【書  式】
+    #include "sgl.h"
+
+    Uint16 mode;
+
+    void slSpriteColMode( mode );
+【引  数】
+    Uint16 mode - スプライトのカラーモード
+【返  数】
+    void - 何も返しません。
+【機  能】
+    スプライトのカラーモードの指定をします。
+     modeには
+       SPR_PAL、SPR_PAL_RGB
+     のいずれかを指定します。
+       SPR_PAL    : スプライトのデータがパレットデータ形式のみの場合に
+                     指定します。
+       SPR_PAL_RGB: スプライトのデータがパレット形式とRGB形式が混在する場合
+                     に指定します。
+【用  例】
+    スプライトのカラーモードをパレットモードにする。
+    slSpriteColMode( SPR_PAL)
+【参  照】
+    slInitSystem, slSetSprTVMode, slSpriteWinMode, VDP2_SPCTL
+    slSpriteType -- 関数
+    slSpriteType - スプライトタイプの指定。
+【書  式】
+    #include "sgl.h"
+
+    Uint16 type;
+
+    void slSpriteType( type );
+【引  数】
+    Uint16 type - スプライトデータのタイプ
+【返  数】
+    void - 何も返しません。
+【機  能】
+    スプライトデータのタイプを指定します。
+    type は 0から15で指定します。
+    0から7は低解像度(320または352)、8から15は高解像度用(640または704)に
+    なります。
+【用  例】
+    スプライトタイプを2にする。
+    slSpriteType( 2 );
+【注  意】
+    SGLのスプライトタイプのデフォルト値はタイプ3です。(ハイレゾにした時は、
+    タイプBになります。)
+【参  照】
+    slDispSprite, slSetSprite, slPutSprite, slDispSpriteHV
+    slDispSpriteSZ, slDispSprite4P, slSpriteWinMode, VDP2_SPCTL
+    ★モザイク
+slScrMosaicOn -- 関数
+    slScrMosaicOn - モザイク処理の対象となるスクロール面の指定。
+【書  式】
+    #include "sgl.h"
+
+    Uint16 mode;
+
+    void slScrMosaicOn( mode );
+【引  数】
+    Uint16 mode - モザイク処理の対象となるスクロール面
+【返  数】
+    void - 何も返しません。
+【機  能】
+    モザイク処理の対象となるスクロール面を指定します。
+    modeには、
+    NBG0ON、NBG1ON、NBG2ON、NBG3ON、RBG0ON、LNCLON、SPRON [constscl]
+    が入ります。
+【用  例】
+    slScrMosaicOn( NBG2ON| NBG3ON);
+【参  照】
+    slScrMosSize, VDP2_MZCTL
+
+
+slScrMosSize -- 関数
+    slScrMosSize - モザイク処理のサイズの指定
+【書  式】
+    #include "sgl.h"
+
+    Uint16 h_size, v_size;
+
+    void slScrMosSize( h_size, v_size );
+【引  数】
+    Uint16 h_size - 水平方向の大きさ。 
+    Uint16 v_size - 垂直方向の大きさ。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    モザイク処理をする場合のサイズを指定します。
+    指定できる大きさは水平、垂直方向とも1から16ドットです。
+【用  例】
+    slScrMosSize( 4, 6 );
+【注  意】
+    倍密インターレースにした場合、強制的に単密インタレースとなり、実際の
+    表示サイズは、V方向に関しては2ドット単位になります。
+    (v_sizeが内部で2倍されます。)
+【参  照】
+    slScrMosaicOn, Resolution, VDP2_MZCTL
+
+
+★ウインドウ
+slScrWindow0 -- 関数
+slScrWindow1 -- 関数
+    slScrWindow0, slScrWindow1 - 矩形ウィンドウの領域の設定。
+【書  式】
+    #include "sgl.h"
+
+    Uint16 left, top, right, bottom;
+
+    void slScrWindow0( left, top, right, bottom );
+    void slScrWindow1( left, top, right, bottom );
+【引  数】
+    Uint16 left   - 右隅の座標
+    Uint16 top    - 上端の座標
+    Uint16 right  - 左隅の座標
+    Uint16 bottom - 下端の座標
+【返  数】
+    void - 何も返しません。
+【機  能】
+    スクロール用矩形ウィンドウ0/1の領域を設定します。
+    ラインウィンドウが指定されている場合、ラインウィンドウは無効になります。
+【用  例】
+    slScrWindow1( 50, 50, 180, 150 );
+【参  照】
+    slSpriteWinMode, slScrLineWindow0, slScrLineWindow1, slScrWindowMode
+    slScrWindowModeNbg0, slScrWindowModeNbg1, slScrWindowModeNbg2, slScrWindowModeNbg3
+    slScrWindowModeRbg0, slScrWindowModeSPR, slScrWindowModeROT, slScrWindowModeCCAL
+    VDP2_TVMD, VDP2_WPSX0, VDP2_WPEX0, VDP2_WPSX1
+    VDP2_WPEX1, VDP2_LWTA0, VDP2_LWTA1
+
+
+slScrLineWindow0 -- 関数
+slScrLineWindow1 -- 関数
+    slScrLineWindow0, slScrLineWindow1 - ラインウィンドウテーブルの設定。
+【書  式】
+    #include "sgl.h"
+
+    void *addr_A;
+
+    void slScrLineWindow0( addr_A );
+    void slScrLineWindow1( addr_A );
+【引  数】
+    void *addr_A - ラインウィンドウデータテーブルのアドレス
+【返  数】
+    void - 何も返しません。
+【機  能】
+    ラインウィンドウデータテーブル0/1のアドレスを指定します。
+    ラインウィンドウを使用する場合は最上位ビットを1にしてください。
+    使用しない場合には NULL を指定します。
+【用  例】
+    ・ラインウィンドウを使用する時
+    アドレス = 0x25E3F00
+    slScrLineWindow0( ( void * )( 0x25E3F000 | 0x80000000) );
+
+    ・アドレスをポインタ変数で持っている場合
+    Sint16 *lnptr;
+    lnptr = ( Sint16 * )0x25e3f000 ;
+    slScrLineWindow1( ( void * )( lnptr + 0x40000000 ) );
+    (加算する値が 2倍 <sizeof( Sint16 )> されるため)
+
+    ・ラインウィンドウを使用しなくなった時
+    slScrLineWindow0( ( void * )NULL);
+【注  意】
+    ラインウィンドウを設定した場合でも、矩形ウィンドウのデータは有効のまま
+    になっています(ハードウエア仕様)ので、両方の領域がウィンドウ0の範囲と
+    なります。
+    矩形ウィンドウのデータを無効にしたい場合には、ウィンドウの上下及び、
+    左右の位置関係に矛盾のあるようなデータをセットしてください。
+    例)
+      slScrWindow0( 10, 0, 0, 10 ); /* 左右の位置関係がおかしい */
+                     |  |  |   |__ Bottom
+                     |  |  |_____ Right
+                     |  |_______ Top
+                     |_________ Left
+      slScrWindow0(10,10,0,0); /* 上下、左右の位置関係がおかしい */
+【参  照】
+    slSpriteWinMode, slScrLineWindow0, slScrLineWindow1, slScrWindowMode
+    slScrWindowModeNbg0, slScrWindowModeNbg1, slScrWindowModeNbg2, slScrWindowModeNbg3
+    slScrWindowModeRbg0, slScrWindowModeSPR, slScrWindowModeROT, slScrWindowModeCCAL
+    VDP2_LWTA0, VDP2_LWTA1
+
+
+slScrWindowMode -- 関数
+slScrWindowModeNbg0 -- マクロ
+slScrWindowModeNbg1 -- マクロ
+slScrWindowModeNbg2 -- マクロ
+slScrWindowModeNbg3 -- マクロ
+slScrWindowModeRbg0 -- マクロ
+slScrWindowModeSPR -- マクロ
+slScrWindowModeROT -- マクロ
+slScrWindowModeCCAL -- マクロ
+    slScrWindowModeNbg0, slScrWindowModeNbg1, slScrWindowModeNbg2,
+    slScrWindowModeNbg3, slScrWindowModeRbg0, slScrWindowModeSPR,
+    slScrWindowModeROT, slScrWindowModeCCAL
+        - スクロール面のウィンドウの使用モードの設定。
+【書  式】
+    #include "sgl.h"
+
+    Uint16 mode;
+    Uint16 type;
+
+    void slScrWindowMode( mode, type );
+    void slScrWindowModeNbg0( type );
+    void slScrWindowModeNbg1( type );
+    void slScrWindowModeNbg2( type );
+    void slScrWindowModeNbg3( type );
+    void slScrWindowModeRbg0( type );
+    void slScrWindowModeSPR( type );
+    void slScrWindowModeROT( type );
+    void slScrWindowModeCCAL( type );
+【引  数】
+    Uint16 mode - 使用するスクロール面(後述)
+    Uint16 type - 条件／モード。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    各スクロール面のウィンドウの使用モードを設定します。
+    modeには、
+        scnNBG0、scnNBG1、scnNBG2、scnNBG3、scnRBG0、scnSPR、 
+        scnROT、scnCCAL
+    のいずれかを、
+    typeには、以下の要素から選択して指定します。
+           [win_OR | win_AND]  複数のウィンドウに対する条件
+           [win0_IN| win0_OUT]
+           [win1_IN| win1_OUT] ..._IN は ウィンドウの内側を表示する
+           [spw_IN | spw_OUT]  ..._OUT は ウィンドウの外側を表示する
+【用  例】
+    NBG0がウィンドウ0の内側のみ、
+    NBG1がウィンドウ1の外側のみ、
+    NBG2がウィンドウ0とウィンドウ1の内側、
+    NBG3がウィンドウ0とウィンドウ1の重なった部分の内側のみという場合
+    slScrWindowModeNbg0( win0_IN);
+    slScrWindowModeNbg1( win1_OUT);
+    slScrWindowModeNbg2( win_OR| win0_IN| win1_IN);
+    slScrWindowModeNbg3( win_AND| win0_IN| win1_IN);
+【参  照】
+    slSpriteWinMode, slScrWindow0, slScrWindow1, slScrLineWindow0
+    slScrLineWindow1, VDP2_WCTLA
+
+
+★プライオリティ
+slPriority -- 関数
+slPriorityNbg0 -- マクロ
+slPriorityNbg1 -- マクロ
+slPriorityNbg2 -- マクロ
+slPriorityNbg3 -- マクロ
+slPriorityRbg0 -- マクロ
+slPrioritySpr0 -- マクロ
+slPrioritySpr1 -- マクロ
+slPrioritySpr2 -- マクロ
+slPrioritySpr3 -- マクロ
+slPrioritySpr4 -- マクロ
+slPrioritySpr5 -- マクロ
+slPrioritySpr6 -- マクロ
+slPrioritySpr7 -- マクロ
+    slPriority, slPriorityNbg0, slPriorityNbg1, slPriorityNbg2, slPriorityNbg3,
+    slPriorityRbg0, slPrioritySpr0, slPrioritySpr1, slPrioritySpr2,
+    slPrioritySpr3, slPrioritySpr4, slPrioritySpr5, slPrioritySpr6,
+    slPrioritySpr7 - プライオリティナンバーの設定。
+【書  式】
+    #include "sgl.h"
+
+    Uint16 mode;
+    Uint16 num;
+
+    void slPriority( mode, num );
+    void slPriorityNbg0( num );
+    void slPriorityNbg1( num );
+    void slPriorityNbg2( num );
+    void slPriorityNbg3( num );
+    void slPriorityRbg0( num );
+    void slPrioritySpr0( num );
+    void slPrioritySpr1( num );
+    void slPrioritySpr2( num );
+    void slPrioritySpr3( num );
+    void slPrioritySpr4( num );
+    void slPrioritySpr5( num );
+    void slPrioritySpr6( num );
+    void slPrioritySpr7( num );
+【引  数】
+    Uint16 num  - プライオリティナンバ。
+    Uint16 mode - プライオリティを設定する面(後述)。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    各画面のプライオリティナンバーを設定します。
+    modeには以下のパラメータが入ります。
+        scnNBG0、scnNBG1、scnNBG2、scnNBG3、scnRBG0、scnSPR0、scnSPR1 [constscl]
+        scnSPR2、scnSPR3、scnSPR4、scnSPR5、scnSPR6、scnSPR7
+    numは0～7の値を指定します(ただし、0を指定すると表示されません)。
+【用  例】
+    slPriority( scnSPR5, 6 );
+    slPriorityRbg0( 5 );
+【参  照】
+    slSpriteType
+
+
+★シャドウ
+slShadowOn -- 関数
+    slShadowOn - シャドウの働くスクロール面の設定。
+【書  式】
+    #include "sgl.h"
+
+    Uint16 mode;
+
+    void slShadowOn( mode );
+【引  数】
+    Uint16 mode - シャドウ機能を働かせる面(後述)。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    シャドウ機能がどのスクロール面に対して機能するかを指定します。
+    modeには、
+        NBG0ON、NBG1ON、NBG2ON、NBG3ON、RBG0ON、BACKON
+    のいずれかを与えます。
+【用  例】
+    slShadowOn( NBG2ON);
+【注  意】
+    ノーマルシャドウ、MSBシャドウいずれに対しても有効です。
+【参  照】
+    slSpriteType, slTpShadowMode, VDP2_SDCTL, VDP2_PRISA
+    slTpShadowMode -- 関数
+    slTpShadowMode - 透明シャドウのスプライトを有効にするかを指定。
+【書  式】
+    #include "sgl.h"
+
+    Uint16 flag;
+
+    void slTpShadowMode( flag );
+【引  数】
+    Uint16 flag - 透明シャドウのスプライトを有効にするかどうかを示すフラグ。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    透明シャドウのスプライトを有効にするかどうかを指定します。
+    flagには、
+         ' ON '又は' OFF '
+    を指定します。
+【用  例】
+    透明シャドウを掛ける。
+    slTpShadowMode( ON );
+【注  意】
+    透明シャドウを掛けるにはスプライトデータのMSBを ON にしておかなければ
+    なりません。
+【参  照】
+    slSpriteType, slShadowOn, VDP2_SDCTL
+
+
+★ライン／縦セルスクロール
+slLineScrollMode -- 関数
+slLineScrollModeNbg0 -- マクロ
+slLineScrollModeNbg1 -- マクロ
+    slLineScrollMode, slLineScrollModeNbg0, slLineScrollModeNbg1
+                             - スクロール面のラインスクロールモードの設定。
+【書  式】
+    #include "sgl.h"
+
+    Uint16 mode;
+    Uint16 type;
+
+    slLineScrollMode( mode, type );
+    slLineScrollModeNbg0( type );
+    slLineScrollModeNbg1( type );
+【引  数】
+    Uint16 mode - ラインスクロールモードを設定する面(後述)。
+    Uint16 type - ラインスクロールモード
+【返  数】
+    void - 何も返しません。
+【機  能】
+    スクロール面のラインスクロールモードを設定します。
+    modeには、
+        scnNBG0、scnNBG1
+    のいずれかが
+    typeには、
+        lineSZ1| lineSZ2| lineSZ4| lineSZ8  : ラインの幅
+        lineZoom                               : 水平方向のスケーリング
+        lineVScroll                            : 垂直方向のスクロール
+        lineHScroll                            : 水平方向のスクロール
+        VCellScroll                            : 縦セルスクロール
+    を使用したいモードを '|' でつないで指定。
+【用  例】
+    slLineScrollMode( scnNBG1, lineSZ2| lineVScroll| VCellScroll);
+    slLineScrollModeNbg1( lineSZ8| lineZoom);
+【参  照】
+    slScrCycleSet, slScrDisp, slLineScrollTable0, slLineScrollTable0
+    slVCellTable, VDP2_SCRCTL
+
+
+slLineScrollTable0 -- 関数
+slLineScrollTable1 -- 関数
+    slLineScrollTable0, slLineScrollTable1
+                  - ラインスクロールデータのテーブルの指定
+【書  式】
+    #include "sgl.h"
+
+    void *addr_A;
+
+    void slLineScrollTable0( addr_A );
+    void slLineScrollTable1( addr_A );
+【引  数】
+    void *addr_A - ラインスクロールデータをセットしたVRAMのアドレス
+【返  数】
+    void - 何も返しません。
+【機  能】
+    ラインスクロールデータのテーブルを指定します。
+【用  例】
+    void slLineScrollTable0( ( void * )0x25e20000 );
+【参  照】
+    slLineScrollMode, slLineScrollModeNbg0, slLineScrollModeNbg1, slVCellTable
+    VDP2_VCSTA, VDP2_LSTA0, VDP2_LSTA1
+
+
+slVCellTable -- 関数
+    slVCellTable -  縦セルスクロールデータのテーブルの指定。
+【書  式】
+    #include "sgl.h"
+
+    void *addr_A;
+
+    void slVCellTable( addr_A );
+【引  数】
+    void addr_A - 縦セルスクロールデータをセットしたVRAMのアドレス
+【返  数】
+    void - 何も返しません。
+【機  能】
+    縦セルスクロールデータのテーブルを指定します。
+    縦セルスクロールを使用する場合、VRAMアクセスサイクルの設定が必要と
+    なります。
+    関数slScrCycleSet, slScrDispによってセットしてください。
+【用  例】
+    NBG0を縦セルスクロールする。
+    slScrCycleSet( 0xc0feeeee, 0x44feeeee, 0xfeeeeeee, 0xfeeeeeee );
+    slScrDisp( NBG0ON);
+
+    void slVCellTable( ( void * )0x25e10000 );
+【注  意】
+    縦セルスクロールはハイレゾリューションモードでは使用できません。
+    また、回転スクロールで使用するデータ(係数、CG等)と同じバンクにすることも
+    許されません。
+【参  照】
+    slLineScrollMode, slLineScrollModeNbg0, slLineScrollModeNbg1, slLineScrollTable0
+    slLineScrollTable0, VDP2_VCSTA

@@ -1,0 +1,1197 @@
+;=======================================================================;
+;	SEGASATURN sound driver						;
+; file name								;
+;	scsp.lib							;
+; copyright								;
+;	SEGA ENTERPRISES						;
+; purpose								;
+;									;
+; author(s)								;
+;	1995-11-14	A.Miyazawa	Ver.2.00			;
+; mod history								;
+;	1996-02-23	A.Miyazawa	Ver.2.06			;
+;	1996-07-02	A.Miyazawa	Ver.2.10L			;
+;	1997-06-30	Y.Kashima	Ver.2.20			;
+;=======================================================================;
+
+;	CPU : MC68000 ( É” = 9.87 MHz )
+
+
+off		equ	0
+on		equ	.not.off
+
+;---------------------------------------------------------------;
+;	assemble switch 1					;
+;---------------------------------------------------------------;
+sw_MODEL_M              .equ    off		;on:for model M
+ENGN                    .equ    off		;on:engine contol
+SW_TITAN                .equ    off		;on:for ST-V
+compatible		.equ	off		;on:host command $0c,$0d
+rereaseCheck		.equ	off		;on:use rerease check
+;---------------------------------------------------------------;
+;	assemble switch 2					;
+;---------------------------------------------------------------;
+
+		.if sw_MODEL_M
+SCSI_RAM_chk		.equ	off		;SCSI access S-RAM R/W check
+		.else
+SCSI_RAM_chk		.equ	off		;don't toutch
+		.endif
+
+;---------------------------------------------------------------;
+;	default value						;
+;---------------------------------------------------------------;
+default_volume		.equ	$7f		;default midi volume
+
+;---------------------------------------------------------------;
+;	hardware memory map					;
+;---------------------------------------------------------------;
+IO_DRAM			.equ		$000000	;d-ram
+DRAM_size		.equ		$100000	;8Mbit(1Mbytes)
+IO_SCSP			.equ		$100000	;scsp
+		.if	sw_MODEL_M
+IO_EXP			.equ		$200000	;model-M expanded I/O
+IO_DMA			.equ		$400000	;dma controller
+IO_ROM			.equ		$600000	;rom
+IO_EMU			.equ		$800000	;emulation
+IO_SCSI			.equ		$a00000	;scsi
+IO_LED			.equ		$c00000	;led
+IO_MIDI1		.equ		$d00000	;midi
+IO_MIDI2		.equ		$d80000	;midi
+IO_SRAM1		.equ		$e00000	;s-ram
+IO_SRAM2		.equ		$f00000	;s-ram
+SRAM1_size		.equ		$40000	;1Mbit x 2
+SRAM2_size		.equ		$40000	;1Mbit x 2
+		.endif
+
+		.if	SW_TITAN
+;+-------+-------+-------+-------+-------+-------+-------+-------+
+;| bit 7 |     6 |     5 |     4 |     3 |     2 |     1 |     0 |
+;+-------+-------+-------+-------+-------+-------+-------+-------+
+;|xxxxxxx|xxxxxxx|jamma D|jamma26|jamma C|jamma25|coin 2 |coin 1 |
+;+-------+-------+-------+-------+-------+-------+-------+-------+
+IO_PORT_C		.equ		$600000	;
+		.endif
+;---------------------------------------------------------------;
+SCSP_slot_unit		.equ	$20		;slot unit size
+SCSP_SLOT_SIZE  	.equ	SCSP_slot_unit	;
+;---------------------------------------------------------------;
+;	d-ram map base def.					;
+;---------------------------------------------------------------;
+sz_SIFTB		.equ		$040	;system interface table size
+sz_SINFO		.equ		$040	;system information table size
+sz_SIFWK		.equ		$080	;system interface work size
+sz_AMAPC		.equ		$100	;sound area map CRNT work size
+sz_TIFWK		.equ		$080	;tool interface work size
+sz_MONTR		.equ		$080	;monitor work size
+sz_HIFWK		.equ		$100	;host interface work size
+
+bs_SIFTB		.equ		$0400	;system i/f table
+bs_SINFO		.equ		$0440	;system information table
+bs_SIFWK		.equ		$0480	;system i/f work top
+bs_AMAPC		.equ		$0500	;area map current work top addr
+bs_TIFWK		.equ		$0600	;tool i/f work top
+bs_MONTR		.equ		$0680	;monitor buffer top
+host_if_work		.equ		$0700	;host i/f work top
+bs_CMDHS		.equ		$0800	;host command history buffer top
+bs_PRGTP		.equ		$1000	;68k prg top address
+sz_PRG			.equ		$6000	;68k program size
+bs_PWKTP		.equ	bs_PRGTP+sz_PRG	;68k work top address
+sz_Prg_wk		.equ		$3000	;68K work size
+bs_SSP			.equ	bs_PWKTP+sz_Prg_wk	; stack pointer initial
+bs_AREAM		.equ	bs_SSP		;area map buffer
+sz_AREAM		.equ		$1000	;area map buffer size
+;-----------------------------------------------------------------------;
+;	driver work ram address or base					;
+;-----------------------------------------------------------------------;
+kanri_wk		.equ		$0000	; 1000H
+slot_work		.equ		$1000	;  800H
+common_wk		.equ		$1800	;   6EH
+mixer_wk_edt		.equ		$186C	;   12H	Tone Editor Ç…ÇÊÇÈïœçXíºëOÇÃÇlixer data
+mixer_wk_SCSP		.equ		$187E	;   12H	é¿ç€ÇÃÇrÇbÇrÇoè„Ç÷ÇÃèëçûçœÇlixer data
+Pcm_Strm		.equ		$1890	;   10H PCM stream Playing SCSP slot#
+MIDIA_wk		.equ		$18A0	;   10H
+;@MIDIB_wk		.equ		$18B0	;   10H
+_KEYHISTB		.equ		$18C0	;   40H
+_DVA_layer		.equ		$1900	;  100H
+_MIDI_RCV_BF		.equ		$1A00	;  400H	;100H 4byte íPà 
+_DFL_ELMNT_wk		.equ		$1E00	;  100H
+;.........		.equ		$1F00	;  100H
+_MIDI_OUT_BF		.equ		$2000	;  400H	95/07/12
+_EXCL_RCV_BF		.equ		$2400	;  180H
+;.........		.equ		$2580	;  280H
+DEC_WORK_OFFSET		.equ		$2800		;SEQ âìÄ work offset value
+SY_TOP			.equ		$0000		; area top offset
+SQ_TOP			.equ		$0100		;
+NC_TOP			.equ		$0400		;
+	;-------------------------------------------------------;
+	;	decoder work					;
+	;-------------------------------------------------------;
+SQ_NUM			.equ		8		;sequence management #
+SQ_SIZ			.equ		96		;management work size(don't care)
+NC_NUM			.equ		32		;slot # for note on cue
+NC_SIZ			.equ		12		;cue data size
+
+;SY_NUM		equ	1		; system control block number
+;SY_SIZ		equ	64		;                      size
+;SY_MAX		equ	SY_SIZ*SY_NUM	;                      area size
+;SQ_MAX		equ	SQ_SIZ*SQ_NUM	;                        area size
+;NC_MAX		equ	NC_SIZ*NC_NUM	;             area size
+
+midi_receive_buffer	.equ	bs_PWKTP+_MIDI_RCV_BF		;$8a00
+exclusive_receive_buf	.equ	bs_PWKTP+_EXCL_RCV_BF		;$9400
+decoder_work		.equ	bs_PWKTP+DEC_WORK_OFFSET	;$9800
+management_work		.equ	bs_PWKTP+DEC_WORK_OFFSET+SQ_TOP	;$9900
+note_on_cue_table	.equ	bs_PWKTP+DEC_WORK_OFFSET+NC_TOP	;$9c00
+
+
+;---------------------------------------------------------------;
+; $0400 -							;
+;	system i/f						;
+;---------------------------------------------------------------;
+Mem_SYINFO_PTR		.equ     bs_SIFTB+$00	;system i/f table top addr
+Mem_HOSTIF_PTR		.equ	bs_SIFTB+$04	;host interface work pointer
+Mem_MAPCRNT_PTR		.equ	bs_SIFTB+$08	;map crnt work pointer
+Mem_TOOLIF_PTR		.equ	bs_SIFTB+$0c	;tool interface work pointer
+Mem_DSP_FLG		.equ	bs_SIFTB+$10	;work
+Mem_DRV_FLG		.equ	bs_SIFTB+$11	;sound driver load flag
+Mem_IFWK_PTR		.equ	bs_SIFTB+$12	;system i/f work pointer
+Mem_DRVERR_FLG		.equ	bs_SIFTB+$16	;error flags (w)
+	;-----------------------------------------------;
+	;	Mem_DRVERR_FLG	($0416)			;
+	;-----------------------------------------------;
+;ERRa15		.equ	7		;always 0
+ERRa14		.equ	6		;
+ERRa13		.equ	5		;
+ERRa12		.equ	4		;
+ERRa11		.equ	3		;
+ERRa10		.equ	2		;cannot find key-on slot,ought to key-off(poly mode)
+ERRa_9		.equ	1		;MIDI ch 10HÅ`1FH input
+ERRa_8		.equ	0		;cannot find key-on slot,ought to key-off(mono mode)
+;ERRa_7		.equ	7		;always 0
+ERRa_6		.equ	6		;max voice #(32) overflow
+ERRa_5		.equ	5		;illegal layer # in tone bank
+ERRa_4		.equ	4		;MIDI F0HÅ`FFH input
+ERRa_3		.equ	3		;MIDI channel pressure
+ERRa_2		.equ	2		;MIDI Polyphonic Key pressure
+ERRa_1		.equ	1		;unregestered level#6
+ERRa_0		.equ	0		;unregestered level#5
+	;-----------------------------------------------;
+Mem_HD_chk		.equ	bs_SIFTB+$18	;word
+Mem_CMDHS_pt		.equ	bs_SIFTB+$1A	;(word) HOST Commnd bufferring point
+Mem_err_bit		.equ	bs_SIFTB+$20	;error flags (l)
+	;-----------------------------------------------;
+	;	Mem_err_bit	($0420)			;
+	;-----------------------------------------------;
+;ERRb31		.equ	7		;always 0
+ERRb30		.equ	6		;cpu buss error
+ERRb29		.equ	5		;cpu exception
+ERRb28		.equ	4		;cpu address error
+ERRb27		.equ	3		;midi receive buffer overflow
+ERRb26		.equ	2		;illegal MIDI exclusive receive
+ERRb25		.equ	1		;
+ERRb24		.equ	0		;
+;ERRb23		.equ	7		;always 0
+ERRb22		.equ	6		;illegal effect change #(over 0FH)
+ERRb21		.equ	5		;
+ERRb20		.equ	4		;sddrvs.tsk ÇÃ mediaä‘Ç≈ÇÃï°êªÉ~ÉX
+ERRb19		.equ	3		;r/w size > $20040
+ERRb18		.equ	2		;cannot find äYìñ SEQ Song#
+ERRb17		.equ	1		;note-on éû not ready [k_BANK_adr]
+ERRb16		.equ	0		;note-on éû äYìñÇkayer nothing
+;ERRb15		.equ	7		;always 0
+ERRb14		.equ	6		;illegal control change # receive
+ERRb13		.equ	5		;not enough memory
+ERRb12		.equ	4		;dsp access area unit is 2000H
+ERRb11		.equ	3		;cannot find dsp-ram-id
+ERRb10		.equ	2		;not dsp-prg down load
+ERRb_9		.equ	1		;cannot find dsp-prg-id
+ERRb_8		.equ	0		;cannot down load SEQ data
+;ERRb_7		.equ	7		;always 0
+ERRb_6		.equ	6		;cannot find äYìñ seq bank#
+ERRb_5		.equ	5		;voice# too large
+ERRb_4		.equ	4		;not ready tone-bank
+ERRb_3		.equ	3		;not ready scspbin address
+ERRb_2		.equ	2		;not find tone bank id or data not ready
+ERRb_1		.equ	1		;not find map
+ERRb_0		.equ	0		;not find mixer
+;---------------------------------------------------------------;
+; $0440 -							;
+;	system information					;
+;---------------------------------------------------------------;
+Mem_bs_PRGTP		.equ	bs_SINFO+$00	; 68K Program   top
+Mem_sz_PRG		.equ	bs_SINFO+$04	;      //       size
+Mem_bs_AREAM		.equ	bs_SINFO+$08	; Area Map area top
+Mem_sz_AREAM		.equ	bs_SINFO+$0C	;      //       size
+Mem_bs_PWKTP		.equ	bs_SINFO+$10	; 68K Prg work  top
+Mem_sz_Prg_wk		.equ	bs_SINFO+$14	;      //       size
+;-----------------------------------------------------------------------;
+; $0480 -								;
+;	system i/f work							;
+;-----------------------------------------------------------------------;
+OF_IPT_CTRL		.equ		$00		;interrupt control word
+OF_IPT_MODE		.equ		$01		;interrupt mode
+OF_PCM_PLAYNUM  	.equ		$02		;pcm play number
+OF_MONO_FLAG		.equ		$03		;tv mono/stereo flag
+monauralFlag		.equ	bs_SIFWK+OF_MONO_FLAG	;abs address
+OF_3D_FLAG		.equ		$04		;3d sound control flag
+OF_QCOEF_PTR		.equ		$05		;q  sound coef pointer
+OF_3DCOEF_PTR   	.equ		$06		;3d sound coef pointer
+OF_3DADRS_PTR   	.equ		$07		;3d sound madrs pointer
+OF_3DCH1_WORK   	.equ		$08		;3d sound ch1 work
+OF_3DCH2_WORK   	.equ		$18		;3d sound ch2 work
+OF_3DPRG_WORK   	.equ		$28		;3d sound PROGRAM work
+OF_HNDSHK_EN		.equ		$60		;host i/f hand-shake en/di
+handShakeFlag		.equ	bs_SIFWK+OF_HNDSHK_EN	;abs address
+OF_HNDSHK_flg		.equ		$61		;hand shake flag
+handShakeMode		.equ	bs_SIFWK+OF_HNDSHK_flg	;abs address
+handShake	.equ	7		;bit7	H:HOST I/F Hand-shake on
+midiDataOut	.equ	6		;   6	H:MIDIèàóù MIDI data out
+cmdMidiOut	.equ	5		;   5	H:HOST input Command MIDI out
+scspMidiInCtrl	.equ	4		;   4	H:SCSP MIDI input Control
+OF_EXTMIDI_No		.equ		$62		; EXT MIDI î≠âπä«óùî‘çÜ
+	;-----------------------------------------------;
+	;	system i/f work for st-v		;
+	;-----------------------------------------------;
+		.if	SW_TITAN
+TTN_SW_DRAM		.equ	bs_SIFWK+$70	;
+TTN_flag68		.equ		$0	;
+TTN_old_sw		.equ		$1	;
+TTN_coin_sw_md		.equ		$2	;
+TTN_execute		.equ		$3	;
+TTN_off_count		.equ		$4	;
+TTN_coin_1		.equ	TTN_off_count+0	;
+TTN_coin_2		.equ	TTN_off_count+1	;
+TTN_coin_3		.equ	TTN_off_count+2	;
+TTN_coin_4		.equ	TTN_off_count+3	;
+;			.equ		$8	;reserved
+;			.equ		$9	;reserved
+;			.equ		$a	;reserved
+;			.equ		$b	;reserved
+;			.equ		$c	;reserved
+;			.equ		$d	;reserved
+;			.equ		$e	;reserved
+;			.equ		$f	;reserved
+		.endif			;SW_TITAN
+
+;-----------------------------------------------------------------------;
+; $0500 -								;
+;	current area map						;
+;-----------------------------------------------------------------------;
+Mem_map_ID		.equ		$00	;id
+Mem_map_start		.equ		$01	;(3)top address
+;			.equ		$04	;data load flag
+MAP_LOAD_BITPOS	.equ	7		;data load flag
+Mem_map_size		.equ		$05	;(3)size
+
+Mem_map_end		.equ		$100	;(w)
+
+BANK_ID			.equ		0	;tone bank data id
+SEQ_ID			.equ		1	;sequence data id
+DSP_PRG_ID		.equ		2	;dsp program id
+DSP_RAM_ID		.equ		3	;dsp work ram id
+user4x			.equ		4	;user block id
+user5x			.equ		5	;user block id
+user6x			.equ		6	;user block id
+user7x			.equ		7	;user block id
+DATA_ID			.equ		0	;
+INDX_ID			.equ		0	;
+MAP_ID_TONEBANK		.equ		$00	;tone bank
+MAP_ID_SEQBANK		.equ		$10	;sequens bank
+MAP_ID_DSPPROG		.equ		$20	;DSP program
+MAP_ID_DSPWORK		.equ		$30	;DSP work RAM
+MAP_ID_END		.equ		$ff	;map data end code
+
+MAP_SIZE		.equ		8	;
+MAP_END_BITPOS	.equ	7		;end bit
+
+MAP_ADRS_MASK		.equ		$0fffff ;map top address max mask
+MAP_SIZE_MASK		.equ		$0fffff ;map size max mask
+	;-------------------------------------------------------;
+	;	sound area map offset pointer			;
+	;-------------------------------------------------------;
+MAP_DATA_ID		.equ		0	; EDbit + DataID data offset
+MAP_DATA_START		.equ		1	; Start address  data offset
+MAP_DATA_LBIT		.equ		4	; reserve	data offset
+MAP_DATA_SIZE		.equ		5	; Area size      data offset
+
+;-----------------------------------------------------------------------;
+; $0600H -								;
+;	tool i/f work							;
+;-----------------------------------------------------------------------;
+OF_WAVE_SDRS		.equ		$04	 ; wave area top address
+OF_WAVE_SIZE		.equ		$08	 ; wave area size
+OF_TONE_ADRS		.equ		$0e	 ; tone area top address
+OF_TONE_SIZE		.equ		$12	 ; tone area size
+OF_DSP_PRGADRS  	.equ		$18	 ; DSP program address
+OF_DSP_PRGSIZE  	.equ		$1c	 ; DSP program size
+OF_DSP_NAME		.equ		$20	 ; DSP file name
+OF_DSP_RAMSIZE  	.equ		$40	 ; DSP work ram size
+OF_DSP_RBL		.equ		$44	 ; DSP RBL
+OF_DSP_ELMADRS  	.equ		$46	 ; DSP element address
+OF_DSP_ELMSIZE  	.equ		$4a	 ; DSP element size
+OF_DSP_ELMNUM   	.equ		$4e	 ; DSP element number
+
+D_1CH_BITPOS	.equ	7		;bit7	3D 1ch mode
+;		.equ	6		;   6
+Q_4CH_BITPOS	.equ	5		;   5	Q 4ch mode
+Q_8CH_BITPOS	.equ	4		;   4	Q 8ch mode
+;-----------------------------------------------------------------------;
+; $0680 -								;
+;	Editor Monitor buffer def.					;
+;-----------------------------------------------------------------------;
+Mem_MVC		.equ	0	; Voice#
+Mem_MNT		.equ	1	; Note#
+Mem_MVL		.equ	2	; Velocity value
+;-----------------------------------------------------------------------;
+; $0700 -								;
+;	host interface work						;
+;-----------------------------------------------------------------------;
+OF_HI_CB1		.equ		$00		;command block 1
+OF_HI_CB2		.equ		$10		;command block 2
+OF_HI_CB3		.equ		$20		;command block 3
+OF_HI_CB4		.equ		$30		;command block 4
+OF_HI_CB5		.equ		$40		;command block 5
+OF_HI_CB6		.equ		$50		;command block 6
+OF_HI_CB7		.equ		$60		;command block 7
+OF_HI_CB8		.equ		$70		;command block 8
+HOST_P1		.equ		0		;paramater 1
+HOST_P2		.equ		1		;	2
+HOST_P3		.equ		2		;	3
+HOST_P4		.equ		3		;	4
+HOST_P5		.equ		4		;	5
+HOST_P6		.equ		5		;	6
+HOST_P7		.equ		6		;	7
+HOST_P8		.equ		7		;	8
+HOST_P9		.equ		8		;	9
+HOST_P10	.equ		9		;	10
+HOST_P11	.equ		10		;	11
+HOST_P12	.equ		11		;	12
+OF_HI_STAT1		.equ		$80		;status 1
+OF_HI_STAT2		.equ		$82		;status 2
+OF_HI_STAT3		.equ		$84		;status 3
+OF_HI_STAT4		.equ		$86		;status 4
+OF_HI_STAT5		.equ		$88		;status 5
+OF_HI_STAT6		.equ		$8a		;status 6
+OF_HI_STAT7		.equ		$8c		;status 7
+OF_HI_STAT8		.equ		$8e		;status 8
+OF_HI_TVOLL		.equ		$90		;total volume Lch
+OF_HI_TVOLR		.equ		$92		;total volume Rch
+OF_HI_HVOLL		.equ		$94		;high  volume Lch
+OF_HI_HVOLR		.equ		$96		;high  volume Rch
+OF_HI_MVOLL		.equ		$98		;mid   volume Lch
+OF_HI_MVOLR		.equ		$9a		;mid   volume Rch
+OF_HI_LVOLL		.equ		$9c		;low   volume Lch
+OF_HI_LVOLR		.equ		$9e		;low   volume Rch
+OF_HI_PCM0		.equ		$a0		;pcm 0 play address
+OF_HI_PCM1		.equ		$a2		;pcm 1 play address
+OF_HI_PCM2		.equ		$a4		;pcm 2 play address
+OF_HI_PCM3		.equ		$a6		;pcm 3 play address
+OF_HI_PCM4		.equ		$a8		;pcm 4 play address
+OF_HI_PCM5		.equ		$aa		;pcm 5 play address
+OF_HI_PCM6		.equ		$ac		;pcm 6 play address
+OF_HI_PCM7		.equ		$ae		;pcm 7 play address
+OF_HI_SEQ0		.equ		$b0		;Sequence 0 play position
+OF_HI_SEQ1		.equ		$b2		;Sequence 1 play position
+OF_HI_SEQ2		.equ		$b4		;Sequence 2 play position
+OF_HI_SEQ3		.equ		$b6		;Sequence 3 play position
+OF_HI_SEQ4		.equ		$b8		;Sequence 4 play position
+OF_HI_SEQ5		.equ		$ba		;Sequence 5 play position
+OF_HI_SEQ6		.equ		$bc		;Sequence 6 play position
+OF_HI_SEQ7		.equ		$be		;Sequence 7 play position
+
+mode_status		.equ	host_if_work+OF_HI_STAT1	;sequnece mode & status
+test_work		.equ	host_if_work+$c0		;monitor work
+status_counter		.equ	host_if_work+$f0		;w rerease control work
+checker_work		.equ	host_if_work+$f2		;w 32slot overflow times
+max_voice		.equ	host_if_work+$f4		;w maximum voices
+scsp_mvol		.equ	host_if_work+$f6		;w 
+
+;-----------------------------------------------------------------------;
+;	Work_RAM_in_Program offset def.					;
+;-----------------------------------------------------------------------;
+	;-------------------------------------------------------;
+	;	SCSPBIN_absolute value				;
+	;-------------------------------------------------------;
+LY_unit			.equ		$20		;layer unit size
+;-----------------------------------------------------------------------;
+;	tone bank binary format						;
+;-----------------------------------------------------------------------;
+BIN_MIX			.equ		$00		;mixer data top offset
+BIN_VL			.equ		$02		;velocity data top offset
+BIN_PEG			.equ		$04		;pitch eg data top offset
+BIN_PLFO		.equ		$06		;pitch lfo data top offset
+BIN_VOICE		.equ		$08		;voice data 0 offset
+	;-------------------------------------------------------;
+	;	SCSPBIN_Voice data offset addr def.		;
+	;-------------------------------------------------------;
+V_PM_BR			.equ		$00		;play mode & bend range
+V_PRT_time		.equ		$01		;portament time
+V_layer_sz		.equ		$02		;layer size - 1
+V_vol_bias		.equ		$03		;volume bias
+V_Layer			.equ		$04		;layer top addr
+
+;-----------------------------------------------------------------------;
+;	.exb file format						;
+;-----------------------------------------------------------------------;
+DL_name			.equ		$00		;DSP module name($20)
+DL_RBL			.equ		$20		;work area size(b) 0,1,2,3
+DL_NCT			.equ		$21		;co-eff table #(b)
+DL_NEL			.equ		$22		;element #(b)
+	;-------------------------------------------------------;
+DL_3DM			.equ		$23		;3D module ID
+DL_3DC			.equ		$24		;3D coef top
+DL_3DA			.equ		$25		;3D address top
+	;-------------------------------------------------------;
+DL_CEF			.equ		$40		;COEF data
+DL_MADR			.equ		$C0		;MADRS data
+DL_MPRO			.equ		$140		;MPRO data
+DL_CT			.equ		$540		;co-eff table data
+;-----------------------------------------------------------------------;
+;	SCSPBIN_Layer DATA offset def.					;
+;-----------------------------------------------------------------------;
+LY_SNT			.equ		$00		; start MIDI note
+LY_ENT			.equ		$01		; end   MIDI note
+LY_SA			.equ		$02		; [PEON]Å`[SA]
+FMCB		.equ	5			;FM carria bit
+PLON		.equ	6			;PLFO execute 
+PEON		.equ	7			;PEG  execute 
+LY_LSA			.equ		$06		;
+LY_D2R			.equ		$0A		;
+LY_SISD			.equ		$0E		;
+LY_MWH		.equ	7			;hard ware Modulation
+LY_MWE		.equ	6			;soft ware PEG
+LY_MWL		.equ	5			;soft ware PLFO
+LY_TL			.equ		$0F		; [TL]
+LY_MDL			.equ		$10		;
+LY_RELFO		.equ		$14		;
+LY_LFOS			.equ		$15		;
+LY_ISEL			.equ		$16		;
+LY_ISLMX		.equ		$17		; [ISEL],[IMXL]
+LY_DSDPN		.equ		$18		; [DISDL],[DIPAN]
+LY_base_note		.equ		$19		; base note ( key-transpose )
+LY_fine_tune		.equ		$1A		; fine tune
+LY_FM			.equ		$1B		; FM åãê¸
+LY_VLNO			.equ		$1D		; [VLNO]
+LY_PEG_NO		.equ		$1E		; PEG î‘çÜ
+LY_PLFO_NO		.equ		$1F		; LFO î‘çÜ
+LY_FM1			.equ		$1B		;
+LY_FM2			.equ		$1C		;
+;-----------------------------------------------------------------------;
+; $6f00 -								;
+;	work for engine control						;
+;-----------------------------------------------------------------------;
+racing_interface	.equ		$6f00	
+	.if ENGN
+ENGN_P1_rpm		.equ		0+2		; P1 âÒì]êî	
+ENGN_P1_accl		.equ		4		; P1 ÉAÉNÉZÉãäJìx
+;ENGN_P1_spd		.equ		8		; P1 ë¨ìx	
+;ENGN_P1_gear		.equ		$0C		; P1 ÉMÉA	
+;ENGN_P1_SH		.equ		$10		; P1 SH-Status	
+;ENGN_P1_68K		.equ		$14		; P1 68k-Status	
+ENGN_TB_addr		.equ		$18		; Engine Table addr
+ENGN_TB_sz		.equ		$1C		; Engine Table size
+;ENGN_P2_rpm		.equ		$20+2		; P2 âÒì]êî	
+;ENGN_P2_accl		.equ		$24		; P2 ÉAÉNÉZÉãäJìx
+;ENGN_P2_spd		.equ		$28		; P2 ë¨ìx	
+;ENGN_P2_gear		.equ		$2C		; P2 ÉMÉA	
+;ENGN_P2_SH		.equ		$30		; P2 SH-Status	
+;ENGN_P2_68K		.equ		$34		; P2 68k-Status	
+;			.equ		$38		;
+;			.equ		$3C		;
+	;-------------------------------------------------------;
+	; $8860-$8867						;
+	;	engine common work offset pointer		;
+	;-------------------------------------------------------;
+ENGN_wk_rpm		.equ		$00		;0 Å` $22
+ENGN_wk_accl		.equ		$01		;0 Å` $0F
+;			.equ		$02		;
+;			.equ		$03		;
+ENGN_wk_TONE		.equ		$04		;l:engine tone data start address
+	;-------------------------------------------------------;
+ENGN_TB_unit		.equ		$80		;
+ENGN_TB_Layer		.equ		0		; long
+ENGN_TB_d4		.equ		4		;scsp slot reg. pointer
+ENGN_TB_flg		.equ		6		; byte 	bit7 = PCM on
+ENGN_TB_rpm		.equ		7		;
+ENGN_TB_accl		.equ		$2A		;16:volume add data table
+ENGN_TB_pitch		.equ		$3A		;16:oct/fns table
+	.endif
+;-----------------------------------------------------------------------;
+;	work for midi channel # by management #				;
+;	--------------------------------------------------------	;
+;	(management #)x(midi channel #)x(size=$20):($7000 to $7fff)	;
+;-----------------------------------------------------------------------;
+knr_unit	equ	$20
+	;-------------------------------------------------------;
+program_number		.equ		$00	;b
+midi_panpot		.equ		$01	;b D7=H:layer pan off
+						;  D6=H:seq pan on
+;			.equ		$02	;b
+midi_flag		.equ		$03	;b
+;monaural	equ	7		;monaural flag
+damper		equ	6		;damper flag
+;modWheel	equ	5		;modulation wheel flag
+;		equ	4		;
+;		equ	3		;
+;		equ	2		;
+;		equ	1		;
+;		equ	0		;
+bank_address		.equ		$04	;l
+knr_PBend_BF		.equ		$08	;w
+knr_MONO_NT0		.equ		$0A	;b
+knr_MONO_NT1		.equ		$0B	;b
+knr_MONO_NT2		.equ		$0C	;b
+knr_MONO_VOL		.equ		$0D	;b
+volume_bias		.equ		$0E	;b
+;			.equ		$0F	;b
+midi_master_volume	.equ		$10	;w
+midi_volume		.equ		$12	;w
+midi_expression		.equ		$14	;w
+noteon_master_volume	.equ		$18	;w
+total_volume		.equ		$1a	;w
+management		.equ		$1c	;
+
+;-----------------------------------------------------------------------;
+;	work for slot #							;
+;-----------------------------------------------------------------------;
+slot_size		.equ		32	;a slot size of scsp
+slot_wk_unit		.equ		40H	;work ram size for a slot
+KHMSK			.equ		$7C0	; Key_History Masking data $00,$40,$80,...,$7C0
+	;-------------------------------------------------------;
+sl_flag1		.equ		$00	
+ENGN_flg	.equ	7		;bit7	H:Engine busy
+PEON_flg	.equ	6		;   6	H:pitch eg on
+PLON_flg	.equ	5		;   5	H:pitch lfo on
+;					;   4-0	scsp slot #
+sl_velo			.equ		$01	;b D7= 0 ( don't use ) D6Å`D0 = MIDI Velo# (0Å`7FH)
+sl_MIDI			.equ		$02	;b D7Å`D4 = 0 ( don't use ) D3Å`D0 = MIDI ch# (0Å`0FH)
+sl_note			.equ		$03	;b D7= 0 ( don't use ) D6Å`D0 = MIDI Note# (0Å`7FH)
+sl_DISDLPAN		.equ		$04	;b
+sl_flag2		.equ		$05	;b
+;		.equ	7		;bit7	
+flg_non		.equ	3		;   3	H:Note on/L:Note off
+flg_FNSX	.equ	2		;   2	[FNSX]
+flg_KON		.equ	1		;   1	H:key-on/L:key-off
+flg_FMCR	.equ	0		;   0	FM Carrier
+_sl_kanri		.equ		$06	;w (management #)x $200
+sl_layer_adr		.equ		$08	;l 
+PLFO_cent		.equ		$0C	;l 100 0000H = 100ÉZÉìÉg
+PLFO_FRQR_bs		.equ		$10	;l 100 0000H = 100ÉZÉìÉg
+PLFO_FRQR_wk		.equ		$14	;l 100 0000H = 100ÉZÉìÉg
+PLFO_Delay		.equ		$18	;w delay counter base ( 2msec íPà  )
+PLFO_HTCNT_bs		.equ		$1A	;w 
+PLFO_HTCNT_wk		.equ		$1C	;w 
+PLFO_FDCNT		.equ		$1E	;w 
+PEG_cent		.equ		$20	;l 100 0000H = 100ÉZÉìÉg
+PEG_RATE		.equ		$24	;l 
+PEG_level		.equ		$28	;l Segment ìûíB level ( +6000H )
+PEG_dly_cnt		.equ		$2C	;w delay counter
+PEG_SEG			.equ		$2E	;b segment# ( 0 Å` 6 )
+EG_Value		.equ		$2F	;b 
+PEG_addr		.equ		$30	;l 
+PSPN			.equ		$34	;b stream play # & flags
+PCM_flg		.equ	7		;bit7	H:stream play mode
+;		.equ	6		;   6	
+;		.equ	5		;   5	
+;		.equ	4		;   4	
+;		.equ	3		;   3	
+;					;   2-0	stream play #
+;sl_temp_IMXL		.equ		$35	; for DSP MPRO èëä∑
+velocity_number		.equ		$35	;b 
+slot_velocity		.equ		$36	;w 
+sl_tune			.equ		$38	;w 
+slot_status		.equ		$3a	;w bit15-8 0xffÇÃÇ∆Ç´FMÇ∆ÇµÇƒégópíÜ
+streamInUse	.equ	7		;bit 7  H:slot in use for stream
+engineInUse	.equ	6		;    6  H:slot in use for engine
+;		.equ	5		;    5	
+;		.equ	4		;    4	
+noteOn		.equ	3		;    3  H:ÉmÅ[ÉgÉIÉìíÜ
+;					;    2-0 ÉäÉäÅ[ÉXÇÃÉåÉxÉãÇéwÇ∑
+release_counter		.equ		$3c	;w 
+slot_age		.equ		$3e	;w 
+
+;-----------------------------------------------------------------------;
+;	work for any functions ( common work )				;
+;-----------------------------------------------------------------------;
+_tmp_kanri		equ	common_wk+$00	; word	; î≠âπä«óùî‘çÜÅ~200H
+_tmp_MIDI_ch		equ	common_wk+$02	; word	; $0000 Å` $001F
+DFL_INST_addr		equ	common_wk+$04	; long	; èuéûílèëçûÇ›ÉAÉhÉåÉX
+stack_RBLP		equ	common_wk+$08	; word	;
+knr_kanri_ofst		equ	common_wk+$0A	; word
+CMWK1			equ	common_wk+$0C	; long	work
+OVER_count		equ	common_wk+$10	; long
+;			equ	common_wk+$14	; byte  
+PM_flag			equ	common_wk+$15	; byte	; Play mode flag Çc6,5,4
+legart		equ	5		;
+LED8_cnt_wk		equ	common_wk+$16	; word	; YM3438 timer control data
+LED_status		equ	common_wk+$18	; byte	; Çc7 : MIDI_A éÛêM
+					;	  Çc6 : MIDI_B éÛêM
+					;	  Çc5 : ÇrÇbÇrÇhéÛêM
+					;	  Çc2 : cannot execute key-on
+					;	  Çc1 : CPU èàóùë¨ìx over Timeríl
+					;	  Çc0 : CPU normal
+CTO_LED_cnt		equ	common_wk+$19	; byte	; CPU èàóù over Time counter
+SEQ_LED_cnt		equ	common_wk+$1A	; word	; 
+RCVA_LED_cnt		equ	common_wk+$1C	; byte	; MIDI-A receive counter
+RCVB_LED_cnt		equ	common_wk+$1D	; byte	; MIDI-B	//
+HISTMP			equ	common_wk+$1E	; word	; History data temporaly stack
+HIS_on_pt		equ	common_wk+$20	; word  ; HIS on point offset  
+					;			: 0,2,4 Å` 3EH
+HIS_off_pt		equ	common_wk+$22	; word  ; HIS off point offset 
+					;			: 0,2,4 Å` 3EH
+DVA_lyr_cnt		equ	common_wk+$24	; word	; for DVA Note_on
+flag0			equ	common_wk+$26	; byte	Çc7=H : 
+BIG_timer		equ	common_wk+$27	; byte	; èÍèäÇà⁄ìÆÇ∑ÇÈÇ»ÅI
+DVA_lyr_cntx		equ	common_wk+$28	; word	; for DVA Note_on
+off_slot_cnt		equ	common_wk+$2A	; word	; îÒî≠âπíÜslotêî ( 0 Å` 32 )
+DFL_ELMNT_addr		equ	common_wk+$2C	; long
+DFL_ELMNT_NO		equ	common_wk+$30	; byte	; ÉGÉåÉÅÉìÉgêî
+SND_OUT_ST		equ	common_wk+$31	; byte	; sound out status
+EFCT_CHG_CNT		equ	common_wk+$32	; byte  : ÅÇ 0 --> Effect chg exe mode
+;			equ	common_wk+$33	; byte
+;tmp_HIF_wk		equ	common_wk+$34	; long
+COMHIS_cnt		equ	common_wk+$38	; word	HOST Command HISTORY counter
+COMHIS_offset		equ	common_wk+$3A	; word	HOST Command HISTORY
+FE_count		equ	common_wk+$3C	; word  
+FE_countH		equ	FE_count	;
+EXCL_pt			equ	common_wk+$3E	; byte 00Å`FFH
+;					  $3F
+_MIDI_RCV_WRPT		equ	common_wk+$40	; byte
+;			equ	common_wk+$41	; byte
+_MIDI_RCV_RDPT		equ	common_wk+$42	; byte
+;			equ	common_wk+$43	; byte
+FUKA_cnt		equ	common_wk+$44	; word
+_activ_MIX_NO		equ	common_wk+$48	; word	activ Mixer# 0Å`7F
+work_temp		equ	common_wk+$4A	; word
+_activ_MIX_BNK		equ	common_wk+$4C	; long	activ Mixer SCSPBIN top
+DSP_RW_top		equ	common_wk+$50	; long
+DSP_RW_sz		equ	common_wk+$54	; long
+DSP_PRG_top		equ	common_wk+$58	; long
+CPU_CAPA_cnt		equ	common_wk+$5C	; word
+;			.equ		common_wk+$5E	;
+;			.equ		common_wk+$5F	;
+ENGN_wk_cmn		.equ		common_wk+$60	;wl:engine control flags
+_MIDI_OUT_WRPT		equ	common_wk+$68	; word : 0Å`7FF
+_MIDI_OUT_RDPT		equ	common_wk+$6A	; word : 0Å`7FF
+
+; don't use +$6C Å`
+
+	;-------------------------------------------------------;
+	;	MIDIA_wk / MIDIB_wk				;
+	;-------------------------------------------------------;
+MIDI_flg	equ	$00	; byte
+MCSAorB		equ	7	; Çc7     L=YM3802-A , H=YM3802-B
+MCS2nd		equ	4	; Çc4=H : MIDI ch. mess. 1st Received
+
+MIDI_1st	equ	$02	; byte
+MIDI_2nd	equ	$03	; byte
+MIDI_3rd	equ	$04	; byte
+;EXCL_flag	equ	$05	; byte  D7 = EXCL data mode
+;					;	D6 = EXCL error mode
+;			$06	; word
+;			$08	; long
+MIDIJPBF	equ	$0C	; long
+
+	;-------------------------------------------------------;
+	;	DVA_layer					;
+	;-------------------------------------------------------;
+DVALY_unit	equ	8
+
+DVALY_addr	equ	$00	; long : layer address
+DVALY_slofst	equ	$04	; word : slot offset ( $00,$40,....,$7C0 )
+;		equ	$06	; = 00H
+DVALY_NO	equ	$07	; byte : Layerî‘çÜ ( 0 Å` 7FH )
+;-----------------------------------------------------------------------;
+; $8e00 -								;
+;	dynamic filter elements work					;
+;-----------------------------------------------------------------------;
+DFL_wk_MSFC	equ	$00	; byte
+DFL_wk_AMP	equ	$01	; byte  for LFO 
+DFL_add_wk	equ	$02	; word  for LFO & EG åìóp
+DFL_add_bs	equ	$04	; word  for LFO & EG åìóp
+DFL_EG_seg	equ	$06	; byte  for EG  = segment# 0Å`7
+				;		0 : ready time
+				;		1 : Hold time
+				;		2 : Attack
+				;		3 : Decay
+				;		4 : Slope
+				;		5 : hold
+				;		6 ; Rerease
+				;		7 : hold
+DFL_dst_addr	equ	$08	; long
+DFL_hold_time	equ	$0C	; word
+DFL_level	equ	$0E	; word ( hold time åìóp )
+
+;-----------------------------------------------------------------------;
+; $
+;	SEQ âìÄ work def. //////////////
+;-----------------------------------------------------------------------;
+IPT_COUNT_BASE		.equ	2000*256	; 2ms: 2000x256=512000
+
+SY_VANWAIT_CNT		.equ	8		; volume analize WAIT counter(2x8=16ms)
+SY_PCMWAIT_CNT		.equ	8		; PCM play adrs  WAIT counter(2x8=16ms)
+SY_MIXWAIT_CNT		.equ	5		; MIXER enable   WAIT counter(2x5=10ms)
+SQ_FD_WAIT		.equ	50-1		; fade control wait(2x50=100ms)
+SQ_PTR_WAIT		.equ	50-1		; sequence pointer wait(2x50=100ms)
+
+	;-------------------------------------------------------;
+	;	SCSP control
+	;-------------------------------------------------------;
+RG_SLOT_MASK		.equ	$1f	; slot number mask(0-31)
+RG_CA_MASK		.equ	$0f	; play address mask(0-15)
+	;-------------------------------------------------------;
+	;	sequence control block
+	;-------------------------------------------------------;
+	;-------------------------------------------------------;
+	;	control flags	(+$00)				;
+	;-------------------------------------------------------;
+SQ_CTL_BITPOS	.equ		7		;control  Bit Position
+SQ_PAUSE_BITPOS	.equ		6		;pause    Bit position
+SQ_MUTE_BITPOS	.equ		5		;mute     Bit position
+SQ_FADE_BITPOS	.equ		4		;fade     Bit position
+SQ_EMPTY_BITPOS	.equ		0		;empty    Bit position
+	;-------------------------------------------------------;
+	;	sequence mode	(+$02)				;
+	;-------------------------------------------------------;
+SQ_MODE_STOP		.equ		$00		;stop
+SQ_MODE_PLAY		.equ		$01		;play
+SQ_MODE_PLAYPAUSE	.equ		$03		;play and pause
+SQ_MODE_FADE		.equ		$05		;play and fade
+SQ_MODE_FADEPAUSE	.equ		$07		;fade and pause
+play_bit	.equ		0		;now sequence play
+pause_bit	.equ		1		;now sequence pause
+fade_bit	.equ		2		;now fade function
+	;-------------------------------------------------------;
+
+SQ_SQNUM_MASK		equ	00000111b   ; sequence play number(0-7) mask
+SQ_PRLEV_MASK		equ	00011111b   ; sequence priority(0-31)   mask
+SQ_PMODE_MASK		equ	00000001b   ; sequence play mode(0-1)   mask
+
+SQ_RESO_MIN		equ	24	; sequencer Resolution min
+SQ_RESO_MAX		equ	960	;		      max
+SQ_TVAL_MIN		equ	200000	; tempo 300: 200ms(200000usec)
+SQ_TVAL_MAX		equ	1500000	; tempo 40: 1500ms(1500000usec)
+
+SQ_TPMAX_VAL		equ	$ffffffff   ; tempo counter MAX value
+SQ_TPCHG_BASE		equ	$1000	; tempo change BASE value
+
+SQ_SQVOL_MAX		equ	$00	; sequence volume MAX value
+SQ_SQVOL_MIN		equ	$7f	; sequence volume MIN value
+SQ_SQVOL_MAX_W		equ	$0000	; sequence volume MAX value(word)
+SQ_SQVOL_MIN_W		equ	$7f00	; sequence volume MIN value(word)
+SQ_SQVOL_MASK		equ	$7f	; sequence volume mask
+;-------------------------
+;   note on cue control
+;-------------------------
+NC_CTL_BITPOS		equ	7	; Control Bit Position
+NC_PORT_MASK		equ	00000001b   ; MIDI port#(0/1) mask
+
+;------------------------------
+;   sequence decoder control
+;------------------------------
+DEC_SONG_INIT		equ	1	; song initial
+DEC_SONG_CONT		equ	0	; song continue
+DEC_TEMPO_INIT		equ	2	; tempo initial
+DEC_TEMPO_CONT		equ	3	; tempo continue
+
+DEC_RET_NORMAL		equ	0	; decoder status NORMAL
+DEC_RET_NODATA		equ	1	;		NO DATA
+DEC_RET_LOOPBACK	equ	2	;		LOOP BACK
+DEC_RET_ERROR		equ	255	;
+
+	;-------------------------------------------------------;
+	;	PCM stream play control				;
+	;-------------------------------------------------------;
+PCM_CTL_BITPOS	.equ		7		; PCM play active bit position
+PCM_MAX_NUM		.equ    	8		; PCM play MAX number
+PCM_PLAY_MASK		.equ		$07		; PCM play number mask(0-7)
+
+	;-------------------------------------------------------;
+	;	pcm buffer block refresh interrupt assign	;
+	;-------------------------------------------------------;
+MCI_EN_BITPOS	.equ   		7		;MIPT enable bit position
+MCI_MODE_NON		.equ		$00		;MIPT mode 00: no interrupt source
+MCI_MODE_PCM		.equ		$01		;MIPT mode 01: PCM play address IPT
+
+	;-------------------------------------------------------;
+	;	midi command					;
+	;-------------------------------------------------------;
+MIDI_COM_MASK		.equ		$F0		;midi command mask
+MIDI_COM_CHMASK		.equ		$0F		;midi channel mask
+
+MIDI_COM_NOFF		.equ		$80		;note off
+MIDI_COM_NON		.equ		$90		;note on
+MIDI_COM_AFT		.equ		$a0		;after touch
+MIDI_COM_CCHG		.equ		$b0		;control change
+MIDI_COM_PCHG		.equ		$c0		;program change
+MIDI_COM_PRES		.equ		$d0		;ch pressure
+MIDI_COM_BEND		.equ		$e0		;bender change
+MIDI_COM_SYS		.equ		$f0		;system message
+	;-------------------------------------------------------;
+	;	saturn midi command mask assign			;
+	;-------------------------------------------------------;
+M4_COM_MASK		.equ		$07		;command mask
+M4_CH_MASK		.equ		$1f		;channel mask
+M4_PORT_MASK		.equ		$01		;port# mask
+
+;-----------------------------------------------------------------------;
+;  $9800 -	(decoder_work:bs_PWKTP+DEC_WORK_OFFSET)			;
+;	system control work area					;
+;-----------------------------------------------------------------------;
+SY_TVOLCTL		.equ		2		; volume analize control word
+SY_TVOLCNT		.equ		3		; volume analize     wait counter
+SY_PCMCNT		.equ		4		; PCM address search wait counter
+	;------- bit assign ------------------------------------;
+SY_VANCTL_BITPOS	.equ	7	; volume analize control bit position
+
+
+;SY_LOG			.equ		0	; log on/off
+;SY_BUSY		.equ		1	; 2ms busy flag word
+;SY_MIXER_WK		.equ		32	; MIXER save work (18B)
+;SY_MIXER_CNT		.equ		50	; MIXER enable counter (1B)
+;SY_MIXER_WAIT		.equ		51	; MIXER control wait counter (1B)
+
+;-----------------------------------------------------------------------;
+;  $9c00 -								;
+;	note on cue data offset						;
+;-----------------------------------------------------------------------;
+NC_CTL			.equ		0		; Control Word
+NC_CMD			.equ		1		; MIDI Command  Cue
+NC_S1			.equ		2		; MIDI Status 1 Cue
+NC_S2			.equ		3		; MIDI Status 2 Cue
+NC_CNT			.equ		4		; Time Counter
+NC_PTR			.equ		8		; Sequence Control Block Pointer
+
+;-----------------------------------------------------------------------;
+;  $9900 -								;
+;	work ram for sequence control by management #			;
+;-----------------------------------------------------------------------;
+CB_CTL			.equ		$00	;control word
+CB_SQ_NUM		.equ		$01	;sequence management #
+CB_MODE			.equ		$02	;sequence mode
+CB_STAT			.equ		$03	;sequence status
+CB_PR_LEV		.equ		$04	;priority level
+CB_SQ_MODE		.equ		$05	;sequence play mode
+CB_SQ_RESO		.equ		$06	;STD MIDI header resolution
+CB_TP_VAL		.equ		$08	;tempo beat value
+CB_TP_CNT		.equ		$0C	;tempo count value
+CB_SQ_TOP		.equ		$10	;sequence data top address
+CB_CT_TIME		.equ		$14	;1 count time
+CB_SQ_TIMER		.equ		$18	;sequence timer counter
+CB_TP_TIMER		.equ		$1C	;tempo timer counter
+CB_NT_CNT		.equ		$20	;note on counter
+CB_TEMPO_MODE		.equ		$21	;b tempo mode
+CB_SQ_VOL		.equ		$22	;sequence volume
+CB_FD_VOL		.equ		$24	;fade volume
+CB_FD_RATE		.equ		$26	;fade rate
+CB_EV_GATE		.equ		$28	;MIDI event gate time
+CB_EV_PORT		.equ		$2C	;midi port #
+CB_EV_COM		.equ		$2D	;midi event cue command
+CB_EV_S1		.equ		$2E	;midi event cue status 1
+CB_EV_S2		.equ		$2F	;midi event cue status 2
+CB_CT_ORGTIME		.equ		$30	;1 count original time
+CB_PTR_CT		.equ		$34	;sequence pointer wait counter
+CB_FD_CT		.equ		$35	;fade control wait counter
+CB_TEMPO_RATIO		.equ		$36	;w tempo ratio
+CB_PTR_ADRS		.equ		$38	;l sequence pointer
+CB_STS_ADRS		.equ		$3C	;l status pointer
+up_down_flag		.equ		$40	;w 1:fade in/ff:fade out
+seq_volume_arrival	.equ		$42	;ÉVÅ[ÉPÉìÉXÉ{ÉäÉÖÅ[ÉÄÇ…ÇÊÇÈâπó êÑà⁄ÇÃìûíBñ⁄ïWâπó ÅB
+appointed_fade_rate	.equ		$44	;w fade rate
+fade_count_variable	.equ		$46	;w fade counter
+sequence_volume		.equ		$48	;w sequence volume
+performance_flag	.equ		$4A	;ÇOà»äOÇÃÇ∆Ç´ââëtíÜÇé¶Ç∑ÅB
+pause_flag		.equ		$4C	;ÇOà»äOÇÃÇ∆Ç´É|Å[ÉYíÜÇé¶Ç∑ÅB
+;			.equ		$4E	;
+
+;-----------------------------------------------------------------------;
+;	dip switch							;
+;-----------------------------------------------------------------------;
+DSW_SEQ		.equ	7			; bit7 H = Sequence data decode mode
+DSW_PRG_sel	.equ	6			; bit6 H = D-RAM è„Ç≈ 68k prg Ç é¿çs
+						;      L = S-RAM è„Ç≈ 68k prg Ç âºé¿çs
+		; low 2bits = timer ê›íËíl 	; bit1 , bit0
+DSW_2msec		.equ		0		;  L   ,  L
+DSW_4msec		.equ		1		;  L   ,  H
+DSW_8msec		.equ		2		;  H   ,  L
+DSW_16msec		.equ		3		;  H   ,  H
+	;-------------------------------------------------------;
+	;	LED_on_off_speed				;
+	;-------------------------------------------------------;
+CPU_LED_speed		.equ		$F00		;$800	; 
+SEQ_LED_speed		.equ		$c0		;$a0	; word size
+MIDI_LED_speed		.equ		10		; byte size
+CTO_LED_speed		.equ		$20		; byte size
+SCSI_LED_speed		.equ		$80		; byte size
+NKON_LED_speed		.equ		$40		; byte size
+err_timer		.equ		$4000		; ÉGÉâÅ[(àŸèÌ)éû ì_ñ≈ä‘äuéûä‘
+;=======================================================================;
+;	scsp register							;
+;=======================================================================;
+	;-------------------------------------------------------;
+	;	slot register					;
+	;-------------------------------------------------------;
+SCSP_KXKB		.equ		$00
+			; D15Å`13     ------
+			; D12	  WO  [KYONEX] key-on execution
+			; D11	  R/W [KYONB]  key-on bit
+			; D10,9   R/W [SBCTL]  source bit invert control
+			; D8,7    R/W [SSCTL]  sound source select
+			; D6,5    R/W [LPCTL]  loop form select
+			; D4      R/W [PCM8B]  wave bit range 8/16 select
+			; D3Å`D0  R/W [SA(H)]  wave start addr.
+SCSP_PCM_SA		.equ		$02	;[SA]  PCM start address
+SCSP_PCM_LSA		.equ		$04	;[LSA] PCM loop start address
+SCSP_PCM_LEA		.equ		$06	;[LEA] PCM loop end address
+SCSP_D2R1R		.equ		$08	;[D2R],[D1R],[EHLD],[AR]
+SCSP_EDLSKRS		.equ		$0A	;[LSLK],[KRS],[DL],[RR]
+SCSP_FH_RR		.equ		$0B	;[DL(low)],[RR]
+SCSP_SISD		.equ		$0C	;[SI],[SD]
+SCSP_TLVL		.equ		$0D	;[TL]
+SCSP_MDLSL		.equ		$0E	;[MDLSL]
+SCSP_OCTFNS		.equ		$10	;[OCTFNS] don't bit set on D15,D10
+SCSP_RELFO		.equ		$12	;[RELFO]
+SCSP_PLFOS		.equ		$13	;[PLFOS]
+SCSP_ISEL		.equ		$14	;[ISEL]
+SCSP_DISDLPN		.equ		$16	;[DISDLPN]
+SCSP_EFSDLPN		.equ		$17	;[EFSDLPN]
+	;-------------------------------------------------------;
+	;	common register					;
+	;-------------------------------------------------------;
+RG_M4DB			.equ		$400	; [M4D8]
+RG_MVOL			.equ		$401	; [VERMVOL]
+RG_RBP			.equ		$402	; [RBL],[RBP]
+RG_MSTS			.equ		$404	; [SMIDIST]
+RG_MIBUF		.equ		$405	; [SMIDIRD]
+RG_MOBUF		.equ     	$407	; [SMIDIWR]
+RG_DEBUG		.equ     	$408	; [MSLC/CA/SGC/EG]
+RG_TACTL		.equ     	$418	; [TACTL]
+RG_TIMA			.equ		$419	; [TIMA]
+RG_TBCTL		.equ		$41A	; [TBCTL]
+RG_TIMB			.equ		$41B	; [TIMB]
+RG_TCCTL		.equ		$41C	; [TCCTL]
+RG_TIMC			.equ		$41D	; [TIMC]
+RG_SCIEB		.equ		$41E	; [SCIEB]
+RG_SCIPD		.equ		$420	; [SCIPD]
+RG_SCIRE		.equ		$422	; [SCIRE]
+RG_SCILV0		.equ		$425	; [SCILV0]
+RG_SCILV1		.equ		$427	; [SCILV1]
+RG_SCILV2		.equ		$429	; [SCILV2]
+RG_MCIEB		.equ		$42A	; [MCIEB]
+RG_MCIPD		.equ		$42c	; SH2 interrupt request
+RG_MCIRE		.equ		$42e	; SH2 interrupt reset
+	;-------------------------------------------------------;
+	;	dsp register					;
+	;-------------------------------------------------------;
+DSP_COEF		.equ		$700
+DSP_MADRS		.equ		$780
+DSP_MPRO		.equ		$800
+DSP_TEMP		.equ		$C00
+DSP_EFREG		.equ		$EC0
+	;-------------------------------------------------------;
+	;	SCSP register direct address			;
+	;-------------------------------------------------------;
+SCSP_SLOT0		.equ	IO_SCSP			; slot register(0-31) top address
+SCSP_DBG_REG		.equ	IO_SCSP+RG_DEBUG	; debug register address
+scsp_release_flag	.equ	IO_SCSP+RG_DEBUG	;
+SCSP_DSP_COEF   	.equ	IO_SCSP+DSP_COEF	; DSP coef register
+SCSP_DSP_MADRS  	.equ	IO_SCSP+DSP_MADRS	; DSP memory address register
+SCSP_DSP_MPRO   	.equ	IO_SCSP+DSP_MPRO	; DSP micro program
+SCSP_EXTS_L		.equ	IO_SCSP+$ee0     ; external input data stack Lch
+SCSP_EXTS_R		.equ	IO_SCSP+$ee2     ; external input data stack Rch
+SCSP_EFREG0		.equ	IO_SCSP+$ec0     ; effect register #0  output data
+SCSP_EFREG1		.equ	IO_SCSP+$ec2     ; effect register #1  output data
+SCSP_EFREG2		.equ	IO_SCSP+$ec4     ; effect register #2  output data
+SCSP_EFREG3		.equ	IO_SCSP+$ec6     ; effect register #3  output data
+SCSP_EFREG4		.equ	IO_SCSP+$ec8     ; effect register #4  output data
+SCSP_EFREG5		.equ	IO_SCSP+$eca     ; effect register #5  output data
+SCSP_EFREG6		.equ	IO_SCSP+$ecc     ; effect register #6  output data
+SCSP_EFREG7		.equ	IO_SCSP+$ece     ; effect register #7  output data
+SCSP_EFREG8		.equ	IO_SCSP+$ed0     ; effect register #8  output data
+SCSP_EFREG9		.equ	IO_SCSP+$ed2     ; effect register #9  output data
+SCSP_EFREG10		.equ	IO_SCSP+$ed4     ; effect register #10 output data
+SCSP_EFREG11		.equ	IO_SCSP+$ed6     ; effect register #11 output data
+SCSP_EFREG12		.equ	IO_SCSP+$ed8     ; effect register #12 output data
+SCSP_EFREG13		.equ	IO_SCSP+$eda     ; effect register #13 output data
+SCSP_EFREG14		.equ	IO_SCSP+$edc     ; effect register #14 output data
+SCSP_EFREG15		.equ	IO_SCSP+$ede     ; effect register #15 output data
+
+;=======================================================================;
+;	data assign for scsp register					;
+;=======================================================================;
+	;-------------------------------------------------------;
+	;	for scsp timer	(1,2,4,8,16msec)		;
+	;-------------------------------------------------------;
+timerA1m		.equ		$ff-$44		;0.9977msec
+timerA2m		.equ		$ff-$58		;1.9955msec
+timerA4m		.equ		$ff-$b1		;4.0136msec
+TIMA_base		.equ		timerA4m	;[TACTL]timer-A 1sample increment
+
+_4msec			.equ	4
+_8msec			.equ	8
+;				:   1msec  2msec  4msec  8msec 16msec 
+TM_DLY			.equ	4	;     2      3      4      5      6   
+TM_FRQ			.equ	6	;     8      7      6      5      4   
+TM_HT			.equ	6	;     4      5      6      7      8   
+TM_FD			.equ	6	;     4      5      6      7      8   
+TM_EGT			.equ	7	;     5      6      7      8      -   
+TM_EGR			.equ	3	;     5      4      3      2      1   
+TM_RATE			.equ	4	;     6	     5      4      3      2
+
+	;------- [TBCTL] timer b increment ---------------------;
+;TIMB_VL		.equ		2*100H+0E9H	;1.99msec(inc ctr 4/44100sec)
+TIMB_VL			.equ		1*100H+0D4H	;1.95msec(inc ctr 2/44100sec)
+;TIMB_VL		.equ		0*100H+0D3H	;0.98msec(inc ctr 1/44100sec)
+	;-------------------------------------------------------;
+TIMC_VL			.equ		0*100H+00H	; [TCCTL]  timer-C 1 sample increment
+					; [TIMC]   timer-C start count value
+	;-------------------------------------------------------;
+	;	for interrupt control				;
+	;-------------------------------------------------------;
+INT_EN			.equ	00010001000B	;[SCIEB] Interrupt Request EN/DI
+;				   |   +-------- bit3:scsp midi input int.
+;				   +------------ bit7:enablee timer b
+INT_RD			.equ	0		; [SCIPD] Interrupt Request status read
+INT_RST			.equ	00011000000B	; [SCIRE] Interrupt Reset
+;				   |+----------- bit6:reset timer a
+;				   +------------ bit7:reset timer b
+	.if	sw_MODEL_M
+SCSP_IPL0		.equ	00000000B	;[SCILV0] scsp interrupt level set
+SCSP_IPL1		.equ	10000000B	;[SCILV1]
+SCSP_IPL2		.equ	00000000B	;[SCILV2]
+;				+--------------- 010:Timer-B,C,MIDIout,1Fs level2
+	.else
+SCSP_IPL0		.equ	00001000B	;[SCILV0] scsp interrupt level set
+SCSP_IPL1		.equ	10000000B	;[SCILV1]
+SCSP_IPL2		.equ	00001000B	;[SCILV2]
+;				|   +----------- 101:scsp midi input level5
+;				+--------------- 010:Timer-B,C,MIDIout,1Fs level2
+	.endif
+
+;-----------------------------------------------------------------------;
+;	data assign for YM3802 register 				;
+;-----------------------------------------------------------------------;
+	.if	sw_MODEL_M
+R00		.equ		0*2		;MCS R00
+R01		.equ		1*2		;MCS R01
+R02		.equ		2*2		;MCS R02
+R03		.equ		3*2		;MCS R03
+Rx4		.equ		4*2		;MCS R04,R14,R24,R34,R44,R54,R64,R74,R84,R94
+Rx5		.equ		5*2		;MCS R05,R15,R25,R35,R45,R55,R65,R75,R85,R95
+Rx6		.equ		6*2		;MCS R06,R16,R26,R36,    R56,R66,R76,R86,R96
+Rx7		.equ		7*2		;MCS     R17,R27,            R67,R77,R87    
+;
+;
+init_R04		equ	00000000B	; R04 ( IRQ vector offset = 0 )
+init_R06		equ	00100000B	; R06 ( IRQ enable select )
+;				  +------------- bit5:enable FIFO-Rx ready
+init_R94		equ	00000000B	; R94 ( all I/O input mode )
+init_R55		equ	10000101B	; R55 ( FIFO-Tx control )
+;				|    | +-------- bit0:transmitter enable
+;				|    +---------- bit2:clear Tx idle flag
+;				+--------------- bit7:clear FIFO-Tx
+init_R35		equ	11001101B	; R35 ( FIFO-Rx control )
+;				||  || +-------- bit0:receiver enable	
+;				||  |+---------- bit2:clear off-line åüèo flag
+;				||  +----------- bit3:clear break åüèo flag	
+;				|+-------------- bit6:clear over-flow åüèo flag
+;				+--------------- bit7:clear FIFO-Rx		
+
+init_R44		equ	00001000B	; R44 ( send rate setting )
+;				   +++++-------- bit4-0:CLKM/32 (1MHz/32=31250bps)
+init_R45		equ	00000000B	; R45 ( send mode setting )
+;		bit length 8/parity disable/no parity bit/no porarity/stop bit 1
+init_R24		equ	00001000B	; R24 ( receive rate setting )
+;				   +++++-------- bit4-0:CLKM/32 (1MHz/32=31250bps)
+init_R25		equ	00000000B	; R25 ( receive mode setting )
+;		bit length 8/parity disable/no parity bit/no porarity/stop bit 1
+
+	.endif
+
+;=======================================================================;
+;	midi data							;
+;=======================================================================;
+MIDI_EXCL		.equ		$F0	; MIDI Exclusive
+MIDI_EOX		.equ		$F7	; MIDI End of Exclusive
+MIDI_TCLK		.equ		$F8	; MIDI timing clock
+MIDI_ASNS		.equ		$FE	; MIDI Active Sensing
+YAMAHA_ID		.equ		$43	;product id #
+YAMAHA_DIV		.equ		$79	;
+DVID			.equ		$00	;
+SATURN_ID		.equ		$01	;
+
+;-----------------------------------------------------------------------;
+;	system macro define						;
+;-----------------------------------------------------------------------;
+	;-------------------------------------------------------;
+	;	status register					;
+	;-------------------------------------------------------;
+sr_push	.macro
+		move	sr,-(sp)		;status push
+	.endm
+
+sr_pop	.macro
+		move	(sp)+,sr		;status pop
+	.endm
+
+int_di	.macro
+		move.w	#$2700,sr		;interrupt disable
+	.endm
+	;-------------------------------------------------------;
+	;	carry flag					;
+	;-------------------------------------------------------;
+stc	.macro
+		ori	#00000001B,ccr		;set carry flag
+	.endm
+
+clc	.macro
+		or	d0,d0			;reset carry flag
+	.endm
+
+;-----------------------------------------------------------------------;
+;	error status	(* sign:model m only)				;
+;-----------------------------------------------------------------------;
+RET_NORMAL		.equ		$00	;normal
+RET_ERR_RESOVAL		.equ		$80	;out of resolution value
+RET_ERR_NOTEMPO		.equ		$81	;tempo data not found
+RET_ERR_NOEVENT		.equ		$82	;event data not found
+RET_ERR_TEMPOVAL	.equ		$83	;out of tempo value
+RET_ERR_NOCONTROL	.equ		$84	;no control in sequence data
+BANK_NOT_FOUND		.equ		$85	;bank not found
+PROGRAM_NOT_FOUND	.equ		$86	;program not found
+BANK_NOT_AVAIRABLE	.equ		$87	;bank not avairable
+OUT_OF_TOTAL_LEVEL	.equ		$88	;out of TL range (illegal volume bias)
+ILLEGAL_MIXER_CHANGE	.equ		$89	;illegal mixer change
+FEATURE_NOT_AVAIRABLE	.equ		$8a	;feature not avairable(ex.mono mode)
+ILLEGAL_LAYER		.equ		$8b	;illegal layer
+VOICE_FULL		.equ		$8c	;voice full (kill oldest note)
+LAYER_NOT_FOUND		.equ		$8d	;layer not found
+DSP_ERROR		.equ		$8e	;dsp error (see manual)
+MIDI_NOT_AVAIRABLE	.equ		$8f	;midi event not avairable
+KEYOFF_ALONE		.equ		$90	;key-off Ç∑Ç◊Ç´ key-oníÜslotÇ™ë∂ç›ÇµÇ»Ç¢
+ALL_NOTE_OFF_INPUT	.equ		$91	;all note off (developer only)
+TOO_MANY_FM_CHANNELS	.equ		$92	;too many fm channels
+MALTIPLE_SLOT_ASSIGN	.equ		$93	;multiple slot assign(program error)
+TOO_LARGE_CHANNEL	.equ		$94	;illegal midi channel #
+;@;VOICE_WARNING_LEVEL1	.equ		$96	;ÉLÅ[ÉIÉtÇ≥ÇÍÇƒÇ¢Çƒ,ÉäÉäÅ[ÉXÉåÉxÉãÇ™4à»â∫ÇÃÉXÉçÉbÉgÇäÑÇËìñÇƒÇΩ.
+VOICE_WARNING_LEVEL2	.equ		$97	;*ignore 'rerease end'slot,because too many notes
+VOICE_WARNING_LEVEL3	.equ		$98	;*too many notes(over 32) in same management #
+KEY_ON_CANCEL		.equ		$99	;key on cancel,because all of slots filled by FM
+
+;-----------------------------------------------------------------------;
+;	command # assign for branch table				;
+;-----------------------------------------------------------------------;
+start_command		.equ	0*8
+stop_command		.equ	1*8
+pause_command		.equ	2*8
+continue_command	.equ	3*8
+
+;-----------------------------------------------------------------------;
+midi_track_note		.equ	0
+midi_velocity		.equ	2
+
+;=======================================================================;
+;	end of file							;
+;=======================================================================;
+

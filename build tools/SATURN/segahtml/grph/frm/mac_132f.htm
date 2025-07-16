@@ -1,0 +1,315 @@
+<HTML>
+<HEAD>
+<TITLE>SpriteEditorTextFormat</TITLE>
+</HEAD>
+<BODY>
+<HR>
+<A HREF="../../index.htm"><IMG SRC="../../what/dosei.gif" BORDER=0 ALIGN="MIDDLE"></A>
+š<A HREF="../index.htm">Graphic Tools Guide</A>
+š<A HREF="../index.htm#frm">ƒtƒH[ƒ}ƒbƒgˆê——</A>
+<HR NOSHADE>
+<CENTER>
+<H1>SpriteEditor
+</H1>
+<H5>Ver1.32</H5>
+<H2>ƒeƒLƒXƒgƒtƒH[ƒ}ƒbƒg</H2>
+</CENTER>
+<Hr>
+<DL>
+<A NAME="no1"></A>
+<P><DT><H3>¡‚PD‚bŒ`®i‰ñ“]‚È‚µj</H3>
+<DL>
+<P><DT><B>‚w‚w‚w.clƒtƒ@ƒCƒ‹—á</B>
+<DD>
+<PRE>
+/******************************
+        Color Table
+******************************/
+
+/*0:16*/                        ©ƒpƒŒƒbƒgƒGƒ“ƒgƒŠ”Ô†•ƒJƒ‰[ƒ‚[ƒh
+SPR_PAL pal_testFile_000[] = {
+        0x8000, /*0*/           ©ÀƒJƒ‰[ƒf[ƒ^
+        0xE318, /*1*/           iƒ‚[ƒh‚É‚æ‚è16F‚Ü‚½‚Í256F•ª‘±‚­j
+        0xD318, /*2*/
+          F
+          F
+          F
+
+SPR_PAL_DAT paldata_testFile[] = {
+        SPR_PAL_DEF(0x0040,  16, pal_AtestFile_000),
+        SPR_PAL_DEF(0x0020,  16, pal_AtestFile_001),
+          F            ª
+          F    •ÒW‚ÌƒpƒŒƒbƒgƒAƒhƒŒƒXAƒJƒ‰[ƒ‚[ƒhAƒ‰ƒxƒ‹  
+          F    i–¢g—p—Ìˆæ‚ÍŠî–{“I‚Éo—Í‚µ‚Ü‚¹‚ñj
+</PRE>
+
+<P><DT><B>‚w‚w‚w.cgƒtƒ@ƒCƒ‹—á</B>
+<DD><PRE>
+/******************************
+        CG
+******************************/
+
+/*0: 88x136*/                   ©ƒXƒvƒ‰ƒCƒg”Ô†•ƒXƒvƒ‰ƒCƒgƒTƒCƒY
+SPR_CG  cg_testFile_000[] = {
+        0x0011,0x0011,0x0011,0x0011,0x0011,0x0011,0x0011,0x0011,
+        0x0011,0x0011,0x0011,0x0011,0x0011,0x0011,0x0011,0x0011,
+        0x0011,0x0011,0x0011,0x0011,0x0011,0x0011,0x0011,0x0011,
+        0x0011,0x0011,0x0011,0x0011,0x0021,0x0099,0x0066,0x00AA,
+          F    ª
+          F    ÀƒsƒNƒZƒ‹ƒf[ƒ^        
+          F    iƒpƒŒƒbƒgƒ‚[ƒh‚ÍƒpƒŒƒbƒgƒR[ƒh
+                @32KFƒ‚[ƒh‚ÍÀƒJƒ‰[ƒf[ƒ^‚É‚È‚è‚Ü‚·j
+
+SPR_CG_DAT      cgdata_testFile[] = {
+        SPR_CG_DEF( 88,136,0x00000000),
+        SPR_CG_DEF( 24, 16,0x00001760),
+        SPR_CG_DEF( 32, 23,0x00001820),
+        SPR_CG_DEF( 40, 23,0x00001990),
+        SPR_CG_DEF( 56, 48,0x00001B5C),
+          F            ª
+          F@  HƒTƒCƒYAVƒTƒCƒYAŠeƒXƒvƒ‰ƒCƒg–ˆ‚Ì‘Š‘ÎƒAƒhƒŒƒX
+          F
+</PRE>
+
+<P><DT><B>‚w‚w‚w.mapƒtƒ@ƒCƒ‹—á</B>
+<DD><PRE>
+/******************************
+        MAP
+******************************/
+/*  0:*/                ©ƒpƒ^[ƒ“”Ô†
+SPR_MAP map_testFile_000[] = {
+        SPR_MAP_DEF(  1,COL_16 ,cg_testFile_005,  24,  16,   7, -62,0x0010),
+        SPR_MAP_DEF(  2,COL_16 ,cg_testFile_002,  32,  23,   2, -46,0x0030),
+                F      ª
+                F      ƒXƒvƒ‰ƒCƒg”Ô†AƒJƒ‰[ƒ‚[ƒh(COL_16,COL_256,COL_DC)
+                F     
+ƒXƒvƒ‰ƒCƒgƒ‰ƒxƒ‹AHƒTƒCƒYAVƒTƒCƒYAHƒIƒtƒZƒbƒgAVƒIƒtƒZƒbƒg
+                F      ”½“]î•ñi0x0010=H”½“]A0x0020=V”½“]j
+</PRE>
+
+<P><DT><B>‚w‚w‚w.anmƒtƒ@ƒCƒ‹—á</B>
+<DD><PRE>
+/******************************
+        ANIME
+******************************/
+/*  0:*/
+ANM_BNK bank_testFile_000[] = {
+        ANM_DEF(map_testFile_000,   5),
+        ANM_DEF(map_testFile_010,  20),
+        ANM_DEF(map_testFile_001,   5),
+                F@ª
+                F@•\¦‘ÎÛƒpƒ^[ƒ“ƒ‰ƒxƒ‹A•\¦ŠÔ
+                F
+</PRE>
+</DL>
+
+<A NAME="no2"></A>
+<P><DT><H3>¡‚QD‚bŒ`®i+‰ñ“]j</H3>
+<DD> *‚w‚w‚w.patˆÈŠO‚Í(1)‚Æ‘S‚­“¯‚¶
+<DL>
+<P><DT><B>‚w‚w‚w.patƒtƒ@ƒCƒ‹—á</B>
+<DD><PRE>
+/******************************
+        PATTERN(+rot)
+******************************/
+/*  0:*/
+PAT_MAP pat_testFile_000[] = {
+        PAT_MAP_DEF(  0,COL_256,cg_testFile_000,   0,   3, -16, -16,  16, 
+16,0x20B6,0x0000)
+};
+
+/*  1:*/
+PAT_MAP pat_testFile_001[] = {
+        PAT_MAP_DEF(  1,COL_256,cg_testFile_001,   0,   3, -16, -16,  16, 
+16,0xF60A,0x0000),
+        PAT_MAP_DEF(  1,COL_256,cg_testFile_001, -19,   5, -16, -16,  16, 
+16,0xEAAA,0x0000),
+        PAT_MAP_DEF(  2,COL_256,cg_testFile_002,  27, -17, -16, -16,  16, 
+16,0x18E2,0x0000)
+                F      ª
+                F      ƒXƒvƒ‰ƒCƒg”Ô†AƒJƒ‰[ƒ‚[ƒh(COL_16,COL_256,COL_DC)
+                F      ƒXƒvƒ‰ƒCƒgƒ‰ƒxƒ‹A‰ñ“]’†SHÀ•WA‰ñ“]’†SVÀ•WA
+                F@@@ƒIƒtƒZƒbƒgAAƒIƒtƒZƒbƒgBAƒIƒtƒZƒbƒgCAƒIƒtƒZƒbƒgDA
+                F      ‰ñ“]Šp“xA”½“]î•ñi0x0010=H”½“]A0x0020=V”½“]j
+@
+@*‰ñ“]’†SÀ•Wƒpƒ^[ƒ“Œ´“_‚©‚ç‚Ì‘Š‘ÎÀ•W’l
+@*ƒIƒtƒZƒbƒgA`D‰ñ“]’†S“_‚ÆƒXƒvƒ‰ƒCƒgiŠp“x‚O‹j‚ÌŠe’¸“_‚Æ‚Ì‘Š‘ÎÀ•W’l
+@iA=TopLeft-HÀ•W@B=TopLeft-VÀ•W@C=BottomRight-HÀ•W@D=BottomRight-VÀ•W
+j
+@*‰ñ“]Šp“x=ƒXƒvƒ‰ƒCƒg–ˆ‚Ì‰ñ“]Šp“xi0‹`360‹‚ğ$0000`$FFFF‚Ì16i‚Å•\‚·j
+</PRE>
+</DL>
+
+<A NAME="no3"></A>
+<P><DT><H3>¡‚RD‚`‚r‚lŒ`®i‰ñ“]‚È‚µj</H3>
+<DL>
+<P><DT><B>‚w‚w‚w.clƒtƒ@ƒCƒ‹—á</B>
+<DD><PRE>
+;----------------------------------------
+;       color data
+
+;----------------------------------------
+;       global
+        .global pal_Test_000
+        .global pal_Test_000_END
+                F
+                F
+
+;----------------------------------------
+;       cg_Test_131     ©•ÒW‚ÉŠY“–ƒpƒŒƒbƒg‚ğg—p‚µ‚Ä‚¢‚½ƒXƒvƒ‰ƒCƒg
+pal_Test_000:
+        CLSIZE  pal_Test_000_END-pal_Test_000-4@©ƒf[ƒ^ƒTƒCƒY
+
+        COLOR  
+h'E318,h'F39C,h'D2DD,h'BA1C,h'A114,h'BA58,h'FA0C,h'F968@@;No=00-07
+        COLOR  
+h'D808,h'A194,h'990E,h'8088,h'82FD,h'8000,h'8000,h'8000@@;No=08-0F
+                F      ª
+                F      ÀƒJƒ‰[ƒR[ƒh
+                F
+pal_Test_000_END:
+</PRE>
+
+<P><DT><B>‚w‚w‚w.cgƒtƒ@ƒCƒ‹—á</B>
+<DD><PRE>
+;----------------------------------------
+;       CG-data 
+
+;----------------------------------------
+;       global
+        .global cg_Test_000     ©g—pƒ‰ƒxƒ‹‚Ìglobal’è‹`
+        .global cg_Test_000_END
+                F
+                F
+                
+;----------------------------------------
+;       x_size:40 y_size:43 (16colors)         
+©HƒTƒCƒYAVƒTƒCƒYAƒJƒ‰[ƒ‚[ƒh
+cg_Test_000:
+        CGSIZE cg_Test_000_END-cg_Test_000-4    ©ƒf[ƒ^ƒTƒCƒY
+
+        .data.b
+h'00,h'00,h'00,h'00,h'00,h'00,h'00,h'00,h'00,h'00,h'02,h'20,h'00,h'00,h'00,h
+'00
+        .data.b
+h'00,h'00,h'00,h'00,h'00,h'00,h'00,h'00,h'00,h'00,h'00,h'00,h'00,h'00,h'2B,h
+'B2
+                F      ª
+                F      ƒsƒNƒZƒ‹ƒf[ƒ^i16Fƒ‚[ƒh4bit/pixel
+,256Fƒ‚[ƒh8bit/pixelj
+                
+cg_Test_000_END:
+
+;----------------------------------------
+;       x_size:56 y_size:105 (32Kcolors)
+cg_Test_001:
+        CGSIZE cg_Test_001_END-cg_Test_001-4
+
+        .data.w h'6F7B,h'6F7B,h'6F7B,h'4631,h'0000,h'7FFF,h'6F7B,h'6F7B
+        .data.w h'6F7B,h'6F7B,h'0000,h'7FFF,h'7FFF,h'7FFF,h'7FFF,h'7FFF
+                F      ª
+                F      ƒsƒNƒZƒ‹ƒf[ƒ^i32KFƒ‚[ƒh16bit/pixelj
+cg_Test_001_END:
+</PRE>
+
+<P><DT><B>‚w‚w‚w.mapƒtƒ@ƒCƒ‹—á</B>
+<DD><PRE>
+;----------------------------------------
+;       Sprite Map 
+
+;----------------------------------------
+;       global
+        .global map_Test_000
+        .global map_Test_001
+                F
+                F
+                
+map_test_000:
+        SPRNUM     8                                    ©ƒXƒvƒ‰ƒCƒg‘”
+        SPRDEF     1,  24,  16, -16, -60,       NONE
+        SPRDEF     2,  32,  23, -19, -44,       NONE
+        SPRDEF     3,  40,  23, -24, -21,       HREV
+        SPRDEF     4,  56,  48,  45, -18,       HREV|VREV
+        SPRDEF     5,  40,  72,   5, -18,       HREV
+        SPRDEF     6,  48,  25, -60,   1,       NONE
+        SPRDEF     7,  48,  21, -60,  36,       VREV
+        SPRDEF     8,  24,  10, -52,  26,       NONE
+        SPREND          ª
+               
+ƒXƒvƒ‰ƒCƒg”Ô†AHƒTƒCƒYAVƒTƒCƒYAHƒIƒtƒZƒbƒgAVƒIƒtƒZƒbƒgA”½“]î•ñ
+                iH”½“]=HREV,V”½“]=VREV,‚È‚µ=NONE)
+</PRE>
+<P><DT><B>‚w‚w‚w.anmƒtƒ@ƒCƒ‹—á</B>
+<DD><PRE>
+;----------------------------------------
+;       Anime Table 
+
+;----------------------------------------
+;       global
+        .global bank_Test_000
+        .global bank_Test_001
+                F
+                F
+
+bank_anumSamp_000:
+        ANIMNUM   12@@©g—pƒpƒ^[ƒ“‘”
+        ANIM    map_Test_000,   5
+        ANIM    map_Test_010,  20
+        ANIM    map_Test_001,   5
+                Fª‘ÎÛƒpƒ^[ƒ“A•\¦ŠÔ
+                F
+        ANIMEND
+</PRE>
+</DL>
+
+<A NAME="no4"></A>
+<P><DT><H3>¡‚SD‚`‚r‚lŒ`®i+‰ñ“]j</H3>
+<DD> *‚w‚w‚w.patˆÈŠO‚Í(3)‚Æ‘S‚­“¯‚¶
+<DL>
+<P><DD><PRE>
+;----------------------------------------
+;       Sprite Pattern(+rot) 
+
+;----------------------------------------
+;       global
+        .global pat_anumSamp_000
+        .global pat_anumSamp_001
+                F
+                F
+
+pat_anumSamp_000:
+        PATNUM     5
+        PATTERN    1,   0,   3, -16, -16,  16,  16,h'F60A,NONE
+        PATTERN    1, -19,   5, -16, -16,  16,  16,h'EAAA,NONE
+                F      ª
+                F      ƒXƒvƒ‰ƒCƒg”Ô†A‰ñ“]’†SHÀ•WA‰ñ“]’†SVÀ•WA
+                F@@@ƒIƒtƒZƒbƒgAAƒIƒtƒZƒbƒgBAƒIƒtƒZƒbƒgCAƒIƒtƒZƒbƒgDA
+                F      ‰ñ“]Šp“xA”½“]î•ñiH”½“]=HREV,V”½“]=VREV,‚È‚µ=NONE)
+@@@@PATEND
+
+@*‰ñ“]’†SÀ•Wƒpƒ^[ƒ“Œ´“_‚©‚ç‚Ì‘Š‘ÎÀ•W’l
+@*ƒIƒtƒZƒbƒgA`D‰ñ“]’†S“_‚ÆƒXƒvƒ‰ƒCƒgiŠp“x‚O‹j‚ÌŠe’¸“_‚Æ‚Ì‘Š‘ÎÀ•W’l
+@iA=TopLeft-HÀ•W@B=TopLeft-VÀ•W@C=BottomRight-HÀ•W@D=BottomRight-VÀ•W
+j
+@*‰ñ“]Šp“x=ƒXƒvƒ‰ƒCƒg–ˆ‚Ì‰ñ“]Šp“xi0‹`360‹‚ğ$0000`$FFFF‚Ì16i‚Å•\‚·j
+</PRE>
+</DL>
+
+<A NAME="no5"></A>
+<P><DT><H3>¡‚TD‚bŒ`®i+‰ñ“]+‹tPrij</H3>
+
+<A NAME="no6"></A>
+<P><DT><H3>¡‚UD‚`‚r‚lŒ`®i+‰ñ“]+‹tPrij</H3>
+<DD>‚»‚ê‚¼‚êA<A HREF="#no2">¡‚QD</A><A HREF="#no4">¡‚SD</A>‚Ì‚w‚w‚w.pat‚Åo—Í‚·‚éƒpƒ^[ƒ“ƒf[ƒ^‚É‚Â‚¢‚Ä
+ƒc[ƒ‹ã‚Å”z’u‚³‚ê‚½ƒXƒvƒ‰ƒCƒg‚Ìƒvƒ‰ƒCƒIƒŠƒeƒB‚ğ‹t‡‚É
+•ÏX‚µ‚Äo—Í‚·‚éB
+<P>ƒtƒ@ƒCƒ‹ƒtƒH[ƒ}ƒbƒg‚»‚Ì‚à‚Ì‚Í<A HREF="#no2">¡‚QD</A><A HREF="#no4">¡‚SD</A>‚Æ“¯‚¶B
+
+<HR NOSHADE>
+<A HREF="../../index.htm"><IMG SRC="../../what/dosei.gif" BORDER=0 ALIGN="MIDDLE"></A>
+š<A HREF="../index.htm">Graphic Tools Guide</A>
+š<A HREF="../index.htm#frm">ƒtƒH[ƒ}ƒbƒgˆê——</A>
+<HR>
+<ADDRESS>Copyright SEGA ENTERPRISES, LTD,. 1997</ADDRESS>
+</BODY>
+</HTML>

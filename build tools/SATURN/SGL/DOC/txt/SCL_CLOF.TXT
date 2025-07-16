@@ -1,0 +1,182 @@
+slColOffsetOn -- 関数
+    slColOffsetOn - カラーオフセット値の影響を受ける画面の設定。
+【書  式】
+    #include "sgl.h"
+
+    Uint16 mode;
+
+    void slColOffsetOn( mode );
+【引  数】
+    Uint16 mode - カラーオフセット値の影響を受ける画面。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    カラーオフセット値の影響を受ける画面を設定します。
+    modeには、
+    NBG0ON、NBG1ON、NBG2ON、NBG3ON、RBG0ON、LNCLON、SPRON [constscl]、 OFF [constenm]
+    が入ります。
+    複数のスクロール面の描画設定を同時に行なう場合は、各面のモードを "|"で
+    つないで指定してください。
+【用  例】
+    NBG1とNBG3にカラーオフセットを掛ける。
+    slColOffsetOn( NBG1ON| NBG3ON);
+
+    全てのBGのカラーオフセットを無効にする。
+    slColOffsetOn( OFF );
+【注  意】
+    引数modeに OFF を指定すると、全ての面に対してカラーオフセットをオフにします。
+【参  照】
+    slColOffsetOff, slColOffsetAUse, slColOffsetBUse, slColOffsetA
+    slColOffsetB, slColOffsetScrn, VDP2_CLOFEN
+
+
+slColOffsetOff -- 関数
+    slColOffsetOff - カラーオフセット値の影響を受けなくする画面の設定。
+【書  式】
+    #include "sgl.h"
+
+    Uint16 mode;
+
+    void slColOffsetOff( mode );
+【引  数】
+    Uint16 mode - カラーオフセット値の影響を受けなくする画面。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    カラーオフセット値の影響を受けなくする画面を設定します。
+    modeには、
+    NBG0ON、NBG1ON、NBG2ON、NBG3ON、RBG0ON、LNCLON、SPRON [constscl]
+    が入ります。
+    複数のスクロール面の描画設定を同時に行なう場合は、各面のモードを "|"
+    でつないで指定してください。
+【用  例】
+    slColOffsetOff( NBG2ON| NBG3ON);
+【注  意】
+    全ての面について無効にする場合には slColOffsetOn( OFF )を
+    実行してください。
+【参  照】
+    slColOffsetOn, slColOffsetAUse, slColOffsetBUse, slColOffsetA
+    slColOffsetB, slColOffsetScrn
+
+
+slColOffsetAUse -- 関数
+    slColOffsetAUse - カラーオフセット値の影響を受ける画面を設定。
+【書  式】
+    #include "sgl.h"
+
+    Uint16 mode;
+
+    void slColOffsetAUse( mode );
+【引  数】
+    Uint16 mode - カラーオフセット値の影響を受ける画面。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    関数 slColOffsetAによって設定されたカラーオフセット値の影響を
+    受ける画面を設定します。
+    modeには、
+        NBG0ON、NBG1ON、NBG2ON、NBG3ON、RBG0ON、LNCLON、SPRON [constscl]
+    が入ります。
+    複数のスクロール面の描画設定を同時に行なう場合は、各面のモードを "|"
+    でつないで指定してください。
+【用  例】
+    slColOffsetA( 35, 23, 12 );
+                :
+    slColOffsetAUse( NBG0ON);
+【注  意】
+    slColOffsetAUse, slColOffsetBUse関数を実行すると
+    slColOffsetOn 関数も同時に実行されますので、
+    slColOffsetOn関数はユーザーが実行する必要はありません。
+【参  照】
+    slColOffsetOn, slColOffsetOff, slColOffsetBUse, slColOffsetA
+    slColOffsetB, slColOffsetScrn, VDP2_CLOFEN
+
+
+slColOffsetBUse -- 関数
+    slColOffsetBUse - カラーオフセット値の影響を受ける画面を設定。
+【書  式】
+    #include "sgl.h"
+
+    Uint16 mode;
+
+    void slColOffsetBUse( mode );
+【引  数】
+    Uint16 mode - カラーオフセット値の影響を受ける画面。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    関数 slColOffsetBによって設定されたカラーオフセット値の影響を
+    受ける画面を設定します。
+    modeには、
+    NBG0ON、NBG1ON、NBG2ON、NBG3ON、RBG0ON、LNCLON、SPRON [constscl]
+    が入ります。
+    複数のスクロール面の描画設定を同時に行なう場合は、各面のモードを "|"
+    でつないで指定してください。
+【用  例】
+    slColOffsetB( 35, 23, 12 );
+                :
+    slColOffsetBUse( NBG0ON);
+【参  照】
+    slColOffsetOn, slColOffsetOff, slColOffsetAUse, slColOffsetA
+    slColOffsetB, slColOffsetScrn, VDP2_CLOFEN
+
+
+slColOffsetA -- 関数
+slColOffsetB -- 関数
+    slColOffsetA, slColOffsetB - カラーオフセットA・Bのオフセット値を設定。
+【書  式】
+    #include "sgl.h"
+
+    Sint16 r, g, b;
+
+    void slColOffsetA( r, g, b );
+    void slColOffsetB( r, g, b );
+【引  数】
+    Sint16 r - red のオフセット値。
+    Sint16 g - green のオフセット値。
+    Sint16 b - blue のオフセット値。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    カラーオフセットA・Bで使用されるオフセット値を設定します。
+    r、g、bで使われるデータは下位9ビットのみが使用されます。
+【用  例】
+    slColOffsetA( 35, 23, 12 );
+                :
+    slColOffsetAUse( NBG0ON );
+【参  照】
+    slColOffsetOn, slColOffsetOff, slColOffsetAUse, slColOffsetBUse
+    slColOffsetScrn, VDP2_COAR, VDP2_COAG, VDP2_COAB
+    VDP2_COBR, VDP2_COBG, VDP2_COBB
+
+
+slColOffsetScrn -- 関数
+    slColOffsetScrn - カラーオフセットの影響するスクリーンの設定。
+【書  式】
+    #include "sgl.h"
+
+    Uint16 mode_a;
+    Uint16 mode_b;
+
+    void slColOffsetScrn( mode_a, mode_b );
+【引  数】
+    Uint16 mode_a - カラーオフセットの影響するスクリーン(A)(後述)。
+    Uint16 mode_b - カラーオフセットの影響するスクリーン(B)(後述)。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    カラーオフセットの影響するスクリーンをパラメータAに対する面と、パラメータ
+    Bに対する面とを別々に指定します。
+    mode_a、mode_bいずれも、以下の定義済みマクロが入ります。
+          NBG0ON| NBG0OFF
+          NBG1ON| NBG1OFF
+          NBG2ON| NBG2OFF
+          NBG3ON| NBG3OFF
+          RBG0ON| RBG0OFF
+【用  例】
+    slColOffsetScrn( NBG1ON| NBG2ON, NBG0ON| NBG3ON);   
+【注  意】
+    この関数は slColOffsetOn()とslColOffsetBUse()とを
+    合わせたものです。
+【参  照】
+    VDP2_CLOFEN, VDP2_CLOFSL

@@ -1,0 +1,336 @@
+
+
+★イベント
+slInitEvent -- 関数
+    slInitEvent - イベント、ワーク管理用のバッファを初期化
+【書  式】
+    #include "sgl.h"
+
+    void slInitEvent( void );
+【引  数】
+    void - 何も与えません。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    イベント、ワーク管理用のバッファを初期化します。イベントは64個、
+    ワークは256個が用意されます。
+【用  例】
+    void *eventtbl[] = {
+        init_camera,
+        init_player1,
+        init_player2,
+        init_enemyctrl
+    };
+
+    void InitGame(){
+        void  **evrdptr;
+        EVENT  *evptr;
+        int        cnt;
+
+        slInitEvent();           /* イベント管理用変数の初期化 */
+        evrptr = eventtbl;
+        for( cnt = sizeof( eventtbl ) / sizeof( void * ) ; cnt-- > 0 ; ) {
+            evptr = slSetEvent( *evrptr++ );
+        }
+        slSetSprTVMode( TV_320x224 );
+    }
+
+    void Game(){
+        slExecuteEvent();       /* イベントの実行 */
+        slSynch();              /* ポリゴンデータの出力とビデオ表示同期 */
+    }    
+【注  意】
+    イベント、ワーク用のRAM自体は初期化されないので、領域を取り出した時に、
+    ユーザープログラムが初期化してください。
+【参  照】
+    slGetEvent, slSetEvent, slSetEventNext, slCloseEvent
+    slReturnEvent, slExecuteEvent, slGetWork, slReturnWork
+    slGetEvent -- 関数
+    slGetEvent - イベント用RAMの取得。
+【書  式】
+    #include "sgl.h"
+
+    EVENT *slGetEvent( void );
+【引  数】
+    void - 何も与えません。
+【返  数】
+    EVENT* - 取得したイベント用RAMのアドレスを示すポインタ。
+【機  能】
+    イベント用に割り付けられたRAM領域を取り出し、そのポインタを返します。
+【用  例】
+    void func() {
+      /* This is executed in event loop. */
+    }
+
+    EVENT *evnt1, *evnt2;
+
+    evnt1 = slGetEvent();
+
+    evnt2 = slSetEvent( func );
+    evnt2->user = ( Uint8 * )evnt1;    
+【注  意】
+    128バイトの領域で、ユーザーが自由に使用できます。64個分用意されていますが、
+    使い切っている場合にはNULLコードを返します。
+【参  照】
+    slInitEvent, slSetEvent, slSetEventNext, slCloseEvent
+    slReturnEvent, EventTop, EventCount
+
+
+slSetEvent -- 関数
+    slSetEvent - イベントの追加。
+【書  式】
+    #include "sgl.h"
+
+    void *( func )( void );
+
+    EVENT *slSetEvent( func );
+【引  数】
+    void *( func )( void ) - イベントに登録する実行関数。
+【返  数】
+    EVENT* - 取得したイベントへの EVENT型ポインタ。
+【機  能】
+    イベントを取り出し、実行リストの末尾に追加します。この際、指定された関数を
+    実行関数として登録します。
+【用  例】
+    slInitEvent();
+
+    slSetEvent( user_func1 );
+    slSetEvent( user_func2 );
+         :
+    while( -1 ) {
+         :
+      slExecuteEvent();
+      slSynch();
+    }
+【注  意】
+    128バイトの領域ですが、先頭の16バイトはシステムにより使用されます。
+    イベントが残っていない場合には NULLコードを返します。
+【参  照】
+    slInitEvent, slSetEvent, slSetEventNext, slCloseEvent
+    slReturnEvent, slExecuteEvent
+
+
+slSetEventNext -- 関数
+    slSetEventNext - イベントの次候補の登録。
+【書  式】
+    #include "sgl.h"
+
+    EVENT *evnt;
+    void *( func )( void );
+
+    EVENT *slSetEventNext( evnt, func );
+【引  数】
+    EVENT *evnt            - 登録するイベントの前のイベント。
+    void *( func )( void ) - 登録する実行関数。
+【返  数】
+    EVENT* - 取り出されたイベントを示す、 EVENT型構造体へのポインタ。
+【機  能】
+    イベントを取り出し、指定されたイベントの次に実行されるように、実行リスト
+    に追加します。この際、指定された関数を実行関数として登録します。
+【用  例】
+    void func() {
+      /* This is executed in event loop. */
+    }
+
+    ss_main() {
+      EVENT *evnt;
+
+      evnt = slGetEvent();
+      evnt->work = ...
+              :
+      slSetEventNext( evnt, func );
+              :
+【注  意】
+    128バイトの領域ですが、先頭の16バイトはシステムにより使用されます。
+    イベントが残っていない場合には NULLコードを返します。
+【参  照】
+    slInitEvent, slSetEvent, slGetEvent, slCloseEvent
+    slReturnEvent, slExecuteEvent
+
+
+slReturnEvent -- 関数
+    slReturnEvent - 未登録イベントの検索。
+【書  式】
+    #include "sgl.h"
+
+    EVENT *evnt;
+
+    void slReturnEvent( evnt );
+【引  数】
+    EVENT *evnt - 解放を要求するイベントを表す EVENT型構造体へのポインタ。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    実行リストに登録されていないイベントをシステムに返す。
+【用  例】
+    EVENT *evnt;
+
+    evnt = slGetEvent();
+    slReturnEvent( evnt );
+【注  意】
+    実行リストに登録されているイベントに対して、この関数を実行するとリストに
+    登録されたままになるため、実行は継続されます。戻されたポインタはシステムの
+    バッファに再登録されますが、この際に登録済みであってもチェックされません
+    ので、同じポインタを複数回返却すると、この後実行される、
+    slGetEvent()、slSetEvent()、slSetEventNext()
+    において不具合が発生します。
+【参  照】
+    slInitEvent, slGetEvent, slSetEvent, slSetEventNext
+    slCloseEvent, EventLast
+
+
+slCloseEvent -- 関数
+    slCloseEvent - イベントの削除。
+【書  式】
+    #include "sgl.h"
+
+    EVENT *evnt;
+
+    void slCloseEvent( evnt );
+【引  数】
+    EVENT *evnt - 削除するイベントを表す EVENT型構造体へのポインタ。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    実行リストに登録されたイベントをリストから切り離し、システムに返します。
+    また、ワークがセットされている場合、これらも戻します。
+【用  例】
+    EVENT *evnt;
+
+    evnt = slSetEvent( user_func );
+                 :
+    slCloseEvent( evnt );
+【注  意】
+    実行リストに登録されていないイベントを指定すると、リスト情報が正しくない
+    ため、不当なイベントに対して、リスト変更処理をすることになり、予測できない
+    アドレスに対する書き込みが発生し、最悪の場合、CPUが停止する場合があります。
+    戻されたポインタはシステムのバッファに再登録されますが、この際に登録済みで
+    あってもチェックされないので、同じポインタを複数回返却すると、この後
+    実行される、
+    slGetEvent()、slSetEvent()、slSetEventNext()
+    において不具合が発生します。
+【参  照】
+    slInitEvent, slGetEvent, slSetEvent, slSetEventNext
+    slReturnEvent
+
+
+slExecuteEvent -- 関数
+    slExecuteEvent - イベントの実行。
+【書  式】
+    #include "sgl.h"
+
+    void slExecuteEvent( void );
+【引  数】
+    void - 何も与えません。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    実行リストに登録されたイベントを先頭から順に実行します。
+【用  例】
+    slInitEvent();
+
+    slSetEvent( ... );
+        :
+    while( -1 ) {
+      slExecuteEvent();
+      slSynch();
+    }
+【注  意】
+    メインループごとに実行してください。
+【参  照】
+    slInitEvent, slSetEvent, slSetEventNext, slSynch
+    slInitSynch, EventTop, EventNow, EventCount
+    ★ワーク
+slGetWork -- 関数
+    slGetWork - イベント用ワークRAMの取得。
+【書  式】
+    #include "sgl.h"
+
+    WORK *slGetWork( void );
+【引  数】
+    void - 何も与えません。
+【返  数】
+    WORK* - 割り当てられたワークエリアを示す WORK型構造体へのポインタ。
+【機  能】
+    ワーク用に割り付けられたRAM領域を取り出し、そのポインタを返します。
+【用  例】
+    WORK  *work;
+    EVENT *evnt;
+
+    work = slGetWork();
+    evnt = slSetEvent();
+    evnt->work = work;
+【注  意】
+    ワークは64バイトの領域で、先頭の4バイトをリスト用のポインタとして、
+    システムで使用します。残りの60バイトはユーザーが自由に使用できます。
+    EVENT構造体のWORKに ポインタをセットしていればイベントをクローズする
+    場合に、システムに返却されます。
+【参  照】
+    slInitEvent, slReturnWork, WorkCount
+
+
+slReturnWork -- 関数
+    slReturnWork - イベント用ワークRAMの解放。
+【書  式】
+    #include "sgl.h"
+
+    WORK *wk;
+
+    void slReturnWork( wk );
+【引  数】
+    WORK *wk - 解放するワークRAMを表す、WORK構造体のポインタ。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    ワークとして使用していたRAM領域をシステムに戻す。
+【用  例】
+    WORK *work;
+
+    work = slGetWork();
+               :
+    slReturnWork( work );
+【注  意】
+    戻されたポインタはシステムのバッファに再登録されますが、この際に登録済みで
+    あってもチェックされないので、同じポインタを複数回返却すると、この後に
+    実行される slGetWork() において不具合が発生します。
+【参  照】
+    slInitEvent, slGetWork, WorkCount
+
+
+★イベント用グローバル変数
+EventBuf -- グローバル変数
+    EventBuf - EVENT [types]構造体の為のバッファ
+【書  式】
+    #include "sgl.h"
+
+    extern EVENT  EventBuf [];          /* buffer for Event use */
+【参  照】
+    slInitEvent, slGetEvent, slReturnEvent
+
+
+WorkBuf -- グローバル変数
+    WorkBuf - WORK [types]構造体の為のバッファ
+【書  式】
+    #include "sgl.h"
+
+    extern WORK   WorkBuf [];           /* buffer for Work use */
+【参  照】
+    slGetWork
+
+
+RemainEvent -- グローバル変数
+    RemainEvent
+【書  式】
+    #include "sgl.h"
+
+    extern EVENT* RemainEvent[] ;       /* Remain Event address buffer */
+【参  照】
+    slSetEvent, slSetEventNext, slReturnEvent, slExecuteEvent
+    RemainWork -- グローバル変数
+    RemainWork
+【書  式】
+    #include "sgl.h"
+
+    extern WORK*  RemainWork[] ;        /* Remain Work address buffer */
+【参  照】
+    slReturnWork

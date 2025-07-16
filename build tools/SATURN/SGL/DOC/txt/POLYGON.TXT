@@ -1,0 +1,568 @@
+slPutPolygon -- 関数
+    slPutPolygon - ポリゴンの描画
+【書  式】
+    #include "sgl.h"
+
+    PDATA *pol;
+
+    Bool slPutPolygon( pol );
+【引  数】
+    PDATA *pol - 表示するポリゴンデータを含むPDATA構造体へのポインタ。
+【返  数】
+    Bool - エラーコード(後述)。
+【機  能】
+    カレントマトリクスを使用して与えられたポリゴンモデルを回転・平行移動し、
+    透視変換を行ない、ポリゴン及び、変形スプライトとして表示します。
+    最大ポリゴン数又は最大頂点数を越えた場合、エラーコード'FALSE'を返します。
+【用  例】
+    slPushMatrix();
+    {
+      slTranslate( pos[X], pos[Y], pos[Z] );
+      slRotX( ang[X] );
+      slRotY( ang[Y] );
+      slRotZ( ang[Z] );
+      slPutPolygon( &polygons );
+                  :
+【参  照】
+    slPutPolygonS, slPutPolygonX, slDispPolygon, slWindow
+    slZdspLevel, slLight, slPutObject, MsPbufPtr
+    SlPbufPtr, SpritePtr, ComWrPtr, ComRdPtr
+    MsLightVector, ColorOffset, MsScreenDist, MsZlimit
+    WinUseFlag, TotalPolygons, TotalVertices, MsWindowSizeX
+    MsWindowSizeY, MXPolygons, FrameSizeX, FrameSizeY
+    MsWinXAdder, MsWinYAdder, MsClipXAdder, MsClipYAdder
+    DispPolygons, DMAEndFlag, DMASetFlag, PutCount
+    Resolution
+
+
+slPutPolygonS -- 関数
+    slPutPolygonS - ポリゴンの描画
+【書  式】
+    #include "sgl.h"
+
+    PDATA *pol;
+
+    Bool slPutPolygonS( pol );
+【引  数】
+    PDATA *pol - 表示するポリゴンデータを含むPDATA構造体へのポインタ。
+【返  数】
+    Bool - エラーコード(後述)。
+【機  能】
+    カレントマトリクスを使用して与えられたポリゴンモデルを回転・平行移動し、
+    透視変換を行ない、ポリゴン及び、変形スプライトとして表示します。
+    最大ポリゴン数又は最大頂点数を越えた場合、エラーコード'FALSE'を返します。
+【用  例】
+    slPushMatrix();
+    {
+      slTranslate( pos[X], pos[Y], pos[Z] );
+      slRotX( ang[X] );
+      slRotY( ang[Y] );
+      slRotZ( ang[Z] );
+      slPutPolygonS( &polygons );
+    }
+    slPopMatrix();
+【注  意】
+    slPutPolygonでは、スレーブCPUの状況に応じて処理を
+    分担し、マスターCPUと並列実行しますが、本関数では、全てをスレーブ
+    CPUが実行します。
+【参  照】
+    slPutPolygon, slPutPolygonX, slDispPolygon, slWindow
+    slZdspLevel, slLight, slPutObject, SlPbufPtr
+    SpritePtr, ComWrPtr, ComRdPtr, SlScreenDist
+    WinUseFlag, TotalPolygons, TotalVertices, MXPolygons
+    FrameSizeX, FrameSizeY, SlWinXAdder, SlWinYAdder
+    SlClipXAdder, SlClipYAdder, SlZlimit, DispPolygons
+    DMAEndFlag, DMASetFlag, PutCount
+
+
+slDispPolygon -- 関数
+    slDispPolygon - 正射影によるポリゴンの描画。
+【書  式】
+    #include "sgl.h"
+
+    PDATA  *pol;
+    Uint16 mode;
+
+    Bool slDispPolygon( PDATA *pat , Uint16 mode)
+【引  数】
+    PDATA  *pol - モデルデータ
+    Uint16 mode - フラグ(後述)。
+【返  数】
+    Bool - エラーコード(後述)。
+【機  能】
+    カレントマトリクスを使用して与えられたポリゴンモデルを回転・平行移動
+    し、正投影のまま、ポリゴン及び、変形スプライトを表示します。
+    ただし、光源計算、クリッピング等のオプションは使用できません。
+    mode は アトリビュートを総てのポリゴンが共有するかどうかのフラグで、
+    0の時、アトリビュートテーブルの先頭のデータで、各ポリゴンが表示され
+    ます。それ以外の場合には指定されたアトリビュートデータで表示されます。
+    最大ポリゴン数又は最大頂点数を越えた場合、エラーコード'FALSE'を返します。
+【用  例】
+    slPushMatrix();
+    {
+      slTranslate( pos[X], pos[Y],pos[Z] );
+      slRotX( ang[X] );
+      slRotY( ang[Y] );
+      slRotZ( ang[Z] );
+      slDispPolygon( &polygon, 0 ); /* ポリゴンの属性は全て同じになる。 */
+    }
+    slPopMatrix();    
+【注  意】
+    この関数はポリゴンの透視変換を行ないません。そのため、slPutPolygon
+    に比べて若干処理が軽くなります。
+【参  照】
+    slPutPolygon, slPutPolygonS, slPutPolygonX, slWindow
+    slZdspLevel, slLight, slPutObject, MsPbufPtr
+    SlPbufPtr, SpritePtr, ComWrPtr, ComRdPtr
+    WinUseFlag, TotalPolygons, TotalVertices, MXPolygons
+    DispPolygons, DMAEndFlag, DMASetFlag, PutCount
+    slPutObject -- 関数
+    slPutObject - オブジェクトの描画。
+【書  式】
+    #include "sgl.h"
+
+    OBJECT *obj;
+
+    Bool slPutObject( obj );
+【引  数】
+    OBJECT *obj - モデルデータ。
+【返  数】
+    Bool - エラーコード。
+【機  能】
+    指定されたオブジェクト構造体で指定された平行移動、回転、スケーリング
+    を行ない、ポリゴンモデルを表示します。本関数は以下の関数を実行したも
+    のと同じ結果となります。
+    void slPutObject( OBJECT *objptr ) {
+      slTranslate( objptr->pos[ X ], objptr->pos[ Y ], objptr->pos[ Z ] );
+      slRotZ( objptr->ang[ Z ] );
+      slRotY( objptr->ang[ Y ] );
+      slRotX( objptr->ang[ X ] );
+      slScale( objptr->scl[ X ], objptr->scl[ Y ], objptr->scl[ Z ] );
+      if ( objptr->pat !=  NULL ) {
+        return slPutPolygon( objptr->pat );
+      }
+    }
+【用  例】
+    親子構造にしたがった表示のサンプルプログラム
+
+      void PutAll( OBJECT* obptr ) {
+        slPushMatrix();                 /* 親のマトリクスを退避 */
+        {
+          slPutObject( obptr );            /* オブジェクトの表示 */
+          if ( obptr->child != NULL ) {
+            PutAll( obptr->child );     /* 子がいれば表示 */
+          }
+        }
+        slPopMatrix();
+
+        if ( obptr->sibling != NULL ) {
+          PutAll( obptr->sibling );     /* 兄弟オブジェクトの表示 */
+        }
+      }
+【注  意】
+    本関数はカレントマトリクスを変更しますので、必要に応じて
+    slPushMatrix()関数を実行してマトリクスの退避を行なってください。
+    また、オブジェクトの親子関係についてはユーザー関数で対応してください。
+【参  照】
+    slPutPolygon, slPutPolygonS, slPutPolygonX, slWindow
+    slZdspLevel, slLight, slDispPolygon, SlPbufPtr
+    SpritePtr, ComWrPtr, ComRdPtr, DispPolygons
+    DMAEndFlag, DMASetFlag, PutCount
+
+
+slInitGouraud -- 関数
+    slInitGouraud - リアルタイムグーローの使用宣言。
+【書  式】
+    #include "sgl.h"
+
+    GOURAUDTBL *tbl;
+    Uint32  max;
+    Uint32  *gaddr_A;
+    Uint8   *vaddr_A;
+
+    void slInitGouraud( tbl, max, gaddr_A, vaddr_A );
+【引  数】
+    GOURAUDTBL *tbl     - グーローデータ格納エリア。
+    Uint32  max      - グーローポリゴン最大数。
+    Uint32  *gaddr_A - グーローテーブル(絶対)アドレス。
+    Uint8   *vaddr_A - 頂点演算ワーク(絶対)アドレス。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    リアルタイムグーローシェーディング処理の初期化を行います。
+    グーローデータ格納エリアは、グーローポリゴン最大数x8バイト必要になります。
+    頂点演算ワークアドレスは、1モデル最大頂点数バイト必要です。
+    グーローテーブルアドレスは、VDP1にグーローテーブルをセットするアドレス
+    になります。
+    VDP1オフセットアドレス/8を指定します。(モデルデータのグーローアドレス
+    と同じ方法です)
+【用  例】
+    総ポリゴン数500、1モデル最大頂点数100の場合。
+    #define    MAX_POLYGON     500
+    #define    MAX_MODEL_VERT  100
+    #define    GOURAUD_ADDR    0xE000
+    GOURAUDTBL GTBL[MAX_POLYGON];
+    Uint8      VTBL[MAX_MODEL_VERT];
+
+    slInitGouraud( GTBL, MAX_POLYGON, GOURAUD_ADDR, VTBL );
+【参  照】
+    slPutPolygonX, slGouraudTblCopy, slSetGouraudTbl, slSetGouraudColor
+    slSetFlatColor, slSetAmbient, slSetNearClipFlag, slWindowClipLevel
+    slSetDepthLimit, slSetDepthTbl, slDispPlaneLevel
+
+
+★リアルタイムグーロー
+slPutPolygonX -- 関数
+    slPutPolygonX - リアルタイムグーローでポリゴンの描画。
+【書  式】
+    #include "sgl.h"
+
+    XPDATA *pol;
+    FIXED  *lgt;
+
+    void slPutPolygonX( pol, lgt );
+【引  数】
+    XPDATA *pol - モデルデータ。
+    FIXED  *lgt - 光源ベクトル。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    モデルデータの出力を行います。
+    オプションでUseGouraudを指定していないポリゴンも正常に出力される。
+【用  例】
+    extern XPDATA polygons[];
+
+    slPushMatrix();
+    {
+      slTranslate( pos[X], pos[Y], pos[Z] );
+      slRotX( ang[X] );
+      slRotY( ang[Y] );
+      slRotZ( ang[Z] );
+      slPutPolygonX( polygons );
+    }
+    slPopMatrix();
+【注  意】
+    この関数を実行する前に必ずslInitGouraud関数で初期化しておく必要があります。
+【参  照】
+    slWindow, slPutPolygon, slPutPolygonS, slDispPolygon
+    slPutObject, slPerspective, slInitGouraud, slGouraudTblCopy
+    slSetGouraudTbl, slSetGouraudColor, slSetFlatColor, slSetAmbient
+    slSetNearClipFlag, slWindowClipLevel, slSetDepthLimit, slSetDepthTbl
+    slDispPlaneLevel, SlPbufPtr, ComWrPtr, ComRdPtr
+    SlClipXAdder, SlClipYAdder, SlZlimit, DispPolygons
+    DMAEndFlag, DMASetFlag, PutCount
+
+
+slGouraudTblCopy -- 関数
+    slGouraudTblCopy - グーローテーブルのコピー。
+【書  式】
+    #include "sgl.h"
+
+    void slGouraudTblCopy( void )
+【引  数】
+    void - 何も与えません。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    ライブラリで計算したグーローデータをVRAMに転送します。
+    通常、slIntFunctionなどを用いてV-Blank中に転送します。
+    尚、この関数はSCU DMAを用いて転送されます。他のSCU DMAと競合しないように
+    注意する必要があります。(DMA_ScuMemCopy関数が使用されます。)
+【用  例】
+    slIntFunction ( slGouraudTblCopy );
+
+    while( -1 ) {
+          :
+      slSynch
+    }
+【注  意】
+    slPutPolygonXでリアルタイムグーローを使用する際には必ずこの関数を使用
+    するようにしてください。
+【参  照】
+    slSynch, slIntFunction, slInitGouraud, slSetGouraudTbl
+    slPutPolygonX, slSetGouraudColor
+
+
+slSetGouraudTbl -- 関数
+    slSetGouraudTbl - ユーザー定義グーローテーブルの設定。
+【書  式】
+    #include "sgl.h"
+
+    Uint16 *tbl;
+
+    void slSetGouraudTbl( tbl );
+【引  数】
+    void - 何も与えません。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    ユーザ独自のグーローテーブルをセットします。
+    光源の反対側の一番暗い値から、光源の正面の一番明るい値までを32段階で指定
+    します。
+【用  例】
+    #define GRTBL(r,g,b)    (((b&0x1f)<<10) | ((g&0x1f)<<5) | (r&0x1f) )
+    static  Uint16  GourTbl[32] = {
+        GRTBL(  0, 16, 16 ),GRTBL(  1, 16, 16 ),GRTBL(  2, 16, 16 ),
+        GRTBL(  3, 16, 16 ),GRTBL(  4, 16, 16 ),GRTBL(  5, 16, 16 ),
+        GRTBL(  6, 16, 16 ),GRTBL(  7, 16, 16 ),GRTBL(  8, 16, 16 ),
+        GRTBL(  9, 16, 16 ),GRTBL( 10, 16, 16 ),GRTBL( 11, 16, 16 ),
+        GRTBL( 12, 16, 16 ),GRTBL( 13, 16, 16 ),GRTBL( 14, 16, 16 ),
+        GRTBL( 15, 16, 16 ),GRTBL( 16, 16, 16 ),GRTBL( 17, 16, 16 ),
+        GRTBL( 18, 16, 16 ),GRTBL( 19, 16, 16 ),GRTBL( 20, 16, 16 ),
+        GRTBL( 21, 16, 16 ),GRTBL( 22, 16, 16 ),GRTBL( 23, 16, 16 ),
+        GRTBL( 24, 16, 16 ),GRTBL( 25, 16, 16 ),GRTBL( 26, 16, 16 ),
+        GRTBL( 27, 16, 16 ),GRTBL( 28, 16, 16 ),GRTBL( 29, 16, 16 ),
+        GRTBL( 30, 16, 16 ),GRTBL( 31, 16, 16 ),
+    };
+    
+    slSetGouraudTbl( GourTbl );
+【参  照】
+    slInitGouraud, slGouraudTblCopy, slSetGouraudTbl, slPutPolygonX
+    slSetGouraudColor
+
+
+slSetGouraudColor -- 関数
+    slSetGouraudColor - リアルタイムグーロー用光源色の設定。
+【書  式】
+    #include "sgl.h"
+
+    Uint16 col;
+
+    void slSetGouraudColor( col );
+【引  数】
+    Uint16 col - 光源色。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    リアルタイムグーロー用の光源色を設定します。
+    slSetGouraudTbl関数の設定は無視されます。
+【用  例】
+    Uint16  gr_data;
+
+    gr_data = (((b&0x1f)<<10) | ((g&0x1f)<<5) | (r&0x1f) )
+    slSetGouraudColor( gr_data );
+【参  照】
+    slInitGouraud, slGouraudTblCopy, slSetGouraudTbl, slPutPolygonX
+    slSetGouraudColor
+
+
+★光源の設定
+slLight -- 関数
+    slLight - 環境光線ベクトルの設定。
+【書  式】
+    #include "sgl.h"
+
+    VECTOR light;
+
+    void slLight( light );
+【引  数】
+    VECTOR light - 光線のベクトル。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    光源の方向を設定します。
+【用  例】
+    VECTOR vec = { toFIXED( 0.05 ), toFIXED( 0.07 ), toFIXED( 0.65 ) };
+    slLight( vec );
+【注  意】
+    光源は平行光線で、方向のみを表しますが、ベクトルは単位ベクトルでなければ
+    いけません。大きさが1を越えた場合、オーバーフローしますので、正しく表示
+    できません(おかしなカラーで表示されます)。
+    また、モデルを表示するときに slScale() を使用していると 法線も同様に
+    スケーリングされてしまうため、オーバーフローしてしまう場合がありますので、
+    スケーリングしないようにしてください。
+【参  照】
+    slPutPolygon, slPutPolygonS, slPutPolygonX, slDispPolygon
+    slPutObject, ComWrPtr, ComRdPtr, MsLightVector
+    slSetFlatColor -- 関数
+    slSetFlatColor - フラットシェーディング用光源色の設定。
+【書  式】
+    #include "sgl.h"
+
+    Uint16 col;
+
+    void slSetFlatColor( col );
+【引  数】
+    Uint16 col - 光源色。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    通常光源の光源色を設定します。(UseLightの光源)
+【用  例】
+    slSetFlatColor( C_RGB( 0, 5, 2 ) );
+【参  照】
+    slPutPolygon, slPutPolygonS, slDispPolygon, slPutObject
+    slSetAmbient -- 関数
+    slSetAmbient - 環境光源色の設定。
+【書  式】
+    #include "sgl.h"
+
+    Uint16 col;
+
+    void slSetAmbient( col );
+【引  数】
+    Uint16 col - 環境色。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    環境光として、光源計算の最低ラインを設定します。
+    この設定は、slSetGouraudColor関数, slSetFlatColor関数に
+    影響します。
+    この設定の後、必ず光源色の設定を行ってください。
+    colは、標準ではRGBそれぞれ 15～-16まで変化しますが、例えばこの関数で
+    R = -10, G = -5, B = 0
+    のように設定すれば、Rは 15～-10まで変化し、本来なら-16までになるはずの
+    テーブルには-10が設定されます。
+    つまり、32段階の、下6段階は最低値が引き継がれます。
+    この設定によって指定した値より暗くなりすぎるのを防ぐことができ、環境光
+    として設定することになります。
+【用  例】
+    slSetAmbient( C_RGB( 1, 1, 1 ) );
+【注  意】
+    slSetGouraudTbl関数で直接設定したテーブルに対しては、
+    無効になります。
+【参  照】
+    slSetGouraudColor, slSetFlatColor, slInitGouraud
+
+
+★クリッピング
+slSetNearClipFlag -- 関数
+    slSetNearClipFlag - ニアクリッピングの頂点補正の設定。
+【書  式】
+    #include "sgl.h"
+
+    Uint32 flag;
+
+    void slSetNearClipFlag( flag );
+【引  数】
+    Uint32 flag - ニアクリッピングフラグ(後述)。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    ニアクリップの為の頂点補正を行うかどうかを設定します。初期値は頂点補正
+    するになっています。
+    flagには、以下のパラメータが入ります。
+      0 : 補正しない
+      1 : 補正する(初期値)
+【用  例】
+    slSetNearClipFlag( 0 );
+【注  意】
+    ニアクリップを使用しないタイプのゲームでは、0(補正しない)を選択することで、
+    演算速度を向上させることが出来ます。
+【参  照】
+    slWindowClipLevel, ComWrPtr, ComRdPtr
+
+
+slWindowClipLevel -- 関数
+    slWindowClipLevel - ニアクリッピングレベルの設定。
+【書  式】
+    #include "sgl.h"
+
+    Sint32 level;
+
+    void slWindowClipLevel( level );
+【引  数】
+    Sint32 level - クリッピング値(後述)。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    ニアクリップを設定してあるポリゴンは、4点とも画面外のとき表示を
+    行いません。このとき、4点とも画面外でも画面の角にかかるポリゴンを
+    表示するため、実際の画面より少し大きめで、クリッピングのチェックを
+    するための設定です。levelで設定した分だけ画面より大きめにチェックします。
+    設定する必要がある場合、値は20～50が最適と思われます。
+    画面外の数値指定(初期値は0)。
+    0が表示画面内。負数の設定も可能。
+【用  例】
+    slWindowClipLevel( 37 );
+【参  照】
+    slSetNearClipFlag, ComWrPtr, ComRdPtr
+
+
+★デプスキュー(リアルタイムグーロー)
+slSetDepthLimit -- 関数
+    slSetDepthLimit - デプスキュー範囲の設定。
+【書  式】
+    #include "sgl.h"
+
+    Uint32 near;
+    Uint16 depth;
+    Uint16 step;
+
+    void slSetDepthLimit( Uint32 near, Uint16 depth, Uint16 step )
+【引  数】
+    Uint32 near  - 手前位置
+    Uint16 depth - 深さ(2の乗数)
+    Uint16 step  - 段階(2の乗数)
+【返  数】
+    void - 何も返しません。
+【機  能】
+    デプスキューのための範囲を設定します。
+    near位置から(FIXEDではない)depthまでの範囲を、step段階で設定します。
+    depthとstepの値は乗数を設定してください。
+    例えば、5を設定すれば実際には32として扱われます。
+【用  例】
+    slSetDepthLimit( 50, 5, 2 );
+【参  照】
+    slInitGouraud, slPutPolygonX, slSetDepthTbl
+
+
+slSetDepthTbl -- 関数
+    slSetDepthTbl - デプスキューテーブルの設定。
+【書  式】
+    #include "sgl.h"
+
+    Uint16 *tbl;
+    Uint16 *addr_A;
+    Uint16 size;
+
+    void slSetDepthTbl( tbl, addr_A, size );
+【引  数】
+    Uint16 *tbl    - デプスキュー用グーローテーブル。
+    Uint16 *addr_A - グーローテーブル(絶対)アドレス。
+    Uint16 size    - テーブルサイズ。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    デプスキューのためのテーブルを設定します。
+    グーローテーブルは段階数分用意し、手前から奥に向かってデータをセット
+    します。
+    グーローアドレスgaddrはVDP1にセットするアドレスです。
+    2のstep乗がsizeと同じになるようにしてください。
+    VRAM上のグーローエリアはグーローテーブルの4倍のエリアが必要です。
+【用  例】
+    距離100から1124までを32段階に分ける
+    グーローテーブルは 0xE000にセットする。
+
+    Uint16    depthtbl[32] = {
+        ...
+    };
+    slSetDepthLimit( 100, 10, 5 );
+    slSetDepthTbl( depthtbl, 0xe000, 32 );
+【参  照】
+    slInitGouraud, slPutPolygonX, slSetDepthLimit, ComWrPtr
+    ComRdPtr
+
+
+★ポリゴンの設定
+slDispPlaneLevel -- 関数
+    slDispPlaneLevel - ポリゴン表裏判定レベルの設定。
+【書  式】
+    #include "sgl.h"
+
+    Sint32 level;
+
+    void slDispPlaneLevel( level );
+【引  数】
+    Sint32 level - ポリゴン表裏判定のレベル(初期値0)
+【返  数】
+    void - 何も返しません。
+【機  能】
+    ポリゴンの表裏判定のレベルを設定します。
+    プラスに設定すると、より裏側まで描画します。
+    マイナスにセットすると、より正面の方のみ描画します。
+【用  例】
+    slDispPlaneLevel( -10 );
+【参  照】
+    slPutPolygon, slPutPolygonS, slDispPolygon, slPutObject
+    slPutPolygonX

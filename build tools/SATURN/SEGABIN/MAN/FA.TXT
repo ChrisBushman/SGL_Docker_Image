@@ -1,0 +1,81 @@
+==============================================================================
+		FA Version 1.12  Copyright (C) 1994,1995 SEGA
+		Film解析ユーティリティ FA (Film Analyzer) 
+			　　fa.txt
+==============================================================================
+
+１．概要
+ 「Film Analyzer  FA（エフエー）」は、MovieToSaturn_Jで変換したSaturn用Cinepak
+ムービを解析するためのユーティリティプログラムです。
+
+２．機能
+・Saturn用Cinepakムービの内容を表示
+・データレート、圧縮率、キーフレーム率を計算
+・リングバッファサイズ、サウンドバッファサイズを計算
+
+３．使用環境
+・IBM PC/AT互換機
+・MS-DOS Ver.5.0以降		　　
+
+４．起動方法
+MS-DOSのコマンドプロントから
+	C>FA filename[return]
+
+５．実行例
+
+<<Film Analyzer  FA Version 1.12 Copyright(c) 1994, 1995 SEGA>>
+-------------------------------------------------------------------------
+File name       : miki1_1.cpk,    644,252 bytes,    '95-01-31 14:32
+MovieToSaturn_J : Version 1.06
+Time scale      : 1/600
+Film Comp.Type  : Cinepak
+Film header size: 3,856 bytes
+Film duration   : 00:00:08.50 (h:mm:ss.ms)
+Frame size      : W = 120, H = 80
+FrameRate       : 24.0 fps(Ave.), 24.0 fps * 204
+Tile Count      : 1
+Audio type      : PCM
+Audio duration  : 00:00:08.50 (h:mm:ss.ms)
+Audio sampling  : 11.127 kHz, 8 bits, mono
+Chroma-key      : Off, red=0, green=0, blue=0
+-------------------------------------------------------------------------
+Data rate       : 74 KB/sec(Ave.)
+Comp. ratio     :  9.290 %,   2.230 bit/pixel
+Key-Frame ratio : 24.510 %
+RingBuffer size : min. 90 KB
+PCM Buffer size : min. 16 KSample
+
+＜説明＞
+File name       : ムービのファイル名、サイズ、日付
+MovieToSaturn_J : ムービを変換したMovieToSaturn_Jのバージョン
+Time scale      : ムービを管理する単位時間
+Film Comp.Type  : ムービの圧縮方式
+Film header size: ムービのヘッダサイズ
+Film duration   : ムービの映像の総表示時間（ムービ長）
+Frame size      : ムービのフレームサイズ（ピクセル単位）
+FrameRate       : 平均フレームレートと個別フレームのレート
+Tile Count      : １フレームの分割数、 Cinepak 圧縮時に、分割された面
+　　　　　　　　　単位で、シネパックの圧縮アルゴリズムが適応される
+Audio type      : オーディオ形式（現バージョンではPCM）
+Audio duration  : オーディオ長,Film durationと同一でなければならない
+Audio sampling  : オーディオ仕様
+Chroma-key      : クロマキーオプションのon,offとクロマキー設定値
+-------------------------------------------------------------------------
+Data rate       : 平均データ転送レート
+Comp. ratio     : 圧縮率 
+Key-Frame ratio : キーフレーム率、（キーフレーム数／総フレーム）
+RingBuffer size : 確保しなければならないリングバッファサイズ
+PCM Buffer size : 確保しなければならないPCM(サウンド)バッファサイズ
+
+６．来歴
+1994/11/10  Ver1.10	･正式リリース
+1995/02/08  Ver1.11 ･非圧縮ムービへの対応
+					･表示項目の追加 (Film Comp.Type, Tile Count)
+　　　　            ･項目名の変更 (SoundBuffer -> PCM Buffer)
+                    ･44kHz 16bit Stereo のムービのリングバッファの計算
+                     の不具合を修正
+1995/06/26  Ver1.12 ･長いムービのオーディオ長がおかしくなる障害に対応した
+
+以上
+============================ end of fa.txt =================================
+

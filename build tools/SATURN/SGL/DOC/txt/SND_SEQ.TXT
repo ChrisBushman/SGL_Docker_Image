@@ -1,0 +1,509 @@
+slBGMOn -- 関数
+    slBGMOn - BGMの演奏開始
+【書  式】
+    #include "sgl.h"
+
+    Uint16 song;
+    Uint8  prio;
+    Uint8  vol;
+    Uint8  rate;
+
+    Bool slBGMOn( song, prio, vol, rate );
+【引  数】
+    Uint16 song - ソング番号。
+    Uint8  prio - プライオリティ。
+    Uint8  vol  - ボリューム。
+    Uint8  rate - フェードの割合。
+【返  数】
+    Bool - コマンドの発行が正しく行なわれたかを示すフラグ。
+【機  能】
+    BGMの演奏を開始します。BGMは常に発音管理番号0を使用します。
+    volは0から127の範囲を、rate はそのvolへのピッチを指定します。
+    rateに0を指定するとすぐにその音量になります。
+    コマンドバッファに空きがない場合、返値としてFALSEを返します。
+    それ以外の時はTRUEを返します。
+【用  例】
+    slBGMOn( 0, 4, 127, 0 );
+【注  意】
+    本関数の第2引数にプライオリティを指定する仕様となっておりますが、現在
+    サウンドドライバはシーケンスのプライオリティに対応していません。
+    従って、ここに値を指定してもシーケンスのプライオリティ制御は出来ません。
+    もし、シーケンスのプライオリティを制御するのであれば、ユーザ
+    アプリケーション側で指定する必要があります。
+    この関数は、シーケンス0番を使って曲の再生をする関数です。従って機能的には、
+    slSoundRequest( "bbbb", SND_SEQ_START, 0, Bank, Song, Prio );
+    などとするのと変わりはありません。
+【参  照】
+    slBGMCont, slBGMOff, slBGMFade, slBGMTempo
+    slBGMStat, slSequenceOn, slSequenceOff, slSequenceFade
+    slSequenceTempo, slSequencePause, slSequenceCont, slSequencePan
+    slSequenceReset, slSequenceStat
+
+
+slBGMPause -- 関数
+    slBGMPause - BGMのポーズ
+【書  式】
+    #include "sgl.h"
+
+    Bool slBGMPause( void );
+【引  数】
+    void - 何も与えません。
+【返  数】
+    Bool - コマンドの発行が正しく行なわれたかを示すフラグ。
+【機  能】
+    BGMの演奏を一時停止します。
+    コマンドバッファに空きがない場合、返値、FALSEを返し、それ以外はTRUEを
+    返します。
+【用  例】
+    slBGMPause( 3 );
+【参  照】
+    slBGMOn, slBGMCont, slBGMOff, slBGMFade
+    slBGMTempo, slBGMStat, slSequenceOn, slSequenceOff
+    slSequenceFade, slSequenceTempo, slSequencePause, slSequenceCont
+    slSequencePan, slSequenceReset, slSequenceStat
+
+
+slBGMCont -- 関数
+    slBGMCont - BGMのポーズ状態からの再開
+【書  式】
+    #include "sgl.h"
+
+    Bool slBGMCont( void );
+【引  数】
+    void - 何も与えません。
+【返  数】
+    Bool - コマンドの発行が正しく行なわれたかを示すフラグ。
+【機  能】
+    一時停止していたBGMを再開します。
+    コマンドバッファに空きがない場合、返値、FALSEを返し、それ以外はTRUEを
+    返します。
+【用  例】
+    slBGMCont();
+【参  照】
+    slBGMOn, slBGMPause, slBGMOff, slBGMFade
+    slBGMTempo, slBGMStat, slSequenceOn, slSequenceOff
+    slSequenceFade, slSequenceTempo, slSequencePause, slSequenceCont
+    slSequencePan, slSequenceReset, slSequenceStat
+
+
+slBGMOff -- 関数
+    slBGMOff - BGM演奏の中止
+【書  式】
+    #include "sgl.h"
+
+    Bool slBGMOff( void );
+【引  数】
+    void - 何も与えません。
+【返  数】
+    Bool - コマンドの発行が正しく行なわれたかを示すフラグ。
+【機  能】
+    BGMの演奏を停止します。
+    コマンドバッファに空きがない場合、返値、FALSEを返し、それ以外はTRUEを
+    返します。
+【用  例】
+    slBGMOff();
+【参  照】
+    slBGMOn, slBGMPause, slBGMCont, slBGMFade
+    slBGMTempo, slBGMStat, slSequenceOn, slSequenceOff
+    slSequenceFade, slSequenceTempo, slSequencePause, slSequenceCont
+    slSequencePan, slSequenceReset, slSequenceStat
+
+
+slBGMFade -- 関数
+    slBGMFade - BGMのフェード設定
+【書  式】
+    #include "sgl.h"
+
+    Uint8 vol;
+    Uint8 rate;
+
+    Bool slBGMFade( vol, rate );
+【引  数】
+    Uint8 vol   - 最大音量
+    Uint8 rate  - 音量の増加割合
+【返  数】
+    Bool - コマンドの発行が正しく行なわれたかを示すフラグ。
+【機  能】
+    BGMの演奏音量を指定された大きさに徐々に変更します。
+    rateに0を指定するとすぐにその音量になります。
+    コマンドバッファに空きがない場合、返値、FALSEを返し、それ以外はTRUEを
+    返します。
+【用  例】
+    slBGMFade( 127, 4 );
+【参  照】
+    slBGMOn, slBGMPause, slBGMCont, slBGMOff
+    slBGMTempo, slBGMStat, slSequenceOn, slSequenceOff
+    slSequenceFade, slSequenceTempo, slSequencePause, slSequenceCont
+    slSequencePan, slSequenceReset, slSequenceStat
+
+
+slBGMTempo -- 関数
+    slBGMTempo - BGMのテンポ変更
+【書  式】
+    #include "sgl.h"
+
+    Sint16 tempo;
+
+    Bool slBGMTempo( tempo );
+【引  数】
+    Sint16 tempo - BGMのテンポ
+【返  数】
+    Bool - コマンドの発行が正しく行なわれたかを示すフラグ。
+【機  能】
+    BGMのテンポを変更します。0を元のテンポとして、1000H上下するとテンポは、
+    倍又は半分になります。
+    0を与えればもともと曲が持っているテンポに戻ります。
+    コマンドバッファに空きがない場合、返値、FALSEを返し、それ以外はTRUEを
+    返します。
+【用  例】
+    slBGMTempo( -50 );
+【参  照】
+    slBGMOn, slBGMPause, slBGMCont, slBGMOff
+    slBGMFade, slBGMStat, slSequenceOn, slSequenceOff
+    slSequenceFade, slSequenceTempo, slSequencePause, slSequenceCont
+    slSequencePan, slSequenceReset, slSequenceStat
+
+
+slBGMStat -- 関数
+    slBGMStat - BGMの再生状態の調査
+【書  式】
+    #include "sgl.h"
+
+    Bool slBGMStat( void );
+【引  数】
+    void - 何も与えません。
+【返  数】
+    Bool - コマンドの発行が正しく行なわれたかを示すフラグ。
+【機  能】
+    BGMが再生中であるかを調べフラグを返します。
+    再生中(ポーズ中でも)の場合にはTRUE、停止していればFALSEが返ります。
+【用  例】
+    if ( slBGMStat() == TRUE) {
+      /* 再生中 */
+    } else {
+      /* 再生終了 */
+    }
+【参  照】
+    slBGMOn, slBGMPause, slBGMCont, slBGMOff
+    slBGMFade, slBGMTempo, slSequenceOn, slSequenceOff
+    slSequenceFade, slSequenceTempo, slSequencePause, slSequenceCont
+    slSequencePan, slSequenceReset, slSequenceStat
+
+
+slSequenceOn -- 関数
+    slSequenceOn - シーケンスの演奏開始
+【書  式】
+    #include "sgl.h"
+
+    Uint16 song;
+    Uint8  prio;
+    Uint8  vol;
+    Sint8  pan;
+
+    Uint8 slSequenceOn( song, prio, vol, pan );
+【引  数】
+    Uint16 song - ソング番号
+    Uint8  prio - プライオリティ
+    Uint8  vol  - 音量
+    Sint8  pan  - パン
+【返  数】
+    Uint8 - 確保されたシーケンス番号
+【機  能】
+    効果音を指定された方向(Pan)から演奏します。
+    volは0から127の範囲、panは(左 -127～0～+127 右)の範囲で指定します
+    (ただし、ハードウエア上でPanは32段階であるため、下位3ビットが無効)
+    -128 を指定した場合、Panの設定は無視されます。
+    コマンドバッファ及び、発音管理バッファに空きがない場合、FALSEを返します。
+    通常終了の場合には、発音管理番号を返します。
+【用  例】
+    slSequenceOn( bank << 8 | song, 5, 127, 0 );
+【注  意】
+    シーケンスデータにPANの設定がなされていた場合、そちらの方が、関数引数
+    より優先されます。もし、そのようなデータにプログラム側で強制的に、
+    PANの変更を加える場合、slSequenceOn関数のあとで、slSequencePan関数
+    を実行してください。
+    本関数の第2引数にプライオリティを指定する仕様となっておりますが、現在
+    サウンドドライバはシーケンスのプライオリティに対応していません。
+    従って、ここに値を指定してもシーケンスのプライオリティ制御は出来ません。
+    もし、シーケンスのプライオリティを制御するのであれば、ユーザ
+    アプリケーション側で指定する必要があります。
+【参  照】
+    slBGMOn, slBGMCont, slBGMOff, slBGMFade
+    slBGMTempo, slBGMStat, slSequenceOff, slSequenceFade
+    slSequenceTempo, slSequencePause, slSequenceCont, slSequencePan
+    slSequenceReset, slSequenceStat, slSndFlush
+
+
+slSequenceOff -- 関数
+    slSequenceOff - シーケンスの演奏中止
+【書  式】
+    #include "sgl.h"
+
+    Uint8 seq;
+
+    Bool slSequenceOff( seq );
+【引  数】
+    Uint8 seq - シークエンス番号。
+【返  数】
+    Bool - コマンドの発行が正しく行なわれたかを示すフラグ。
+【機  能】
+    指定された効果音の演奏を停止します。
+    成功すればTRUEを、失敗すればFALSEを返値として返します。
+【用  例】
+    slSequenceOff( 3 );
+【参  照】
+    slBGMOn, slBGMCont, slBGMOff, slBGMFade
+    slBGMTempo, slBGMStat, slSequenceOn, slSequenceFade
+    slSequenceTempo, slSequencePause, slSequenceCont, slSequencePan
+    slSequenceReset, slSequenceStat, slSndFlush
+
+
+slSequenceFade -- 関数
+    slSequenceFade - シーケンスのフェード設定
+【書  式】
+    #include "sgl.h"
+
+    Uint8 seq;
+    Uint8 vol;
+    Uint8 rate;
+
+    Bool slSequenceFade( seq, vol, rate );
+【引  数】
+    Uint8 seq  - 発音管理番号
+    Uint8 vol  - 最大音量
+    Uint8 rate - 音量の変化の割合
+【返  数】
+    Bool - コマンドの発行が正しく行なわれたかを示すフラグ。
+【機  能】
+    指定された効果音に対しボリュームコントロールをします。
+    発音管理番号、音量、ピッチを指定します。
+    成功すればTRUEを、失敗すればFALSEを返値として返します。
+【用  例】
+    slSequenceFade( 5, 120, 3 );
+【参  照】
+    slBGMOn, slBGMCont, slBGMOff, slBGMFade
+    slBGMTempo, slBGMStat, slSequenceOn, slSequenceOff
+    slSequenceTempo, slSequencePause, slSequenceCont, slSequencePan
+    slSequenceReset, slSequenceStat, slSndFlush
+
+
+slSequenceTempo -- 関数
+    slSequenceTempo - シーケンスのテンポ設定
+【書  式】
+    #include "sgl.h"
+
+    Uint8  seq;
+    Uint16 tempo;
+
+    Bool slSequenceTempo( seq, tempo );
+【引  数】
+    Uint8  seq   - 発音管理番号
+    Uint16 tempo - テンポ
+【返  数】
+    Bool - コマンドの発行が正しく行なわれたかを示すフラグ。
+【機  能】
+    指定された効果音に対しテンポを変更します。0を元のテンポとして、
+    1000H上下するとテンポは、発音管理番号、テンポを指定します。
+    成功すればTRUEを、失敗すればFALSEを返値として返します。
+【用  例】
+    slSequenceTempo( 4, 100 );
+【参  照】
+    slBGMOn, slBGMCont, slBGMOff, slBGMFade
+    slBGMTempo, slBGMStat, slSequenceOn, slSequenceOff
+    slSequenceFade, slSequencePause, slSequenceCont, slSequencePan
+    slSequenceReset, slSequenceStat, slSndFlush
+
+
+slSequencePause -- 関数
+    slSequencePause - シーケンス演奏の一時停止
+【書  式】
+    #include "sgl.h"
+
+    Uint8 seq;
+
+    Bool slSequencePause( seq );
+【引  数】
+    Uint8 seq - 発音管理番号。
+【返  数】
+    Bool - コマンドの発行が正しく行なわれたかを示すフラグ。
+【機  能】
+    指定された効果音の演奏を一時停止します。
+    成功すればTRUEを、失敗すればFALSEを返値として返します。
+【用  例】
+    slSequencePause( 2 );
+【参  照】
+    slBGMOn, slBGMCont, slBGMOff, slBGMFade
+    slBGMTempo, slBGMStat, slSequenceOn, slSequenceOff
+    slSequenceFade, slSequenceTempo, slSequenceCont, slSequencePan
+    slSequenceReset, slSequenceStat, slSndFlush
+
+
+slSequenceCont -- 関数
+    slSequenceCont - シーケンス演奏の再開
+【書  式】
+    #include "sgl.h"
+
+    Uint8 seq;
+
+    Bool slSequenceCont( seq );
+【引  数】
+    Uint8 seq - 発音管理番号。
+【返  数】
+    Bool - コマンドの発行が正しく行なわれたかを示すフラグ。
+【機  能】
+    一時停止していた効果音を再開します。
+    成功すればTRUEを、失敗すればFALSEを返値として返します。
+【用  例】
+    slSequenceCont( 6 );
+【参  照】
+    slBGMOn, slBGMCont, slBGMOff, slBGMFade
+    slBGMTempo, slBGMStat, slSequenceOn, slSequenceOff
+    slSequenceFade, slSequenceTempo, slSequenceFade, slSequencePan
+    slSequenceReset, slSequenceStat, slSndFlush
+
+
+slSequencePan -- 関数
+    slSequencePan - シーケンスのパン設定。
+【書  式】
+    #include "sgl.h"
+
+    Uint8 seq;
+    Uint8 pan;
+【引  数】
+    Uint8 seq - 発音管理番号
+    Uint8 pan - パン
+
+    Bool slSequencePan( seq, pan );
+【返  数】
+    Bool - コマンドの発行が正しく行なわれたかを示すフラグ。
+【機  能】
+    効果音の方向を指定します。
+    panは(左 -127～0～+127 右)の範囲で指定します(下位3ビットは無効)。
+    -128 を指定した場合、panの設定は無視されます。
+    成功すればTRUEを、失敗すればFALSEを返値として返します。
+【用  例】
+    slSequencePan( 5, 65 );
+【参  照】
+    slBGMOn, slBGMCont, slBGMOff, slBGMFade
+    slBGMTempo, slBGMStat, slSequenceOn, slSequenceOff
+    slSequenceFade, slSequenceTempo, slSequenceFade, slSequenceCont
+    slSequenceReset, slSequenceStat, slSndFlush
+
+
+slSequenceReset -- 関数
+    slSequenceReset - シーケンスの演奏状態の初期化
+【書  式】
+    #include "sgl.h"
+
+    Uint8 seq;
+
+    Bool slSequenceReset( seq );
+【引  数】
+    Uint8 seq - 発音管理番号
+【返  数】
+    Bool - コマンドの発行が正しく行なわれたかを示すフラグ。
+【機  能】
+    指定された発音番号のボリューム、テンポ、Panを初期化します。
+    ボリュームは最大、テンポは通常、Panは非制御となります。
+    成功すればTRUEを、失敗すればFALSEを返値として返します。
+【用  例】
+    slSequenceReset( 5 );
+【参  照】
+    slBGMOn, slBGMCont, slBGMOff, slBGMFade
+    slBGMTempo, slBGMStat, slSequenceOn, slSequenceOff
+    slSequenceFade, slSequenceTempo, slSequenceFade, slSequenceCont
+    slSequencePan, slSequenceStat, slSndFlush
+
+
+slSequenceStat -- 関数
+    slSequenceStat - シーケンスの演奏状態の調査
+【書  式】
+    #include "sgl.h"
+
+    Uint8 seq;
+
+    Bool slSequenceStat( seq );
+【引  数】
+    Uint8 seq - シーケンス番号
+【返  数】
+    Bool - コマンドの発行が正しく行なわれたかを示すフラグ。
+【機  能】
+    指定された発音番号のシーケンスが再生中であるかを調べフラグを返します。
+    再生中(ポーズ中でも)の場合にはTRUE、停止していればFALSEが返ります。
+【用  例】
+    if ( slSequenceStat( 4 ) == TRUE ) {
+      /* 再生中 */
+    } else {
+      /* 再生終了 */
+    }
+【参  照】
+    slBGMOn, slBGMCont, slBGMOff, slBGMFade
+    slBGMTempo, slBGMStat, slSequenceOn, slSequenceOff
+    slSequenceFade, slSequenceTempo, slSequenceFade, slSequenceCont
+    slSequencePan, slSequenceReset, slSndFlush
+
+
+slSndMapChange -- 関数
+    slSndMapChange - マップチェンジ
+【書  式】
+    #include "sgl.h"
+
+    Uint8 map;
+
+    void *slSndMapChange( map );
+【引  数】
+    Uint8 map - マップ番号。
+【返  数】
+    void* - カレントサウンドマップのアドレス。
+【機  能】
+    カレントサウンドマップを変更します。
+    サウンドデータを転送後、ワーク領域の転送済みビットをセットしてください。
+    戻り値はパラメータをセットしたコマンドバッファのアドレスです。
+    コマンドバッファに空きがない場合、NULLを返します。
+【用  例】
+    typedef struct sndmap{
+      Sint8 ID;
+      Sint8 ST_Addr[ 3 ];
+      Sint8 LdFlag;
+      Sint8 AR_Size[ 3 ];
+    }SOUNDMAP;
+
+    void init_sound(){
+      SOUNDMAP *smptrs, *smptrd;
+
+      /* カレントマップが切り替わるのを待つ */
+      slWaitSound( slSndMapChange( 1 ) );
+      smptrs = (SOUNDMAP *)soundmap;
+      smptrd = (SOUNDMAP *)SoundCTRL;
+      while(smptrs->ID >= 0){
+        smptrd->LdFlag = -1;        /* Map Load Flag */
+        smptrs++;
+        smptrd++;
+      }
+      slDMACopy( sounddat, ( void * )( SoundSeqBuf ), sizeof( sounddat ) );
+    }
+【参  照】
+    slWaitSound, slSndFlush, SoundRdCount
+
+
+slSndSeqNum -- 関数
+    slSndSeqNum - 空いている発音管理番号を調べる
+【書  式】
+    #include "sgl.h"
+
+    Uint8 slSndSeqNum( void );
+【引  数】
+    void - 何も与えません。
+【返  数】
+    Uint8 - 空いている発音管理番号
+【機  能】
+    空いている発音管理番号を返します。
+    空きがない場合には0が、正常終了した場合には1～7が返されます。
+【用  例】
+    if ( slSndSeqNum() > 0 ) {
+      slSequenceOn(...
+    } 
+【参  照】
+    slSequenceOn, slSequenceOff, slSequenceFade, slSequenceTempo
+    slSequencePause, slSequenceCont, slSequencePan, slSequenceReset
+    slSequenceStat

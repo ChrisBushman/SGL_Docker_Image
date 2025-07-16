@@ -1,0 +1,12 @@
+#
+#■このファイルは makefile から include されます。
+#  TARGET にはライブラリのファイル名を指定してください。
+#  OBJS にはライブラリを作るための dependencies を指定してください。
+#
+TARGET=	sega_spr.a
+
+OBJS=	$(OBJDIR)/spr_slv.o\
+		$(OBJDIR)/spr_1c.o\
+		$(OBJDIR)/spr_2c.o\
+		$(OBJDIR)/spr_2a.o
+

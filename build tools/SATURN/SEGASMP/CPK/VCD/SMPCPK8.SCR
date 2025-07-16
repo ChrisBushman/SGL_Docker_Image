@@ -1,0 +1,52 @@
+Disc SMPCPK8.DSK
+CatalogNo 0
+Session SEMIXA
+LeadIn MODE1
+EndLeadIn
+	Track MODE1
+        Volume ISO9660 SMPCPK8.PVD
+            PrimaryVolume 0:2:16
+            EndPrimaryVolume
+        EndVolume
+		File SDDRVS.TSK
+			FileSource SDDRVS.TSK
+			EndFileSource
+		EndFile
+		File BOOTSND.MAP
+			FileSource BOOTSND.MAP
+			EndFileSource
+		EndFile
+		File SAMPLE0.CPK
+			FileSource SAMPLE0.CPK
+			EndFileSource
+		EndFile
+	EndTrack
+	Track MODE2
+		Extent
+			FileInterleave 1 2
+				File SAMPLE1.CPK
+					FileSource SAMPLE1.CPK
+					EndFileSource
+				EndFile
+			EndFileInterleave
+			FileInterleave 1 2
+				File SAMPLE2.CPK
+					FileSource SAMPLE2.CPK
+					EndFileSource
+				EndFile
+			EndFileInterleave
+			FileInterleave 1 2
+				File SAMPLE3.CPK
+					FileSource SAMPLE3.CPK
+					EndFileSource
+				EndFile
+			EndFileInterleave
+		EndExtent
+		PostGap 75
+	EndTrack
+LeadOut MODE2
+	Empty 300
+EndLeadOut
+EndSession
+EndDisc
+

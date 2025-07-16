@@ -1,0 +1,6 @@
+..\VCDMKTOC.EXE %1 %2 %3 %4 %5 %6 %7 %8 %9
+ECHO %1
+ECHO %2
+ECHO %3
+ECHO %4
+ECHO %5

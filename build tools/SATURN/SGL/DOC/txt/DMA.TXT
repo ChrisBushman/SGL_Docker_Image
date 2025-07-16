@@ -1,0 +1,152 @@
+slDMACopy -- 関数
+    slDMACopy - DMAを使ったメモリ転送。
+【書  式】
+    #include "sgl.h"
+
+    void   *src_A;
+    void   *dest_A;
+    Uint32 size;
+
+    void slDMACopy( src_A, dest_A, size );
+【引  数】
+    void   *src_A  - 元データのあるアドレス。
+    void   *dest_A - 転送先アドレス。
+    Uint32 size    - 転送するサイズ(バイト)。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    CPUに内蔵された DMAを使用してブロック転送を行います。
+【用  例】
+    slDMACopy( high_ram, vdp2, size );
+【注  意】
+    この関数は DMAを起動後、すぐに終了するため、転送が完了するのを知りたい
+    場合には「slDMAWait」関数を使用してください。
+【参  照】
+    slDMAWait
+
+
+slDMAXCopy -- 関数
+    slDMAXCopy - DMAを使ったメモリ転送。
+【書  式】
+    #include "sgl.h"
+
+    void   *src_A;
+    void   *dest_A;
+    Uint32 size;
+    Uint16 mode;
+
+    void slDMAXCopy( src_A, dest_A, size, mode );
+【引  数】
+    void   *src_A  - 元データのあるアドレス。
+    void   *dest_A - 転送先アドレス。
+    Uint32 size    - 転送するサイズ(転送サイズ単位)。
+    Uint16 mode    - 転送モード(後述)。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    CPUに内蔵された DMAを使用してブロック転送を行います。
+    引数は上記 slDMACopyと同様ですが、 mode は 以下の様に指定します。
+    mode :
+      SourceMode_DestinationMode_Size の形式で、
+      SourceMode :
+        Sinc : 転送元アドレスを増やしながら転送します。
+        Sdec : 転送元アドレスを減らしながら転送します。
+        Sfix : 転送元アドレスを固定して転送します。
+      DestinationMode :
+        Dinc : 転送先アドレスを増やしながら転送します。
+        Ddec : 転送先アドレスを減らしながら転送します。
+        Dfix : 転送先アドレスを固定して転送します。
+      Size :
+        Byte : 1バイトごとに転送します。
+        Word : 2バイトごとに転送します。
+        Long : 4バイトごとに転送します。
+【用  例】
+    ある領域を0で埋める。
+    Uint32 dest = 0;
+    slDMAXCopy( src, &dest, size, Sfix_Dinc_Long );
+【注  意】
+    アドレスの変更は転送単位が終るごとに実行されるため、減算を指定した場合、
+    まず指定先に転送し、アドレスを減らして、次の転送を行いますので、注意して
+    ください。
+【参  照】
+    slDMACopy, slDMAWait, DMASt_CPU0
+
+
+slDMAWait -- 関数
+    slDMAWait - DMAの転送待ち。
+【書  式】
+    #include "sgl.h"
+
+    void slDMAWait();
+【引  数】
+    void - 何も渡しません。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    slDMACopy, slDMAXCopyで起動されたDMAの終了を待ちます。
+【用  例】
+    slDMACopy( src0, dst0, cnt0 );  /* ひとつ目の転送リクエスト       */
+    slDMACopy( src1, dst1, cnt1 );  /* ふたつ目の転送リクエスト       */
+                                    /*   (ひとつ目終了後実行される)   */
+    slDMACopy( src2, dst2, cnt2);   /* みっつ目の転送リクエスト(同上) */
+
+    slDMAWait();                    /* みっつ目の転送終了待ち */
+【注  意】
+    slDMACopy, slDMAXCopyは常に同じチャンネルを使用し、もし
+    実行中であれば、転送終了を待って新しい転送を起動しますので、続けて
+    実行することができます。
+【参  照】
+    slDMACopy, slDMAXCopy
+
+
+slDMAStatus -- 関数
+    slDMAStatus - DMAの起動状態。
+【書  式】
+    #include "sgl.h"
+
+    Bool slDMAStatus();
+【引  数】
+    void - 何も渡しません。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    上記の slDMACopy, slDMAXCopyが実行中であるか調べ状態を
+    返します。
+    動作中であればON、終了していればOFFを返します。
+【用  例】
+    slDMACopy( src, dest, size );
+    if ( slDMAStatus() == ON ) {
+                    :
+    } else {
+                    :
+    }
+【参  照】
+    slDMACopy, slDMAXCopy, slDMAWait
+
+
+slCashPurge -- 関数
+    slCashPurge - キャッシュの初期化。
+【書  式】
+    #include "sgl.h"
+
+    void slCashPurge();
+【引  数】
+    void - 何も渡しません。
+【返  数】
+    void - 何も返しません。
+【機  能】
+    CPU内蔵のキャッシュをクリアします。DMA転送等によりキャッシュ領域
+    の変更があった場合等に使用します。
+【用  例】
+    *( Uint32 * )( 0x26020000 ) = 0x25e09990;
+              :
+    slCashPurge();
+    test = *( Uint32 * )( 0x6020000 );
+【注  意】
+    slDMACopy及び、slDMAXCopyでは、転送先がキャッシュ領域であった
+    場合、キャッシュはクリアされます。
+    又、スレーブCPUからマスターCPUのメモリを見る場合、スレーブCPUで、
+                                                      ^^^^^^^^^^^^^
+    この関数を実行してから見るようにしてください。
+【参  照】
+    slSynch

@@ -1,0 +1,22 @@
+LIBRARY ..\..\..\segalib\lib\sega_mth.lib
+LIBRARY ..\..\..\segalib\lib\sega_spr.lib
+LIBRARY ..\..\..\segalib\lib\sega_scl.lib
+LIBRARY ..\..\..\segalib\lib\sega_dma.lib
+LIBRARY ..\..\..\segalib\lib\sega_csh.lib
+LIBRARY ..\..\..\segalib\lib\sega_cdc.lib
+LIBRARY ..\..\..\segalib\lib\sega_gfs.lib
+LIBRARY ..\..\..\segalib\lib\sega_stm.lib
+LIBRARY ..\..\..\segalib\lib\sega_snd.lib
+LIBRARY ..\..\..\segalib\lib\sega_cpk.lib
+LIBRARY ..\..\..\segalib\lib\sega_int.lib
+LIBRARY ..\..\..\segalib\lib\sega_sys.lib
+LIBRARY ..\..\..\sh\lib\shcnpic.lib
+OUTPUT sh.abs
+PRINT  sh.map
+INPUT ..\..\..\segasmp\lib\strt1_h.obj
+INPUT ..\..\..\segasmp\lib\strt2_h.obj
+INPUT main.obj
+START P,SEGA_P,C,SEGA_C,D,B,SEGA_B(06010000)
+FORM A
+EXIT
+

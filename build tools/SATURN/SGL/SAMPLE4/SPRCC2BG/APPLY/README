@@ -1,0 +1,53 @@
+1997-04-08
+セガ テクニカルサポート
+
+
+付属のサンプルプログラムは、
+・NBG と ラインカラーとのカラー演算
+・スプライトとＢＧとのカラー演算
+です。
+操作方法等については、MAIN.C の先頭にドキュメント化してありますので、
+そちらを参照して下さい。
+
+
+以下は、カラー演算機能を使用する際の簡単なＦＡＱとなります。
+
+
+Ｑ：ＢＧ面に対してカラー演算を使用する方法は？
+Ａ：カラー演算機能には幾つかモードがありますが、最も簡単な方法ですと
+    次のようになります。
+
+例１）NBG0の下にある画像全てを 50% の割合でカラー演算する場合
+       slColRate( scnNBG0 , CLRate16_16 );
+       slColorCalc( CC_RATE |CC_TOP| NBG0ON ); ← トップ画像側で演算割合を指定
+
+例２）NBG0 の下にある画像毎に違う演算割合でカラー演算する場合
+       slColRate(NBG1ON , Uint16 rate); ←必要な画面の分、
+       slColRate(NBG2ON , Uint16 rate); ←個別に設定して下さい。
+                   :                    ←
+       slColRate(SPRON  , Uint16 rate); ←
+       slColorCalc( CC_RATE |CC_2ND| NBG0ON );
+                               ↑
+                             セカンド画像側で演算割合を指定
+
+＜使用方法＞void slColorCalc(Uint16 flag)
+  機能 : カラー演算のためのパラメータを設定します。
+    flag :  CC_RATE | CC_ADD                : 演算方法
+            CC_TOP | CC_2ND                 : 演算割合指定画面
+            CC_EXT                          : 拡張カラー演算
+            NBG0ON | NBG1ON | NBG2ON | NBG3ON | RBG0ON | LNCLON | SPRON : 登録面
+        使用する機能に応じて上記の値を "|" でつないで指定して下さい。
+
+＜使用方法＞void slColRate(Uint16 scrn , Uint16 rate)
+  機能 : 各画面のカラー演算割合を指定します。
+    scrn : scnNBG0 , scnNBG1 , scnNBG2 , scnNBG3 , scnRBG0 , scnLNCL , scnBACK
+           scnSPR0 , scnSPR1 , scnSPR2 , scnSPR3 , scnSPR4 , scnSPR5 , scnSPR6
+            , scnSPR7
+       のいずれか１つを指定します。
+    rate :演算割合を指定します。（３２段階）    CLRate31_1 ～ CLRate0_32
+
+各関数の詳細やREFERENCE マニュアルに記載されていない関数については、
+  [SGL\DOC\SCROLL.TXT]を
+御参照のうえ、不明な点はテクニカルサポート宛てに御質問ください。
+
+

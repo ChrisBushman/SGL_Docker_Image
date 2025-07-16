@@ -1,0 +1,11 @@
+l 6080000;m:..\sddrvs.tsk
+l 6020000;m:boottone.bnk
+l 6025000;m:bootse.bnk
+l 6025400;m:pitch.bnk
+l 6028000;m:bootse.exb
+l 6028600;m:vc_ps.exb
+l 6028c00;m:surround.exb
+l 6029200;m:3bandana.exb
+l 6029800;m:bootsnd.mp
+l 6010000;m:sh.bin
+

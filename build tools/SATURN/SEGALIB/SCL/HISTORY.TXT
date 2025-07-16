@@ -1,0 +1,18 @@
+1995.11.06 scl_func.c SCL_RotateInit() vsync周り処理改善(address error 対策)
+1995.07.09 scl_func.c SCL_CopyReg() write only resisterへの書き込む不具合修正
+1995.08.31 scl_pr03.c 
+           extern void SCL_SetColRamOffset(Uint32 Object, Uint32 Offset,\
+           Uint8 transparent); 追加。
+1995.08.31 scl_pri.c 
+           extern void  SCL_SetColRam(Uint32 Object, Uint32 Index,Uint32 num,
+                  void *Color); 追加。
+1996.10.22 scl_SCL_JU05.C
+         、SCL_SetLineParam()
+           Line 116:
+           addr = &Scl_n_reg.lineaddr[0];
+	   addr1 = &Scl_n_reg.celladdr;
+           ↓
+           	Scl_n_reg.celladdr = (lp->cell_addr / 2) & 0x0007ffff;;
+           Line 120:削除
+           		addr = &Scl_n_reg.lineaddr[1];
+          

@@ -1,0 +1,54 @@
+all:	sddrvs.tsk
+
+sddrvs.tsk:	TRGT.OBJ CHG.OBJ LED.OBJ HOST.OBJ INT_MIDI.OBJ MIDI.OBJ NON.OBJ NOFF.OBJ INIT.OBJ TABLE.OBJ SDMAIN.OBJ SDDRV.OBJ SDCOM.OBJ DEC2.OBJ DSP3D.OBJ SEGA.OBJ
+		l68 sddrvs.lnk -d
+
+TRGT.OBJ:	trgt.asm scsp.lib
+		x68k -q $*
+
+CHG.OBJ:	chg.asm scsp.lib
+		x68k -q $*
+
+LED.OBJ:	led.asm scsp.lib
+		x68k -q $*
+
+HOST.OBJ:	host.asm scsp.lib
+		x68k -q $*
+
+INT_MIDI.OBJ:	int_midi.asm scsp.lib
+		x68k -q $*
+
+MIDI.OBJ:	midi.asm scsp.lib
+		x68k -q $*
+
+NON.OBJ:	non.asm scsp.lib
+		x68k -q $*
+
+NOFF.OBJ:	noff.asm scsp.lib
+		x68k -q $*
+
+INIT.OBJ:	init.asm scsp.lib
+		x68k -q $*
+
+TABLE.OBJ:	table.asm scsp.lib
+		x68k -q $*
+
+SDMAIN.OBJ:	sdmain.asm scsp.lib
+		x68k -q $*
+
+SDDRV.OBJ:	sddrv.asm scsp.lib
+		x68k -q $*
+
+SDCOM.OBJ:	sdcom.asm scsp.lib
+		x68k -q $*
+
+DEC2.OBJ:	dec2.asm scsp.lib
+		x68k -q $*
+
+SEGA.OBJ:	sega.asm scsp.lib
+		x68k -q $*
+
+DSP3D.OBJ:	dsp3d.asm scsp.lib
+		x68k -q $*
+
+

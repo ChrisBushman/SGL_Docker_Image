@@ -1,0 +1,853 @@
+
+
+★基本データ型
+Uint8 -- データ型
+    Uint8 -  符号なし1バイト整数
+【機  能】
+    typedef unsigned char Uint8;
+
+
+Sint8 -- データ型
+    Sint8 -  符号つき1バイト整数
+【機  能】
+    typedef signed char  Sint8;
+
+
+Uint16 -- データ型
+    Uint16 -  符号なし2バイト整数
+【機  能】
+    typedef unsigned short Uint16;
+
+
+Sint16 -- データ型
+    Sint16 -  符号つき2バイト整数
+【機  能】
+    typedef signed short Sint16;
+
+
+Uint32 -- データ型
+    Uint32 -  符号なし4バイト整数
+【機  能】
+    typedef unsigned long Uint32;
+
+Sint32 -- データ型
+    Sint32 -  符号付き4バイト整数
+【機  能】
+    typedef signed long Sint32;
+
+
+Float32 -- データ型
+    Float32 -  4バイト実数
+【機  能】
+    typedef float Float32;
+
+
+Float64 -- データ型
+    Float64 -  8バイト実数
+【機  能】
+    typedef double Float64;
+
+
+Int -- データ型
+    Int - INT型
+【機  能】
+    typedef int Int;
+
+
+Bool -- データ型
+    Int - 論理型(論理定数を値にとる)
+【機  能】
+    typedef int Bool;
+
+
+★応用データ型
+ANGLE -- データ型
+    ANGLE - 一周360度を16ビットで表す
+【機  能】
+    typedef Sint16 ANGLE;
+
+
+FIXED -- データ型
+    FIXED - 上位16ビットで整数部、下位16ビットで小数部を表す固定小数点型
+【機  能】
+    typedef  Sint32  FIXED;
+
+
+MATRIX -- データ型
+    MATRIX - マトリクスデータ
+【機  能】
+    typedef  FIXED  MATRIX[4][3];
+
+
+VECTOR -- データ型
+    VECTOR - ベクトルデータ
+【機  能】
+    typedef  FIXED  VECTOR[XYZ];
+
+
+POINT -- データ型
+    POINT - 頂点の位置データ
+【機  能】
+    typedef  FIXED   POINT[XYZ];
+
+
+TEXDAT -- データ型
+    TEXDAT - テクスチャデータ
+【機  能】
+    typedef  Uint16  TEXDAT;
+
+
+GOURAUDTBL -- データ型
+    GOURAUDTBL - グーローシェーディングテーブル
+【機  能】
+    typedef Uint16 GOURAUDTBL[4];
+
+
+CELL -- データ型
+    CELL - 1セルの大きさ
+【機  能】
+    typedef  Uint16  CELL;
+
+
+DmaCpuStatus -- データ型
+    DmaCpuStatus - CPU-DMAのステータス(SBL関数使用時)
+【機  能】
+    typedef  Uint32  DmaCpuStatus;
+
+
+WORK -- 構造体
+    WORK - イベント用データコンテナ
+【構  造】
+    typedef struct work {
+      struct work *next;
+      Uint8       user[ WORK_SIZE - sizeof( struct work * ) ];
+    } WORK;
+【機  能】
+    next - 次のワークへのポインタ。
+    user  - データ本体。
+
+
+EVENT -- 構造体
+    EVENT - イベント用イベントコンテナ。
+【構  造】
+    typedef struct evnt {
+      WORK        *work;
+      struct evnt *next;
+      struct evnt *before;
+      void        ( *exad )();
+      Uint8       user[EVENT_SIZE - (sizeof(WORK *) + sizeof(struct evnt *) 
+                       * 2 + sizeof(void (*)()))] ;
+      } EVENT;
+【機  能】
+    work   - WORK構造体へのポインタ。
+    next   - 次のEVENTへのポインタ。
+    before - 前のEVENTへのポインタ。
+    exad   - コールバック関数の実行アドレス。
+    user   - ユーザ領域。
+
+
+POLYGON -- 構造体
+    POLYGON - ポリゴンデータ管理構造体
+【構  造】
+    typedef struct {
+      VECTOR norm;
+      Uint16 Vertices[4];
+    } POLYGON;
+【機  能】
+    norm     - 法線ベクトル
+    Vertices - ポリゴンを構成する頂点番号
+
+
+ATTR -- 構造体
+    ATTR - テクスチャの属性
+【構  造】
+    typedef struct {
+      Uint8  flag;
+      Uint8  sort;
+      Uint16 texno;
+      Uint16 atrb;
+      Uint16 colno;
+      Uint16 gstb;
+      Uint16 dir;
+    } ATTR;
+【機  能】
+    flag  - 片面か両面かのフラグ
+    sort  - ソートの基準位置とオプション設定 
+    texno - テクスチャ番号
+    atrb  - アトリビュートデータ(表示モード)
+    colno - カラーナンバー
+    gstb  - グーローシェーディングテーブル
+    dir   - テクスチャの反転とファンクションナンバー
+
+
+SPR_ATTR -- 構造体
+    SPR_ATTR - スプライトの属性
+【構  造】
+    typedef struct {
+      Uint16 texno;
+      Uint16 atrb;
+      Uint16 colno;
+      Uint16 gstb;
+      Uint16 dir;
+    } SPR_ATTR;
+【機  能】
+    texno - ピクチャー番号
+    atrb  - アトリビュートデータ(表示モード)
+    colno - カラーナンバー
+    gstb  - グーローシェーディングテーブル
+    dir   - テクスチャの反転とファンクションナンバー 
+
+
+PDATA -- 構造体
+    PDATA - モデルデータ管理構造体
+【構  造】
+    typedef struct {
+      POINT  *pntbl;
+      Uint32  nbPoint;
+      POLYGON *pltbl;
+      Uint32  nbPolygon;
+      ATTR    *attbl;
+   } PDATA;
+【機  能】
+    pntbl     - 頂点の位置データテーブル
+    nbPoint   - 頂点の数
+    pltbl     - ポリゴン定義テーブル
+    nbPolygon - ポリゴンの数
+    attbl     - ポリゴンのアトリビュートテーブル
+
+
+XPDATA -- 構造体
+    XPDATA - リアルタイムグーロー用モデルデータ管理構造体
+【構  造】
+    typedef struct {
+      POINT  *pntbl;
+      Uint32  nbPoint;
+      POLYGON *pltbl;
+      Uint32  nbPolygon;
+      ATTR    *attbl;
+      VECTOR  *vntbl;
+    } XPDATA;
+【機  能】
+    pntbl     - 頂点の位置データテーブル
+    nbPoint   - 頂点の数
+    *pltbl    - ポリゴン定義テーブル
+    nbPolygon - ポリゴンの数
+    attbl     - ポリゴンのアトリビュートテーブル
+    *vntbl    - 各頂点の法線ベクトルテーブル
+
+
+OBJECT -- 構造体
+    OBJECT - 階層モデル管理構造体
+【構  造】
+    typedef struct obj{
+      PDATA      *pat;
+      FIXED      pos[XYZ];
+      ANGLE      ang[XYZ];
+      FIXED      scl[XYZ];
+      struct obj *child;
+      struct obj *sibling;
+    } OBJECT;
+【機  能】
+    pat     - ポリゴンモデルデータテーブル
+    pos     - 相対位置データ
+    ang     - 回転角データ
+    scl     - スケーリングデータ
+    child   - 子オブジェクトデータへのポインタ
+    sibling - 兄弟オブジェクトデータへのポインタ
+
+
+TEXTURE -- 構造体
+    TEXTURE - スプライトデータインフォメーションインデックス
+【構  造】
+    typedef struct {
+      Uint16 Hsize;
+      Uint16 Vsize;
+      Uint16 CGadr;
+      Uint16 HVsize;
+    } TEXTURE;
+【機  能】
+    Hsize  - スプライトのHサイズ
+    Vsize  - スプライトのVサイズ
+    CGadr  - スプライトCGアドレス/8
+    HVsize - Hサイズ/8×Vサイズ(ハード用)
+
+
+PICTURE -- 構造体
+    PICTURE - スプライト用ピクチャーデータインフォメーション
+【構  造】
+    typedef struct {
+      Uint16 texno;
+      Uint16 cmode;
+      void   *pcsrc;
+    } PICTURE;
+【機  能】
+    texno - テクスチャ番号
+    cmode - カラーモード
+    pcsrc - 元データの所在
+【注  意】
+    この構造体はテクスチャデータのVRAMへの転送時などに補助的な情報として、
+    使用されるもので、SGLのシステムの動作自体に関わるものではありません。
+
+
+SPRITE -- 構造体
+    SPRITE - VDP1コマンドテーブルと構成の同じスプライト管理用構造体
+【構  造】
+    typedef struct {
+      Uint16 CTRL;
+      Uint16 LINK;
+      Uint16 PMOD;
+      Uint16 COLR;
+      Uint16 SRCA;
+      Uint16 SIZE;
+      Sint16   XA;
+      Sint16   YA;
+      Sint16   XB;
+      Sint16   YB;
+      Sint16   XC;
+      Sint16   YC;
+      Sint16   XD;
+      Sint16   YD;
+      Uint16 GRDA;
+      Uint16 DMMY;
+    } SPRITE;
+【機  能】
+    CTRL   - コントロールファンクション
+    LINK   - リンクアドレス
+    PMOD   - プットモード
+    COLR   - カラーデータ
+    SRCA   - CGアドレス
+    SIZE   - キャラクタサイズ
+    XA、YA - 表示位置 A
+    XB、YB - 表示位置 B
+    XC、YC - 表示位置 C
+    XD、YD - 表示位置 D
+    GRDA   - グーローシェーディングテーブル
+    DMMY   - サイズ合わせ用 ダミーデータ
+【注  意】
+    この構造体の構成は、VDP1のコマンドテーブルの構造と全く同じものです。
+    詳細については、
+    VDP1ユーザーズマニュアル 第7章「コマンド」を御覧ください。
+
+
+ROTSCROLL -- 構造体
+    ROTSCROLL - 回転パラメータテーブル
+【構  造】
+    typedef struct rdat{
+      FIXED  XST;
+      FIXED  YST;
+      FIXED  ZST;
+      FIXED  DXST;
+      FIXED  DYST;
+      FIXED  DX;
+      FIXED  DY;
+      FIXED  MATA;
+      FIXED  MATB;
+      FIXED  MATC;
+      FIXED  MATD;
+      FIXED  MATE;
+      FIXED  MATF;
+      Sint16 PX;
+      Sint16 PY;
+      Sint16 PZ;
+      Sint16 dummy0;
+      Sint16 CX;
+      Sint16 CY;
+      Sint16 CZ;
+      Sint16 dummy1;
+      FIXED  MX;
+      FIXED  MY;
+      FIXED  KX;
+      FIXED  KY;
+      Uint32 KAST;
+      Sint32 DKAST;
+      Sint32 DKA;
+    } ROTSCROLL;
+【機  能】
+    XST    - スクリーン画面スタート座標 Xst
+    YST    - スクリーン画面スタート座標 Yst
+    ZST    - スクリーン画面スタート座標 Zst
+    DXST   - スクリーン画面垂直方向座標増分 dXst
+    DYST   - スクリーン画面垂直方向座標増分 dYst
+    DX     - スクリーン画面水平方向座標増分 dX
+    DY     - スクリーン画面水平方向座標増分 dY
+    MATA   - 回転マトリクスパラメータA
+    MATB   - 回転マトリクスパラメータB
+    MATC   - 回転マトリクスパラメータC
+    MATD   - 回転マトリクスパラメータD
+    MATE   - 回転マトリクスパラメータE
+    MATF   - 回転マトリクスパラメータF
+    PX     - 視点座標 Px
+    PY     - 視点座標 Py
+    PZ     - 視点座標 Pz
+    dummy0 - VDP2の回転係数パラメータとバイト位置を合わせるためのダミー
+    CX     - 中心座標 Cx
+    CY     - 中心座標 Cy
+    CZ     - 中心座標 Cz
+    dummy1 - VDP2の回転係数パラメータとバイト位置を合わせるためのダミー
+    MX     - 平行移動量 Mx
+    MY     - 平行移動量 My
+    KX     - 拡大縮小係数 kx
+    KY     - 拡大縮小係数 ky
+    KAST   - 係数テーブルスタートアドレス KAst
+    DKAST  - 係数テーブル垂直方向アドレス増分 ΔKAst
+    DKA    - 係数テーブル水平方向アドレス増分 KA
+【注  意】
+    この構造体の構造は、VDP2の回転パラメータと全く同じです。
+    詳細については、
+      VDP2ユーザーズマニュアル 第6章「回転スクロール」の 6.3 回転パラメータ
+    を御覧ください。
+
+
+PCM -- 構造体
+    PCM - PCM再生用構造体
+【構  造】
+    typedef struct{
+      Uint8   mode;
+      Uint8   channel;
+      Uint8   level;
+      Sint8   pan;
+      Uint16  pitch;
+      Uint8   eflevelR;
+      Uint8   efselectR;
+      Uint8   eflevelL;
+      Uint8   efselectL;
+      Uint8   totalLevel;
+    } PCM;
+【機  能】
+    mode       - ステレオ/モノラル
+    channel    - 再生しているPCMのチャネル番号
+    level      - 再生ボリウム7段階
+    pan        - パン
+    pitch      - 再生ピッチ
+    eflevelR   - Rチャネルのエフェクトの度合
+    efselectR  - Rチャネルのエフェクトセレクタ
+    eflevelL   - Rチャネルのエフェクトの度合
+    efselectL  - Rチャネルのエフェクトセレクタ
+    totalLevel - 再生スロットのトータルレベル256段階
+
+SmpcDateTime -- 構造体
+    SmpcDateTime - RTC時刻情報
+【構  造】
+    typedef struct {
+      Uint16 year;
+      Uint8  month;
+      Uint8  date;
+      Uint8  hour;
+      Uint8  minute;
+      Uint8  second;
+      Uint8  dummy;
+    } SmpcDateTime;
+【機  能】
+    year   - 西暦年号
+    month  - 曜日・月
+    date   - 日
+    hour   - 時
+    minute - 分
+    second - 秒
+    dummy  - ダミー
+
+
+SmpcStatus -- 構造体
+    SmpcStatus - SMPCステータス
+【構  造】
+    typedef struct {
+      Uint8        cond;
+      Uint8        dummy1;
+      Uint16       dummy2;
+      SmpcDateTime rtc;
+      Uint8        ctg;
+      Uint8        area;
+      Uint16       system;
+      Uint32       smem;
+    } SmpcStatus;
+【機  能】
+    cond   - 状態ステータス
+    dummy1 - ダミー1
+    dummy2 - ダミー2
+    rtc    - RTC時刻
+    ctg    - カートリッジコード
+    area   - エリアコード
+    system - システムステータス
+    smem   - SMPCメモリ保持データ
+
+
+PerDigital -- 構造体
+    PerDigital - デジタルデバイス
+【構  造】
+    typedef struct {
+      Uint8  id;
+      Uint8  ext;
+      Uint16 data;
+      Uint16 push;
+      Uint16 pull;
+      Uint32 dummy2[4];
+    } PerDigital;
+【機  能】
+    id        - ペリフェラルID
+    ext       - 拡張データサイズ
+    data      - ボタン現在データ
+    push      - ボタン押下データ
+    pull      - ボタン引上データ
+    dummy2[4] - ダミー
+
+
+PerAnalog -- 構造体
+    PerAnalog - アナログデバイス
+【構  造】
+    typedef struct {
+      Uint8  id;
+      Uint8  ext;
+      Uint16 data;
+      Uint16 push;
+      Uint16 pull;
+      Uint8  x;
+      Uint8  y;
+      Uint8  z;
+      Uint8  dummy1;
+      Uint32 dummy2[3];
+    } PerAnalog;
+【機  能】
+    id        - ペリフェラルID
+    ext       - 拡張データサイズ
+    data      - ボタン現在データ
+    push      - ボタン押下データ
+    pull      - ボタン引上データ
+    x         - X軸データ絶対値
+    y         - Y軸データ絶対値
+    z         - Z軸データ絶対値
+    dummy1    - ダミー1
+    dummy2[3] - ダミー2
+
+
+
+PerPoint -- 構造体
+    PerPoint - ポインティングデバイス
+【構  造】
+    typedef struct {
+      Uint8  id;
+      Uint8  ext;
+      Uint16 data;
+      Uint16 push;
+      Uint16 pull;
+      Uint16 x;
+      Uint16 y;
+      Uint32 dummy2[3];
+    } PerPoint;
+【機  能】
+    id        - ペリフェラルID
+    ext       - 拡張データサイズ
+    data      - ボタン現在データ
+    push      - ボタン押下データ
+    pull      - ボタン引上データ
+    x         - X座標
+    y         - Y座標
+    dummy2[3] - ダミー1
+
+
+
+PerKeyBoard -- 構造体
+    PerKeyBoard - キーボードデバイス
+【構  造】
+    typedef struct {
+      Uint8  id;
+      Uint8  ext;
+      Uint16 data;
+      Uint16 push;
+      Uint16 pull;
+      Uint8  cond;
+      Uint8  code;
+      Uint16 dummy1;
+      Uint32 dummy2[3];
+    } PerKeyBoard;
+【機  能】
+    id        - ペリフェラルID
+    ext       - 拡張データサイズ
+    data      - ボタン現在データ
+    push      - ボタン押下データ
+    pull      - ボタン引上データ
+    cond      - 状態データ
+    code      - キーコード
+    dummy1    - ダミー1
+    dummy2[3] - ダミー2
+
+
+Per3DPad -- 構造体
+    Per3DPad - セガマルチコントローラ
+【構  造】
+    typedef struct {
+      Uint8   id;
+      Uint8   ext;
+      Uint16  data;
+      Uint16  push;
+      Uint16  pull;
+      Uint8   x;
+      Uint8   y;
+      Uint8   r;
+      Uint8   l;
+      Uint32  dummy2[3];
+    } Per3DPad;
+【機  能】
+    id;         /* ペリフェラルID       */
+    ext;        /* 拡張データサイズ     */
+    data;       /* ボタン現在データ     */
+    push;       /* ボタン押下データ     */
+    pull;       /* ボタン引上データ     */     
+    x;          /* X軸データ絶対値      */
+    y;          /* Y軸データ絶対値      */
+    r;          /* R軸データ絶対値      */
+    l;          /* L軸データ絶対値      */
+    dummy2[3];  /* ダミー2              */
+
+
+DmaCpuComPrm -- 構造体
+    DmaCpuComPrm - CPU-DMA転送プライオリティモード(SBL関数使用時)
+【構  造】
+    typedef struct {
+      Uint32 pr;
+      Uint32 dme;
+      Uint32 msk;
+    }DmaCpuComPrm;
+【機  能】
+    pr  - プライオリティモード
+    dme - DMAマスタイネーブル
+    msk - マスクビット
+
+
+DmaCpuPrm -- 構造体
+    DmaCpuPrm - DMAソースアドレス転送パラメータ(SBL関数使用時)
+【構  造】
+    typedef struct {
+      Uint32 sar;
+      Uint32 dar;
+      Uint32 tcr;
+      Uint32 dm;
+      Uint32 sm;
+      Uint32 ts;
+      Uint32 ar;
+      Uint32 ie;
+      Uint32 drcr;
+      Uint32 msk;
+    }DmaCpuPrm;
+【機  能】
+    sar  - DMAソースアドレス
+    dar  - DMAディスティネーションアドレス
+    tcr  - DMAトランスファカウント
+    dm   - ディスティネーションアドレスモードビット
+    sm   - ソースアドレスモードビット
+    ts   - トランスファサイズ
+    ar   - オートリクエストモード
+    ie   - インタラプトイネーブル
+    drcr - DMA要求／応答選択制御
+    msk  - マスクビット
+
+
+DmaCpuComStatus -- 構造体
+    DmaCpuComStatus - CPU-DMA共通ステータス(SBL関数使用時)
+【構  造】
+    typedef struct {
+      Uint32 ae;
+      Uint32 nmif;
+    }DmaCpuComStatus;
+【機  能】
+    ae   - アドレスエラーフラグ
+    nmif - NMIフラグ
+
+
+DmaScuPrm -- 構造体
+    DmaScuPrm - SCU-DMA転送パラメータ(SBL関数使用時)
+【構  造】
+    typedef struct {
+      Uint32 dxr;
+      Uint32 dxw;
+      Uint32 dxc;
+      Uint32 dxad_r;
+      Uint32 dxad_w;
+      Uint32 dxmod;
+      Uint32 dxrup;
+      Uint32 dxwup;
+      Uint32 dxft;
+      Uint32 msk;
+    }DmaScuPrm;
+【機  能】
+    dxr    - 読み込みアドレス
+    dxw    - 書き出しアドレス
+    dxc    - 転送バイト数
+    dxad_r - 読み込みアドレス加算値
+    dxad_w - 書き込みアドレス加算値
+    dxmod  - モードビット
+    dxrup  - 読み込みアドレス更新ビット
+    dxwup  - 書き込みアドレス更新ビット
+    dxft   - 起動要因選択ビット
+    msk    - マスクビット
+
+
+DmaScuStatus -- 構造体
+    DmaScuStatus - SCU-DMAステータス
+【構  造】
+    typedef struct {
+      Uint32 dxmv;
+    }DmaScuStatus;
+【機  能】
+    dxmv - DMA動作中フラグ
+
+
+★グローバル変数
+MasterStack -- グローバル変数
+    MasterStack - マスタCPUスタックのボトム
+【書  式】
+    const  void*  MasterStack;
+【機  能】
+    マスタSH2CPUのスタックポインタのアドレスです。
+
+
+MaxVertices -- グローバル変数
+    MaxVertices - 計算可能最大頂点数
+【書  式】
+    const  Uint16  MaxVertices;
+【機  能】
+    計算可能な頂点数です。SGLシステムではこの頂点数を越えた計算要求に対しては
+    計算を行ないません。バッファをオーバしているかを判別するのに
+    用いられますので、バッファサイズはこの値から計算するようにしてください。
+
+
+MaxPolygons -- グローバル変数
+    MaxPolygons - 計算可能最大ポリゴン数
+【書  式】
+    const  Uint16  MaxPolygons;
+【機  能】
+    計算可能なポリゴン数です。この上限を越えた場合そのモデルデータに関しては、
+    計算は行ないません。バッファをオーバしているかを判別するのに
+    用いられますので、バッファサイズはこの値から計算するようにしてください。
+
+
+EventSize -- グローバル変数
+    EventSize - イベントサイズ
+【書  式】
+    const  Uint16  EventSize;
+【機  能】
+    EVENT構造体のサイズになります。デフォルトでは、128になっています。
+
+
+WorkSize -- グローバル変数
+    WorkSize - ワークサイズ
+【書  式】
+    const  Uint16  WorkSize;
+【機  能】
+    WORK構造体のサイズです。デフォルトでは、64です。
+
+
+MaxEvents -- グローバル変数
+    MaxEvents - 最大イベント数
+【書  式】
+    const  Uint16  MaxEvents;
+【機  能】
+    slGetEvent出来る、イベントの数です。デフォルトは、64です。
+
+
+MaxWorks -- グローバル変数
+    MaxWorks - 最大ワーク数
+【書  式】
+    const  Uint16  MaxWorks;
+【機  能】
+    slGetWork出来る、ワークの数です。デフォルトは、128です。
+
+
+SortList -- グローバル変数
+    SortList - スプライトソートバッファ
+【書  式】
+    const  void*   SortList;
+【機  能】
+    スプライトのソートに使うバッファの先頭アドレスです。
+
+
+SortListSize -- グローバル変数
+    SortListSize - スプライトデータ転送要求テーブルサイズ
+【書  式】
+    const  Uint32  SortListSize;
+【機  能】
+    スプライトのソートに使うバッファのサイズです。
+
+
+TransList -- グローバル変数
+    TransList - SCU-DMA転送テーブルアドレス
+【書  式】
+    const  void*   TransList;
+【機  能】
+    V-Blank In割り込み時のユーザの転送登録用のキューです。
+    SCU DMAを間接モードで使用するため、テーブルのサイズを越える2のべき乗数で
+    領域調整するようにしてください。
+    最大20エントリまでです。
+
+    
+Zbuffer -- グローバル変数
+    Zbuffer - Zバッファ
+【書  式】
+    const  void*   Zbuffer;
+【機  能】
+    スプライトのソートに使用されるZバッファです。4バイトのバウンダリで指定
+    してください。
+
+    
+SpriteBuf -- グローバル変数
+    SpriteBuf - スプライトコントロールデータバッファ
+【書  式】
+    const  void*   SpriteBuf;
+【機  能】
+    スプライトコントロールデータをセットするバッファです。各フレームで
+    前半後半を切替えて使用します。
+
+
+SpriteBufSize -- グローバル変数
+    SpriteBufSize - スプライトコントロールデータバッファサイズ
+【書  式】
+    const  Uint32  SpriteBufSize;
+【機  能】
+    スプライトコントロールデータをセットするバッファです。各フレームで
+    前半後半を切替えて使用するので、実際に表示されるスプライト(ポリゴン)数
+    ＋5個)×36バイト×2バンクでバッファを指定する必要があります。
+
+    
+Pbuffer -- グローバル変数
+    Pbuffer - 頂点計算用バッファ
+【書  式】
+    const  void*  Pbuffer;
+【機  能】
+    ポリゴン表示関数用の、座標変換、透視変換の演算用のバッファです。
+    ポリゴン表示関数以外では使用しません。
+
+
+CLOfstBuf -- グローバル変数
+    CLOfstBuf - カラーオフセット用バッファ
+【書  式】
+    const  void*  CLOfstBuf;
+【機  能】
+    カラーオフセット用バッファで、4バイトバウンダリ
+    
+CommandBuf -- グローバル変数
+    CommandBuf - スレーブ受渡し用コマンドバッファ
+【書  式】
+    const  void*  CommandBuf;
+【機  能】
+    SGLでは、マスター側からスレーブ側への演算要求をこのバッファを用いて
+    行ないます。受渡し用のコマンドの種類としては、イニシャライズ要求、
+    スプライト作成要求、DMA転送テーブル作成要求などがあります
+
+
+PCM_Work -- グローバル変数
+    PCM_Work - PCMワークエリア
+【書  式】
+    const  void*  PCM_Work;
+【機  能】
+    PCM再生用の内部バッファのアドレスです。
+
+
+PCM_WkSize -- グローバル変数
+    PCM_WkSize - PCMワークサイズ
+【書  式】
+    const  Uint32  PCM_WkSize;
+【機  能】
+    PCM再生用の内部バッファのサイズです。サイズを変更する際には、2000Hの
+    バウンダリで指定します。
+
+
+

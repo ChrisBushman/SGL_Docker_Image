@@ -1,0 +1,972 @@
+<HTML>
+<HEAD>
+<H1>SGL補足マニュアル</H1><BR>
+<HR NOSHADE>
+<!-------------------------------------------------------------------------------->
+<PRE>
+<HR>
+<A HREF=hosoku.htm>最初に戻る</A>｜<A HREF=../index.htm>表紙</A><BR>
+<HR>
+◎ イベントの登録と実行について<BR>
+<BR>
+  <A HREF="../func/event.htm#slInitEvent"><I>slInitEvent</I></A>() を実行した時には実行リストはクリアされますので、実行したい<BR>
+  イベントをリストに登録しなければなりません。<BR>
+  イベントの登録には <A HREF="../func/event.htm#slSetEvent"><I>slSetEvent</I></A>() あるいは <A HREF="../func/event.htm#slSetEventNext"><I>slSetEventNext</I></A>() を使用します。<BR>
+<BR>
+    void *eventtbl[] = {<BR>
+        init_camera ,<BR>
+        init_player1 ,<BR>
+        init_player2 ,<BR>
+        init_enemyctrl<BR>
+    } ;<BR>
+<BR>
+    void InitGame(){<BR>
+        void  **evrdptr ;<BR>
+        <A HREF="../struct/types.htm#EVENT"><I>EVENT</I></A>  *evptr ;<BR>
+        int        cnt ;<BR>
+<BR>
+        <A HREF="../func/event.htm#slInitEvent"><I>slInitEvent</I></A>() ;                /* イベント管理用変数の初期化 */<BR>
+        evrptr = eventtbl ;<BR>
+        for(cnt = sizeof(eventtbl) / sizeof(void *) ; cnt-- > 0 ;){<BR>
+            evptr = <A HREF="../func/event.htm#slSetEvent"><I>slSetEvent</I></A>(*evrptr++) ;<BR>
+        }<BR>
+        <A HREF="../func/init.htm#slSetSprTVMode"><I>slSetSprTVMode</I></A>(<A HREF="../struct/constenm.htm#TV_320x224"><I>TV_320x224</I></A>) ;<BR>
+    }<BR>
+<BR>
+    void Game(){<BR>
+        <A HREF="../func/event.htm#slExecuteEvent"><I>slExecuteEvent</I></A>() ;        /* イベントの実行 */<BR>
+        <A HREF="../func/int.htm#slSynch"><I>slSynch</I></A>() ;                /* ポリゴンデータの出力とビデオ表示同期 */<BR>
+    }<BR>
+<BR>
+  イベントは <A HREF="../func/event.htm#slExecuteEvent"><I>slExecuteEvent</I></A>() 関数を呼び出すごとに実行されます。<BR>
+  各イベントは基本的に、登録された順に実行されます。<BR>
+  はじめに登録されたイベントは システムの <A HREF="../mem/system01.htm#EventTop"><I>EventTop</I></A> 変数に定義され、これを<BR>
+  起点として、イベントのポインタを順次 <A HREF="../mem/system01.htm#EventNow"><I>EventNow</I></A> 変数に定義しながら、各イベ<BR>
+  ントの処理関数を呼び出します。処理関数は以下の形式で定義しておきます。<BR>
+<BR>
+  void function(<A HREF="../struct/types.htm#EVENT"><I>EVENT</I></A> *evptr){<BR>
+        ...                /* イベント処理 */<BR>
+  }<BR>
+<BR>
+  アセンブリ言語で書く場合には<BR>
+<BR>
+  _function:<BR>
+        ...                ; イベント処理<BR>
+                        ; イベントのポインタは r４レジスタにセットされている<BR>
+        rts<BR>
+        nop<BR>
+<BR>
+  ひとつのイベントが終わると、そのイベントの構造体にある next ポインタを<BR>
+  EventNow 変数に入れ、同様に処理関数に実行を移します。これらは next ポインタ<BR>
+  がNULLとなるまで繰り返されます。<BR>
+<BR>
+  <A HREF="../mem/system01.htm#EventTop"><I>EventTop</I></A>: ----+<BR>
+                 |<BR>
+                 |   +------------------+<BR>
+                 +-->| *work = <A HREF="../struct/const.htm#NULL"><I>NULL</I></A>     |<BR>
+                     | *before = <A HREF="../struct/const.htm#NULL"><I>NULL</I></A>   |<BR>
+                +--  | *next            |<BR>
+                |    | *exad()          |<BR>
+                |    |  user[]          |<BR>
+                |    +------------------+<BR>
+                |<BR>
+                |    +------------------+       +------------------+<BR>
+                +--> | *work            |  ---> | *next            | -+<BR>
+                     | *before          |       |                  |  |<BR>
+                +--  | *next            |       |                  |  |<BR>
+                |    | *exad()          |       +------------------+  |<BR>
+                |    |  user[]          |   +-------------------------+<BR>
+                |    +------------------+   |<BR>
+                |                           |   +------------------+<BR>
+                |    +------------------+   +-> | *next = <A HREF="../struct/const.htm#NULL"><I>NULL</I></A>     | <BR>
+  <A HREF="../mem/system01.htm#EventLast"><I>EventLast</I></A>: ---+--> | *work            |       |                  |<BR>
+                     | *before          |       |                  |<BR>
+                     | *next = <A HREF="../struct/const.htm#NULL"><I>NULL</I></A>     |       +------------------+<BR>
+                     | *exad()          |<BR>
+                     |  user[]          |<BR>
+                     +------------------+<BR>
+<BR>
+  <A HREF="../mem/system01.htm#EventLast"><I>EventLast</I></A> 変数には最後に実行されるイベントのポインタが定義されており、イベ<BR>
+  ントを追加する際に使用されます。<BR>
+  ユーザーがRAMを使用するには、ユーザー用に構造体を定義し、イベントRAM<BR>
+  の user[] を その構造体に cast します。<BR>
+<BR>
+  例)<BR>
+    typedef struct rob{<BR>
+        <A HREF="../struct/types.htm#FIXED"><I>FIXED</I></A>  posX , posY , posZ ;<BR>
+        <A HREF="../struct/types.htm#ANGLE"><I>ANGLE</I></A>  angX , angY , angZ ;<BR>
+        <A HREF="../struct/types.htm#PDATA"><I>PDATA</I></A> *pat ;<BR>
+    } ROBOT ;                /* この構造体は112バイトを越えない様にすること */<BR>
+<BR>
+    void rob_control(<A HREF="../struct/types.htm#EVENT"><I>EVENT</I></A> *evptr){<BR>
+        ROBOT *rbptr ;<BR>
+<BR>
+        rbptr = (ROBOT *)evptr->user ;<BR>
+        rbptr->posX = to_fixed(0) ;<BR>
+        rbptr->posY = to_fixed(0) ;<BR>
+        rbptr->posZ = to_fixed(0) ;<BR>
+        rbptr->pat = &PD_Robot ;<BR>
+    }<BR>
+<BR>
+  ワークはポインタのリストによりつなげて持つことができます。<BR>
+  ひとつのイベントで複数のキャラクタを動かす場合にはワークを使用して、RAM<BR>
+  を確保します。<BR>
+<BR>
+    typedef struct road{<BR>
+        struct road *next ;<BR>
+        <A HREF="../struct/types.htm#FIXED"><I>FIXED</I></A>  posX , posY , posZ ;<BR>
+        <A HREF="../struct/types.htm#PDATA"><I>PDATA</I></A> *pat ;<BR>
+    } ROAD ;<BR>
+<BR>
+    typedef struct rdat{<BR>
+        <A HREF="../struct/types.htm#Sint16"><I>Sint16</I></A> px , py , pz ;<BR>
+        <A HREF="../struct/types.htm#Uint16"><I>Uint16</I></A> pn ;<BR>
+    } ROAD_DAT ;<BR>
+<BR>
+    ROAD_DAT roadtbl[] = {<BR>
+        {   0 ,   0 ,   0 , PN_ROAD} ,<BR>
+        {   0 ,   0 , 100 , PN_ROAD} ,<BR>
+        {   0 ,   0 , 200 , PN_ROAD}<BR>
+    } ;<BR>
+<BR>
+    void InitRoadControl(<A HREF="../struct/types.htm#EVENT"><I>EVENT</I></A> *evptr){<BR>
+        <A HREF="../struct/types.htm#WORK"><I>WORK</I></A>  *wkptr ;<BR>
+        ROAD  *rdptr ;<BR>
+        ROAD_DAT *rdtptr ;<BR>
+        int    cnt ;<BR>
+<BR>
+        rdptr = (ROAD *)evptr ;<BR>
+        rdtptr = roadtbl ;<BR>
+        for(cnt = sizeof(roadtbl) / sizeof(ROAD_DAT) ; cnt-- > 0 ;){<BR>
+            if((wkptr = <A HREF="../func/event.htm#slGetWork"><I>slGetWork</I></A>()) == <A HREF="../struct/const.htm#NULL"><I>NULL</I></A>){<BR>
+                break ;<BR>
+            }<BR>
+            rdptr->next = (ROAD *)wkptr ;        /* ひとつめのポインタは */<BR>
+                                                /* イベントの work に入る */<BR>
+            rdptr = (ROAD *)wkptr ;<BR>
+            rdptr->posX = rdtptr->px << 16 ;        /* ポジション */<BR>
+            rdptr->posY = rdtptr->py << 16 ;<BR>
+            rdptr->posZ = rdtptr->pz << 16 ;<BR>
+            rdptr->pat = pattbl[rdptr->pn] ;        /* パターンデータ */<BR>
+            rdtptr++ ;<BR>
+        }<BR>
+        rdptr->next = <A HREF="../struct/const.htm#NULL"><I>NULL</I></A> ;                        /* End mark */<BR>
+        evptr->exad = (void *)RoadControl ;<BR>
+    }<BR>
+<BR>
+<BR>
+<BR>
+<HR>
+<A HREF=hosoku.htm>最初に戻る</A>｜<A HREF=../index.htm>表紙</A><BR>
+<HR>
+★クロックチェンジ時の注意について<BR>
+  ・クロックチェンジ時に保証されるRAM<BR>
+      WORKRAM-HIGH<BR>
+      VRAM<BR>
+  ・クロックチェンジ時に保証されないRAM<BR>
+      WORKRAM-LOW<BR>
+      VDPの各レジスタ<BR>
+      SOUND RAM<BR>
+  そのため、クロックチェンジ後は保証されないメモリを再初期化する必要が<BR>
+  あります。<BR>
+  特に、クロックチェンジ前に、LOW-RAMやSOUND RAMにデータがあった場合、<BR>
+  そのデータの正当性は保証されませんので必ず、データをリロードするなどの<BR>
+  処理を行なうようにしてください。<BR>
+  SGL 3.10より、<A HREF="../func/init.htm#slInitSystem"><I>slInitSystem</I></A>でクロックチェンジが発生した場合、MC68000を<BR>
+  起動させ続けるために、ダミーの空ループを登録しますので、クロックチェンジ後<BR>
+  サウンドドライバのリロードを必ず行なってください。<BR>
+  又、<A HREF="../func/init.htm#slInitSystem"><I>slInitSystem</I></A>によって、各ステータスやレジスタは初期状態になりますので、<BR>
+  ユーザプログラムでそれぞれのパラメータに関して再初期化をしてください。<BR>
+<BR>
+★BSS領域と、システム変数領域の初期化について。<BR>
+  C言語でプログラムを組む場合必ずBSSという領域が確保されます。未初期化の<BR>
+  変数をプログラム上で使用する場合、このBSSと呼ばれるメモリ空間の一部を<BR>
+  その変数用に割り当てます。<BR>
+  普通プログラムで、未初期化の変数を定義する場合、あとで何らかの値を<BR>
+  代入するというのが前提の条件になるのですが、極稀に、そのまま使用する<BR>
+  場合があります。(通常こういった操作はプログラムミスですが)その場合、<BR>
+  大体において0を仮定して操作を行なうことが多くなります。もし、この領域に<BR>
+  不定な値が書かれていた場合、未初期化変数をそのまま使用した場合の動作<BR>
+  が不定になりバグの温床となります。そのため、SGLのサンプルプログラムでは<BR>
+  saturn/sample/common/cinit.c<BR>
+  というプログラムリンクしその中でBSS領域の0クリアを行なっています。<BR>
+  SGLのサンプルが、ss_mainで始まるのはこの為でmain関数では、こういった<BR>
+  初期化を行なっています。<BR>
+  又、SGL内部で使われる「システム変数領域」も同じで、この場合BOOT ROM<BR>
+  によっては、この領域と重なる所にスタックが設定されている場合もあり<BR>
+  中身が不定になります。SGLの関数<A HREF="../func/init.htm#slInitSystem"><I>slInitSystem</I></A>で全て初期化されると<BR>
+  お思いの方もおられるとは思いますが、実際にはこの関数で全ての領域を<BR>
+  初期化するという訳ではなく、場合によっては、SGLの関数が不定な値を<BR>
+  参照する可能性もあります。<BR>
+  この「システム変数領域」の0クリアも上の"cinit.c"で行なっているため、<BR>
+  以上の2つの問題においてはこのファイルをリンクする事で解消されます。<BR>
+  もし、自分のプログラムにおいて、このファイルをリンクしない場合、<BR>
+  これらの初期化を必ず行なうようにしてください。<BR>
+  尚、このcinit.cは、最近までバグを持っており、「システム変数領域」<BR>
+  を初期化できていませんでしたので、お使いのcinit.cが<BR>
+        /* 3.SGL System Variable Clear */<BR>
+        for( dst = (Uint8 *)SystemWork, i = 0;i < SystemSize; i++) {<BR>
+                *dst = 0;<BR>
+        }<BR>
+  となっている場合、以下のように変更して御使用ください。<BR>
+        /* 3.SGL System Variable Clear */<BR>
+        for( dst = (Uint8 *)SystemWork, i = 0;i < SystemSize; i++) {<BR>
+                *dst++ = 0;<BR>
+                /*  ^^   */<BR>
+        }<BR>
+<HR>
+<A HREF=hosoku.htm>最初に戻る</A>｜<A HREF=../index.htm>表紙</A><BR>
+<HR>
+◎ ブランキング割り込みの処理について<BR>
+<BR>
+   ブランキング開始割り込みではスクロールのデータ転送、<A HREF="../func/int.htm#slTransferEntry"><I>slTransferEntry</I></A><BR>
+   によって作成されたDMA転送テーブルの実行、slIntFunction[a]により<BR>
+   登録されたユーザー関数の実行が行われます。この内、スクロールの<BR>
+   データ転送は PauseFlag 変数により、禁止することができます。<BR>
+<BR>
+   <A HREF="../mem/system01.htm#PauseFlag"><I>PauseFlag</I></A> は <A HREF="../struct/types.htm#Uint8"><I>Uint8</I></A>型のフラグ変数で、0以外では上記の転送を<BR>
+   禁止するように働きます。<BR>
+<BR>
+   ブランキング終了割り込みでは、スプライトのフレームバッファの<BR>
+   イレースライト、フレームチェンジ等のモード切り替え、スプライトデータの<BR>
+   DMA転送、ペリフェラルデータの取り込み、割り込み待ちカウンタの減算を<BR>
+   行います。このうち、スプライトに関する部分は上記の <A HREF="../mem/system01.htm#PauseFlag"><I>PauseFlag</I></A>により、<BR>
+   禁止することができます。<BR>
+<BR>
+◎ SGLで使用のFRTについて<BR>
+   SGLでは、SMPCへのコマンド発行のために、FRT(フリーランニングタイマ)を<BR>
+   使用しています。この時のFRTの分周比は128となっており、これをユーザ側<BR>
+   で変更するとことは禁止します。<BR>
+   V-Blank In以降300μsのSMPCへのアクセス禁止時間帯にSMPCリクエストをしない<BR>
+   ように、その時間分のウエイトをFRTをみてかけているためです。<BR>
+<BR>
+◎ libsys.a、libint.aの使用に関して<BR>
+   libsys.aとlibint.aの御使用に関して注意して頂きたい点があります。<BR>
+   割り込みの登録時に使用する、<BR>
+     SYS_SETUINT、SYS_GETUINT、SYS_SETSINT、SYS_GETUINT<BR>
+   は、これまで特定アドレスの中身を参照してアドレスジャンプする<BR>
+   マクロ(BootROMコール)でしたが、このパッケージに入っているものは、<BR>
+   macレジスタを退避、復帰させるフックルーチンへの関数コールとなっています。<BR>
+   これは、Boot ROMコールがmacレジスタ(mach、macl)を保存しないため、より<BR>
+   安全な方法を採用したためです。<BR>
+   そのためこれまでは、これらのマクロは、sega_sys.aなしでコンパイル<BR>
+   できましたが、このバージョン以降の、sega_int.a(libint.a)、<BR>
+   sega_sys.a(libsys.a)を御使用になる場合、libsys.aとlibint.aのリンクが<BR>
+   必要になります。<BR>
+   また、古いバージョンのsega_sys.aとsega_int.aをお使いの場合、<BR>
+   SYS_SETUINT、SYS_SETSINTで登録した割り込みルーチンでmacレジスタを<BR>
+   使っていた場合、メインルーチンが破壊されたmacレジスタを使用する可能性<BR>
+   があるため、極力新しい、sega_int.a(libint.a)、sega_sys.a(libsys.a)を<BR>
+   お使い頂くようよろしくお願い致します。<BR>
+   御使用を強くお勧めするsega_sys.a、sega_int.aのバージョンは、<BR>
+   sysライブラリ Ver 2.50 以降(libsys.a)<BR>
+   intライブラリ Ver 2.00 以降(libint.a)<BR>
+   です。  <BR>
+<BR>
+   X-Band、NetLink、フラッシュシステムなどをお使いの場合、<BR>
+   SYS_?et?intMacSave関数がないといった、リンクエラーが発生する可能性が<BR>
+   あります。この場合リンク時-lsglの後に<BR>
+   -lint -lsys<BR>
+   をリンクするようお願いします。例えばobjectsというファイルで、<BR>
+   LIBS = -lcd -lsgl -lint -lsys -lcd<BR>
+   といったようにします。<BR>
+   sega_sys.a(libsys.a)、sega_int(libint.a)の詳細については、同梱の<BR>
+   ドキュメント、<BR>
+   mansys.txt及びmanint.txtを御覧ください。(こちらも合わせて御覧になる事を<BR>
+   強く推奨します。)<BR>
+<HR>
+<A HREF=hosoku.htm>最初に戻る</A>｜<A HREF=../index.htm>表紙</A><BR>
+<HR>
+◎ 演算ライブラリ及び、システムライブラリについて<BR>
+<BR>
+ライブラリで使用する数値は以下の使用に基づいています。<BR>
+<BR>
+ポジション、三角関数等の固定小数点データ :<BR>
+    上位16ビットが整数部、下位16ビットが小数部のトータル32ビット(符号付き)<BR>
+    型名称  <A HREF="../struct/types.htm#FIXED"><I>FIXED</I></A><BR>
+<BR>
+例)<BR>
+    16.5 を 表す場合        :   0x0010_8000<BR>
+                                ---- ----<BR>
+                                  |    |__ 小数部<BR>
+                                  |__ 整数部<BR>
+    座標は 左右方向がX軸(プラスは右)、上下方向がY軸(プラスは下)、奥行方向が<BR>
+    Z軸(プラスは奥)になります。<BR>
+<BR>
+<BR>
+角度 :<BR>
+    360度を16ビットで表す<BR>
+    型名称  <A HREF="../struct/types.htm#ANGLE"><I>ANGLE</I></A><BR>
+<BR>
+例)<BR>
+    90.0゜ :  0x4000<BR>
+    45.0゜ :  0x2000<BR>
+    22.5゜ :  0x1000<BR>
+    11.25゜:  0x0800<BR>
+<BR>
+    回転行列を作成した場合、角度のプラス方向は軸に対して右回転になります。<BR>
+<BR>
+行列 :<BR>
+    数値は <A HREF="../struct/types.htm#FIXED"><I>FIXED</I></A> を使用。3x4の行列で、メモリ上の配置は以下の通り。<BR>
+    <A HREF="../struct/constenm.htm#M00"><I>M00</I></A>, <A HREF="../struct/constenm.htm#M01"><I>M01</I></A>, <A HREF="../struct/constenm.htm#M02"><I>M02</I></A>,<BR>
+    <A HREF="../struct/constenm.htm#M10"><I>M10</I></A>, <A HREF="../struct/constenm.htm#M11"><I>M11</I></A>, <A HREF="../struct/constenm.htm#M12"><I>M12</I></A>,<BR>
+    <A HREF="../struct/constenm.htm#M20"><I>M20</I></A>, <A HREF="../struct/constenm.htm#M21"><I>M21</I></A>, <A HREF="../struct/constenm.htm#M22"><I>M22</I></A>,<BR>
+    <A HREF="../struct/constenm.htm#M30"><I>M30</I></A>, <A HREF="../struct/constenm.htm#M31"><I>M31</I></A>, <A HREF="../struct/constenm.htm#M32"><I>M32</I></A><BR>
+<HR>
+<A HREF=hosoku.htm>最初に戻る</A>｜<A HREF=../index.htm>表紙</A><BR>
+<HR>
+◎ペリフェラルライブラリの概要<BR>
+   ☆ 排他制御を行なっているので、マルチプロセス環境での使用が可能。<BR>
+   ☆ アプリケーションからあらゆるタイミングで呼び出す事ができる。<BR>
+      SMPCコマンドをリクエストしたフレームで既にインタラプトバックが<BR>
+      発行されていた場合、コマンドキャッシュにキューイングされ、<BR>
+      次のVブランクで適切にSMPCへのコマンド発行が行なわれる。<BR>
+   ☆ インタラプトバック発行・データ収集は全自動。<BR>
+      ユーザーがデータ収集の設定を変更すると、次のフレームからは<BR>
+      自動的にインタラプトバックを発行してデータ収集が行なわれる。<BR>
+      SMPCがデータ収集中でも以前のデータを参照でき、<BR>
+      フレームが変わるVブランク中に最新の情報に切り替わる。<BR>
+   ☆ ペリフェラル未接続ポートのスキップ機能。<BR>
+      マルチタップを一切意識する必要が無い。<BR>
+<BR>
+  ◆これで全てがわかる!ペリフェラル制御サンプルプログラム<BR>
+<BR>
+  void main()<BR>
+  {<BR>
+    <A HREF="../func/init.htm#slInitSystem"><I>slInitSystem</I></A>( <A HREF="../struct/constenm.htm#TV_320x224"><I>TV_320x224</I></A>, <A HREF="../struct/const.htm#NULL"><I>NULL</I></A>, 1 );<BR>
+    {<BR>
+      <A HREF="../func/per.htm#slSetLanguage"><I>slSetLanguage</I></A>( <A HREF="../struct/constenm.htm#SMPC_JAPAN"><I>SMPC_JAPAN</I></A> );<BR>
+      <A HREF="../func/per.htm#slSetSoundOutput"><I>slSetSoundOutput</I></A>( <A HREF="../struct/constenm.htm#SMPC_SOUND_STEREO"><I>SMPC_SOUND_STEREO</I></A> );<BR>
+      ( void )<A HREF="../func/smpc_com.htm#slSetSmpcMemory"><I>slSetSmpcMemory</I></A>();<BR>
+    }<BR>
+<BR>
+    {<BR>
+      <A HREF="../struct/types.htm#SmpcDateTime"><I>SmpcDateTime</I></A> *dt = &( <A HREF="../struct/constper.htm#Smpc_Status"><I>Smpc_Status</I></A>->rtc );<BR>
+<BR>
+      dt->year = 0x1999;<BR>
+      dt->month = <A HREF="../struct/constper.htm#SMPC_FRI"><I>SMPC_FRI</I></A> | <A HREF="../struct/constenm.htm#SMPC_DEC"><I>SMPC_DEC</I></A>;<BR>
+      dt->date = 0x31;<BR>
+      dt->hour = 0x23;<BR>
+      dt->minute = 0x59;<BR>
+      dt->second = 0x59;<BR>
+      ( void )<A HREF="../func/smpc_com.htm#slSetDateTime"><I>slSetDateTime</I></A>();<BR>
+    }<BR>
+<BR>
+    ( void )<A HREF="../func/smpc_com.htm#slResetDisable"><I>slResetDisable</I></A>();<BR>
+<BR>
+    while( <A HREF="../struct/constenm.htm#TRUE"><I>TRUE</I></A> ) {<BR>
+      if( <A HREF="../func/per.htm#slCheckReset"><I>slCheckReset</I></A>() == <A HREF="../struct/constenm.htm#SMPC_RES_ON"><I>SMPC_RES_ON</I></A>) {<BR>
+      ( void )<A HREF="../func/per.htm#slClearReset"><I>slClearReset</I></A>();<BR>
+      break;<BR>
+    }<BR>
+<BR>
+    if(<A HREF="../struct/constper.htm#Per_Connect1"><I>Per_Connect1</I></A>) {<BR>
+      <A HREF="../struct/types.htm#PerDigital"><I>PerDigital</I></A> *pad;<BR>
+<BR>
+      pad = <A HREF="../struct/constper.htm#Smpc_Peripheral"><I>Smpc_Peripheral</I></A> + 0;<BR>
+      if( !( pad->data & <A HREF="../struct/constper.htm#PER_DGT_ST"><I>PER_DGT_ST</I></A> ) ) break;<BR>
+    }<BR>
+    <A HREF="../func/int.htm#slSynch"><I>slSynch</I></A>();<BR>
+  }<BR>
+<BR>
+  ( void )<A HREF="../func/smpc_com.htm#slResetEnable"><I>slResetEnable</I></A>();<BR>
+  ( void )<A HREF="../func/per.htm#slIntBackCancel"><I>slIntBackCancel</I></A>();<BR>
+<BR>
+  while( <A HREF="../struct/constenm.htm#TRUE"><I>TRUE</I></A> ) <A HREF="../func/int.htm#slSynch"><I>slSynch</I></A>();<BR>
+}<BR>
+<BR>
+;---------------------------------------------------------------------------;<BR>
+<BR>
+<BR>
+  ◆ ライブラリ使用時の禁じ手および、<BR>
+   ファンクションコール手順による実行失敗の例<BR>
+<BR>
+   ☆ スレーブSH2からの呼び出しは禁止。<BR>
+      内部ワークエリアをキャッシュスルー領域に取っていないので、動作が不定と<BR>
+      なります。<BR>
+      特に排他制御が正常に行なわれない為、SMPCがデッドロックするなどの<BR>
+      不具合が生じます。<BR>
+<BR>
+   ☆ "<A HREF="../func/per.htm#slGetPeripheral"><I>slGetPeripheral</I></A>" および "<A HREF="../func/per.htm#slGetStatus"><I>slGetStatus</I></A>" 実行後、<BR>
+      以下の関数が呼び出された時にイントバックコマンドを実行中だった場合、<BR>
+      実行に失敗します。<BR>
+      これはウエイトモードでのSMPCコマンドリクエストがコマンドキャッシュを<BR>
+      使用しない事を前提としているために起こります。<BR>
+<BR>
+      <A HREF="../func/smpc_com.htm#slNMIRequestWait"><I>slNMIRequestWait</I></A><BR>
+      <A HREF="../func/smpc_com.htm#slResetDisableWait"><I>slResetDisableWait</I></A><BR>
+      <A HREF="../func/smpc_com.htm#slResetEnableWait"><I>slResetEnableWait</I></A><BR>
+      <A HREF="../func/smpc_com.htm#slSetDateTimeWait"><I>slSetDateTimeWait</I></A><BR>
+      <A HREF="../func/smpc_com.htm#slSetSmpcMemoryWait"><I>slSetSmpcMemoryWait</I></A><BR>
+      上記の実行失敗を回避するには、"<A HREF="../func/per.htm#slIntBackCancel"><I>slIntBackCancel</I></A>" を呼び出し、<BR>
+      次のフレームでコマンド発行すればよい。<BR>
+<BR>
+      以下の関数はイントバックコマンド実行中でなくても実行に失敗します。<BR>
+      これはSMPCが初期設定状態以外でのイントバックコマンドの発行を<BR>
+      禁止しているためです。<BR>
+      <A HREF="../func/per.htm#slSetPortDir1"><I>slSetPortDir1</I></A>,2<BR>
+      <A HREF="../func/per.htm#slSetPortExt1"><I>slSetPortExt1</I></A>,2<BR>
+      <A HREF="../func/per.htm#slSetPortSelect1"><I>slSetPortSelect1</I></A>,2<BR>
+      上記の実行失敗を回避するには、"<A HREF="../func/per.htm#slIntBackCancel"><I>slIntBackCancel</I></A>" を呼び出せばよい。<BR>
+<BR>
+  ◆ "<A HREF="../func/per.htm#slIntBackCancel"><I>slIntBackCancel</I></A>" 実行後、以下の条件を設定した場合、<BR>
+     "<A HREF="../func/per.htm#slGetPeripheral"><I>slGetPeripheral</I></A>" の呼出しで失敗となる。<BR>
+<BR>
+     "<A HREF="../func/per.htm#slSetPortSelect1"><I>slSetPortSelect1</I></A>,2" でSMPCコントロールモードにしたポートについて<BR>
+     "<A HREF="../func/per.htm#slSetPortDir1"><I>slSetPortDir1</I></A>,2" で出力設定にした。<BR>
+     "<A HREF="../func/per.htm#slSetPortExt1"><I>slSetPortExt1</I></A>,2" で外部ラッチ入力を許可した。<BR>
+<BR>
+     上記いずれかの場合および、両方設定した場合。<BR>
+<BR>
+     これはSMPCが初期設定状態以外でのイントバックコマンドの発行を<BR>
+     禁止しているためです。<BR>
+<BR>
+     "<A HREF="../func/per.htm#slSetPortSelect1"><I>slSetPortSelect1</I></A>,2" でポート1・2を共にSH2ダイレクトモードにした。<BR>
+<BR>
+     これはSMPCがポート入出力設定に関わらず、ポートセレクトが共にSH2<BR>
+     ダイレクトモードの時は、ペリフェラルデータのみを返すイントバックコマンドの<BR>
+     発行を禁止しているためです。<BR>
+<BR>
+  ◆ "<A HREF="../func/per.htm#slIntBackCancel"><I>slIntBackCancel</I></A>" 実行後、以下の条件を設定した場合、<BR>
+     "<A HREF="../func/per.htm#slGetStatus"><I>slGetStatus</I></A>" の呼出しで失敗となる。<BR>
+<BR>
+     "<A HREF="../func/per.htm#slSetPortSelect1"><I>slSetPortSelect1</I></A>,2" でSMPCコントロールモードにしたポートについて<BR>
+     "<A HREF="../func/per.htm#slSetPortDir1"><I>slSetPortDir1</I></A>,2" で出力設定にした。<BR>
+     "<A HREF="../func/per.htm#slSetPortExt1"><I>slSetPortExt1</I></A>,2" で外部ラッチ入力を許可した。<BR>
+     上記いずれかの場合および、両方設定した場合。<BR>
+<BR>
+     これはSMPCが初期設定状態以外でのイントバックコマンドの発行を禁止している<BR>
+     ためです。<BR>
+<BR>
+<BR>
+  ◆ 限界性能<BR>
+<BR>
+   ☆ 最大キャッシングコマンド数   ... 31個<BR>
+   ☆ 最大ペリフェラルデータサイズ ... 15バイト * 30ポート<BR>
+      95年4月1日現在で発売されているペリフェラルデバイスおよび、<BR>
+      今後発売されるペリフェラルデバイスからの15バイトモードでの<BR>
+      データ取得に対応。<BR>
+      システム変数 "<A HREF="../struct/constper.htm#Smpc_Status"><I>Smpc_Status</I></A>" および "<A HREF="../struct/constper.htm#Smpc_Peripheral"><I>Smpc_Peripheral</I></A>" への<BR>
+      ユーザー定義バッファアドレスの登録により、<BR>
+      255バイトモードによるデータ取得が可能。<BR>
+      ただし、デバイス固有のデータ変換処理を行なうには<BR>
+      ライブラリサポートが必要です。<BR>
+<HR>
+<A HREF=hosoku.htm>最初に戻る</A>｜<A HREF=../index.htm>表紙</A><BR>
+<HR>
+◎ サウンド関数のコマンド発行と成功不成功について。<BR>
+   サウンドドライバには、8つのコマンドバッファを持っています。<BR>
+   SGLのサウンド関数ではコマンドの発行を要求がある度に、ドライバのバッファ<BR>
+   に送るのではなく、まず最初にライブラリ内部のバッファに転送します。<BR>
+   それを、<A HREF="../func/sound.htm#slSndFlush"><I>slSndFlush</I></A>関数が呼ばれたか、<A HREF="../func/int.htm#slSynch"><I>slSynch</I></A>関数が呼ばれると、<BR>
+   CPU-DMAを用いて、コマンドバッファに転送しています。<BR>
+   又、サウンドドライバとの通信にはタイミングフラグハンドシェイクを用いて<BR>
+   おり、バッファのデータをDMA転送する前に、サウンドドライバのタイミング<BR>
+   フラグが0になるまで待ってからデータ転送を行なっています。<BR>
+   一般にサウンド関数が成功しない場合、発音管理番号やPCMチャネルが足りない<BR>
+   場合に起こります。<BR>
+<BR>
+◎ マップチェンジとマップチェンジ時のウエイト時間<BR>
+   マップチェンジする場合、コマンドの発行手順や処理順序によって発行終了<BR>
+   するまでの時間が大きく変わってきます。<BR>
+   コマンドの発行処理時間を減らすためにも以下の手順を守ってください。<BR>
+   １）サウンドの停止<BR>
+       サウンドの停止には、<A HREF="../func/sound.htm#slSoundAllOff"><I>slSoundAllOff</I></A>を使います。<BR>
+       この時、SGLのサウンドコマンドバッファに蓄えられていたコマンドは、全て<BR>
+       クリアされますので注意が必要です。<BR>
+   ２）サウンドデータの転送<BR>
+       転送するサウンドデータは以下のようなものが考えられます。<BR>
+       トーンデータ<BR>
+       シーケンスデータ<BR>
+       エフェクトデータ<BR>
+       結合ファイル<BR>
+   ３）マップチェンジ<BR>
+       マップチェンジをするために、<BR>
+         <A HREF="../func/sound.htm#slWaitSound"><I>slWaitSound</I></A>( <A HREF="../func/snd_seq.htm#slSndMapChange"><I>slSndMapChange</I></A>( num ) );<BR>
+       という関数コールを行ないます。<BR>
+       マップチェンジは、サウンドドライバにとっては負荷が重い処理ですので、<BR>
+       ここではそれなりの時間がかかることもあります。<BR>
+   ４）マップデータの転送終了ビットに1を立てる<BR>
+       サウンドドライバにデータの転送が終了したことを示すため、<BR>
+       0x25a00500で始まるサウンドエリアカレントワークの各マップ情報の<BR>
+       データ転送終了フラグを立てます。(マップ情報の4バイトめのMSB)<BR>
+       ※この処理は、サウンドのイニシャライズ時のマップの初期化の際にも<BR>
+         しなければなりませんが、<A HREF="../func/sound.htm#slInitSound"><I>slInitSound</I></A>関数内部で行なっているため、<BR>
+         マップチェンジをしない場合に限りユーザ側で意識する必要はありません。<BR>
+   ５）必要であればDSPの設定を行ないます。<BR>
+       DSPの設定は、<A HREF="../func/sound.htm#slSndEffect"><I>slSndEffect</I></A>を使います。<BR>
+   ６）ミキサの設定。<BR>
+       ミキサは、DSPを使う使わないに関わらず必ず設定します。<BR>
+       SGL上でのミキサチェンジは、<A HREF="../func/sound.htm#slSndMixParmChange"><I>slSndMixParmChange</I></A>関数を使って<BR>
+       行なってください。<BR>
+<BR>
+   注意：SGL 3.04以前のサウンド関数には、マップチェンジに関する関数の<BR>
+         多くにバグがあることが分かっています。SGLのサウンド関数を使う場合、<BR>
+         極力、SGL 3.10以降のものをお使いください。<BR>
+<BR>
+◎ エフェクトチェンジ時、マップチェンジ時のプチノイズ<BR>
+   SGL、SBLに関わらずエフェクトチェンジする際にプチノイズが発生する事が<BR>
+   あります。<BR>
+   これは、前の音のリリース処理(エコーやリバーブのように、音の発音が終了した<BR>
+   後に残響的な処理が入るもの)がサウンドドライバ内に残っていたり、急激に<BR>
+   音の処理を変更するためで、極力それらの症状を抑える為に幾つか方法が<BR>
+   あります。<BR>
+   １）ボリュームを落す方法。<BR>
+       エフェクトチェンジしている間(もっといってしまえば、ノイズがのっ<BR>
+       ている間)トータルボリュームを0にしてしまえばノイズは聞こえません。<BR>
+       しかしながら、この場合全ての音が止まってしまうことを頭に入れて<BR>
+       おかなければなりません。また、再度ボリュームを上げた際に、<BR>
+       急激にボリュームを上げてしまうとやはりノイズののる原因になりますので、<BR>
+       上げる際には、段階をおって、(フェードインするなどの処理を入れて)音量<BR>
+       を上げる必要があります。<BR>
+   ２）ミキサを変更する方法。<BR>
+       DSPに関する処理を、サウンド処理が安定するまで止めてしまう方法で、<BR>
+       ミキサで、DSPの処理を出力しないように設定します。<BR>
+       そのためには予め、DSPを出力しないミキサを作っておく必要があります。<BR>
+       ミキサはトーンデータの中にありますので、サウンドの製作側と相談の上<BR>
+       作成してください。<BR>
+       この方法については<A HREF="../func/sound.htm#slSndEffect"><I>slSndEffect</I></A>の注意書きも合わせて御覧ください。<BR>
+   ★ノイズがのらなくなるまでの時間<BR>
+     ノイズがのらなくなるまでの時間は、前に発音されていたリリースの時間<BR>
+     などにもよりますが、大体1秒程度を見込んでおいた方が良いでしょう。<BR>
+     但し、それでもノイズがのるようならもう少し多めに時間をとっておいた<BR>
+     方がいいかも知れません。<BR>
+<BR>
+◎シーケンス再生関数の、発音管理番号の管理について<BR>
+  SGLのシーケンス再生関数では、自動的に発音管理番号を割り当て、シーケンスの<BR>
+  再生を行ないますがそのプロセスは以下の通りです。<BR>
+    <A HREF="../func/snd_seq.htm#slSndSeqNum"><I>slSndSeqNum</I></A>関数で空いている発音管理番号を探す。<BR>
+    空いていればその発音管理番号を使ってシーケンス再生を開始し、<BR>
+    空いていなければ<A HREF="../struct/constenm.htm#FALSE"><I>FALSE</I></A>を返す。<BR>
+    <A HREF="../func/snd_seq.htm#slSndSeqNum"><I>slSndSeqNum</I></A>関数内の処理<BR>
+      <A HREF="../func/snd_seq.htm#slSndSeqNum"><I>slSndSeqNum</I></A>関数内では、発音管理番号7番から1番までの発音状態を<BR>
+      検索する。(0番は、slBGM～関数群で予約。)<BR>
+      検索の方法は、内部バッファに使用状態が管理されているため、それを使用<BR>
+      する。<BR>
+<HR>
+<A HREF=hosoku.htm>最初に戻る</A>｜<A HREF=../index.htm>表紙</A><BR>
+<HR>
+◎ ポリゴンのデータについて<BR>
+<BR>
+  <A HREF="../func/polygon.htm#slPutPolygon"><I>slPutPolygon</I></A>() で使用するポリゴンデータは以下のフォーマットになっています。<BR>
+<BR>
+    .data.l        point_tbl     ; 頂点座標のテーブル<BR>
+    .data.l        NbPoint       ; 計算させる頂点の数<BR>
+    .data.l        polygon_tbl   ; 各ポリゴンの法線ベクトルと頂点番号のテーブル<BR>
+    .data.l        NbPolygon     ; 計算させるポリゴンの数<BR>
+    .data.l        attribute_tbl ; 各ポリゴンのアトリビュートのテーブル<BR>
+<BR>
+ point_tbl:<BR>
+    .data.l        X,Y,Z                ; 頂点番号0の座標データ<BR>
+    .data.l        X,Y,Z                ; 頂点番号1の座標データ<BR>
+        ...<BR>
+    .data.l        X,Y,Z                ; 頂点番号 NbPoint - 1 の座標データ<BR>
+<BR>
+    C言語でテーブルを作成する場合、<A HREF="../struct/types.htm#POINT"><I>POINT</I></A>型が宣言されており、<A HREF="../struct/macro.htm#POStoFIXED"><I>POStoFIXED</I></A><BR>
+    マクロを使用することで、上記のデータテーブルを作成することができます。<BR>
+  例)<BR>
+        static <A HREF="../struct/types.htm#POINT"><I>POINT</I></A> point_CUBE[] = {<BR>
+            <A HREF="../struct/macro.htm#POStoFIXED"><I>POStoFIXED</I></A>(-80,-80,-80),<BR>
+            <A HREF="../struct/macro.htm#POStoFIXED"><I>POStoFIXED</I></A>( 80,-80,-80),<BR>
+            <A HREF="../struct/macro.htm#POStoFIXED"><I>POStoFIXED</I></A>( 80, 80,-80),<BR>
+            <A HREF="../struct/macro.htm#POStoFIXED"><I>POStoFIXED</I></A>(-80, 80,-80),<BR>
+<BR>
+            <A HREF="../struct/macro.htm#POStoFIXED"><I>POStoFIXED</I></A>( 80,-80, 80),<BR>
+            <A HREF="../struct/macro.htm#POStoFIXED"><I>POStoFIXED</I></A>(-80,-80, 80),<BR>
+            <A HREF="../struct/macro.htm#POStoFIXED"><I>POStoFIXED</I></A>(-80, 80, 80),<BR>
+            <A HREF="../struct/macro.htm#POStoFIXED"><I>POStoFIXED</I></A>( 80, 80, 80)<BR>
+        } ;<BR>
+<BR>
+ polygon_tbl:<BR>
+    .data.l        Nx,Ny,Nz     ; ポリゴン番号0の法線ベクトル<BR>
+    .data.w        P0,P1,P2,P3  ; ポリゴン番号0で使用する頂点の番号<BR>
+        (三角形のポリゴンの場合、P2 と P3 が同じ番号になる)<BR>
+        ...<BR>
+    .data.l        Nx,Ny,Nz     ; ポリゴン番号 NbPolygon - 1 の法線ベクトル<BR>
+    .data.w        P0,P1,P2,P3  ; ポリゴン番号 NbPolygon - 1 で使用する頂点の<BR>
+                                ; 番号<BR>
+<BR>
+    C言語でテーブルを作成する場合、<A HREF="../struct/types.htm#POLYGON"><I>POLYGON</I></A>型が宣言されており、<A HREF="../struct/macro.htm#POStoFIXED"><I>POStoFIXED</I></A><BR>
+    マクロを使用することで、上記のデータテーブルを作成することができます。<BR>
+  例)<BR>
+        static <A HREF="../struct/types.htm#POLYGON"><I>POLYGON</I></A> polygon_CUBE[] = {<BR>
+            {<A HREF="../struct/macro.htm#POStoFIXED"><I>POStoFIXED</I></A>( 0 , 0 ,-1) , { 0 , 1 , 2 , 3}} ,<BR>
+                |__ |__<BR>
+            {<A HREF="../struct/macro.htm#POStoFIXED"><I>POStoFIXED</I></A>( 1 , 0 , 0) , { 1 , 4 , 7 , 2}} ,<BR>
+            {<A HREF="../struct/macro.htm#POStoFIXED"><I>POStoFIXED</I></A>(-1 , 0 , 0) , { 5 , 0 , 3 , 6}} ,<BR>
+            {<A HREF="../struct/macro.htm#POStoFIXED"><I>POStoFIXED</I></A>( 0 ,-1 , 0) , { 4 , 1 , 0 , 5}} ,<BR>
+            {<A HREF="../struct/macro.htm#POStoFIXED"><I>POStoFIXED</I></A>( 0 , 1 , 0) , { 2 , 7 , 6 , 3}} ,<BR>
+            {<A HREF="../struct/macro.htm#POStoFIXED"><I>POStoFIXED</I></A>( 0 , 0 , 1) , { 4 , 5 , 6 , 7}} ,<BR>
+        } ;<BR>
+<BR>
+ attribute_tbl:<BR>
+    .data.b        RevCheck     ; 表裏判定により裏側になった面を表示するかどう<BR>
+                                  かのフラグ<BR>
+                        <A HREF="../struct/constenm.htm#Single_Plane"><I>Single_Plane</I></A>と<A HREF="../struct/constenm.htm#Dual_Plane"><I>Dual_Plane</I></A>のいずれかを指定します。<BR>
+    .data.b        SortMode     ; ソーティングの基準にする位置の算出方法とオプ<BR>
+                                  ション機能の使用を宣言します。<BR>
+                        <A HREF="../struct/constenm.htm#SORT_CEN"><I>SORT_CEN</I></A>, <A HREF="../struct/constenm.htm#SORT_MIN"><I>SORT_MIN</I></A>, <A HREF="../struct/constenm.htm#SORT_MAX"><I>SORT_MAX</I></A>, <A HREF="../struct/constenm.htm#SORT_BFR"><I>SORT_BFR</I></A> の いずれか<BR>
+        <A HREF="../struct/constenm.htm#SORT_CEN"><I>SORT_CEN</I></A> : 指定された4点のZ位置の平均をソーティングの基準に使用します<BR>
+        <A HREF="../struct/constenm.htm#SORT_MIN"><I>SORT_MIN</I></A> : 4点の内、最も小さいZ位置を使用します<BR>
+        <A HREF="../struct/constenm.htm#SORT_MAX"><I>SORT_MAX</I></A> : 4点の内、最も大きいZ位置を使用します<BR>
+        <A HREF="../struct/constenm.htm#SORT_BFR"><I>SORT_BFR</I></A> : 直前に表示されたポリゴンのZ位置を使用します<BR>
+                  直前のポリゴンの常に手前に表示されます<BR>
+                        オプションはこれらに加えて指定します<BR>
+                        <A HREF="../struct/constspr.htm#UseTexture"><I>UseTexture</I></A>, <A HREF="../struct/constspr.htm#UseLight"><I>UseLight</I></A>, <A HREF="../struct/constspr.htm#UseClip"><I>UseClip</I></A> オプションは複数指定す<BR>
+                        ることができます。<BR>
+        <A HREF="../struct/constspr.htm#UseTexture"><I>UseTexture</I></A> : テクスチャ(変形スプライト)を使用する場合に指定します。<BR>
+        <A HREF="../struct/constspr.htm#UseLight"><I>UseLight</I></A> : 光源ベクトルと法線ベクトルとの内積によりポリゴンのカラーに<BR>
+                   オフセットを掛け明暗を表現します。<BR>
+                   <A HREF="../struct/constspr.htm#UseTexture"><I>UseTexture</I></A> と 同時には使用できません。<BR>
+        <A HREF="../struct/constspr.htm#UseClip"><I>UseClip</I></A> : 大きなポリゴンを使用する場合、表示位置がオーバーフローして<BR>
+                  正しく表示できないような時に使用します。<BR>
+<BR>
+    .data.w        TextNum      ; テクスチャを使用する場合、キャラクタの登録番<BR>
+                                  号として使用します。<BR>
+    .data.w        DispMode  ; ポリゴンの表示モードを指定します。<BR>
+                               指定できる表示モードには以下のものがあります<BR>
+        <A HREF="../struct/constspr.htm#MSBon"><I>MSBon</I></A> : フレームバッファへの書き込みにおいて最上位ビットのみを1に<BR>
+                します。(スプライトへのシャドウは通常これを使用します)<BR>
+        <A HREF="../struct/constspr.htm#HSSon"><I>HSSon</I></A> : ハイスピードシュリンク有効<BR>
+        <A HREF="../struct/constspr.htm#HSSoff"><I>HSSoff</I></A>: ハイスピードシュリンク無効(default)<BR>
+        <A HREF="../struct/constspr.htm#Window_In"><I>Window_In</I></A> : 指定したウィンドウの内側に表示します。<BR>
+        <A HREF="../struct/constspr.htm#Window_Out"><I>Window_Out</I></A> : ウィンドウの外側に表示します。<BR>
+        <A HREF="../struct/constspr.htm#No_Window"><I>No_Window</I></A> : (default)ウィンドウに影響されずに表示します。<BR>
+        <A HREF="../struct/constspr.htm#MESHon"><I>MESHon</I></A> : メッシュで表示します。<BR>
+        <A HREF="../struct/constspr.htm#MESHoff"><I>MESHoff</I></A> : (default)通常表示をします。<BR>
+        <A HREF="../struct/constspr.htm#ECdis"><I>ECdis</I></A> : テクスチャを使用する時、エンドコードを無効にします。<BR>
+        <A HREF="../struct/constspr.htm#ECenb"><I>ECenb</I></A> : (default)テクスチャを使用する時、エンドコードを有効にします。<BR>
+        <A HREF="../struct/constspr.htm#SPdis"><I>SPdis</I></A> : テクスチャを使用する時、スペースを無効(パレット0のカラーで<BR>
+                表示)にします。<BR>
+                ただし、フレームバッファへの書き込みデータが 0000になる<BR>
+                場合には、表示されませんので、プライオリティ等の値を調整して<BR>
+                0000にならないようにしてください。<BR>
+        <A HREF="../struct/constspr.htm#SPenb"><I>SPenb</I></A> : (default)テクスチャを使用するとき、スペースを有効にします。<BR>
+<BR>
+        <A HREF="../struct/constspr.htm#CL16Bnk"><I>CL16Bnk</I></A>  : (default)テクスチャのカラーモードを16色のカラーバンク方式<BR>
+                  にします。<BR>
+        <A HREF="../struct/constspr.htm#CL16Look"><I>CL16Look</I></A> : テクスチャのカラーモードを16色のルックアップテーブル方式<BR>
+                   にします。<BR>
+        <A HREF="../struct/constspr.htm#CL64Bnk"><I>CL64Bnk</I></A>  : テクスチャのカラーモードを64色のカラーバンク方式にします。<BR>
+        <A HREF="../struct/constspr.htm#CL128Bnk"><I>CL128Bnk</I></A> : テクスチャのカラーモードを128色のカラーバンク方式にします。<BR>
+        <A HREF="../struct/constspr.htm#CL256Bnk"><I>CL256Bnk</I></A> : テクスチャのカラーモードを256色のカラーバンク方式にします。<BR>
+        <A HREF="../struct/constspr.htm#CL32KRGB"><I>CL32KRGB</I></A> : テクスチャのカラーモードを32000色のRGB方式にします。<BR>
+<BR>
+        <A HREF="../struct/constspr.htm#CL_Replace"><I>CL_Replace</I></A> : (default)書き換えモードにします。<BR>
+        <A HREF="../struct/constspr.htm#CL_Trans"><I>CL_Trans</I></A>   : 半透明で表示します。<BR>
+        <A HREF="../struct/constspr.htm#CL_Half"><I>CL_Half</I></A>    : 半輝度で表示します。<BR>
+        <A HREF="../struct/constspr.htm#CL_Shadow"><I>CL_Shadow</I></A>  : シャドウ表示にします。<BR>
+        <A HREF="../struct/constspr.htm#CL_Gouraud"><I>CL_Gouraud</I></A> : グーローシェーディングを指定します。<BR>
+<BR>
+        表示モードは各グループのいずれかひとつずつを指定します。<BR>
+<BR>
+    .data.w        Color         ; 表示カラーを指定します。<BR>
+        光源の影響を受ける場合、また、表示モードで <A HREF="../struct/constspr.htm#CL_Replace"><I>CL_Replace</I></A> 以外を指定する場合に<BR>
+        はRGBモードでなければなりません。<BR>
+        また、テクスチャを使用する場合で、<A HREF="../struct/constspr.htm#CL32KRGB"><I>CL32KRGB</I></A>モードの場合には、ここでの指<BR>
+        定は無視されます。<BR>
+<BR>
+    .data.w        GouraudTable  ; グーローシェーディングテーブルを指定します。<BR>
+        <A HREF="../struct/constspr.htm#CL_Gouraud"><I>CL_Gouraud</I></A> を指定した場合、グーローシェーディングテーブルのオフセット位<BR>
+        置を指示します。オフセット位置は<A HREF="../struct/constspr.htm#SpriteVRAM"><I>SpriteVRAM</I></A>(0x25c00000)を0とし、8バイト<BR>
+        ごとに1進む値で指定します。<BR>
+        例えば、0x25c12000にデータがある場合<BR>
+        ( 0x25c12000 - 0x25c00000 ) / 0x08 = 0x2400<BR>
+<BR>
+    .data.w        Function      ; スプライト表示ファンクションを指定します。<BR>
+        ポリゴン、テクスチャ、ポリラインのいずれとして表示するかを指定します。<BR>
+        指定には以下の6つからひとつを選びます。<BR>
+        <A HREF="../struct/constspr.htm#sprNoflip"><I>sprNoflip</I></A>  : テクスチャを表示します。<BR>
+        <A HREF="../struct/constspr.htm#sprHflip"><I>sprHflip</I></A>   : テクスチャを横方向に反転して表示します。<BR>
+        <A HREF="../struct/constspr.htm#sprVflip"><I>sprVflip</I></A>   : テクスチャを縦方向に反転して表示します。<BR>
+        <A HREF="../struct/constspr.htm#sprHVflip"><I>sprHVflip</I></A>  : テクスチャを縦、横双方に反転して表示します。<BR>
+        <A HREF="../struct/constspr.htm#sprPolygon"><I>sprPolygon</I></A> : ポリゴンとして表示します。<BR>
+        <A HREF="../struct/constspr.htm#sprPolyLine"><I>sprPolyLine</I></A>: ポリライン(ポリゴンの輪郭のみ)を表示します。<BR>
+<BR>
+    C言語でテーブルを作成する場合、<A HREF="../struct/types.htm#ATTR"><I>ATTR</I></A>型が宣言されており、<A HREF="../struct/macro.htm#ATTRIBUTE"><I>ATTRIBUTE</I></A><BR>
+    マクロを使用することで、上記のデータテーブルを作成することができます。<BR>
+  例)<BR>
+        static <A HREF="../struct/types.htm#ATTR"><I>ATTR</I></A> attr_CUBE[] = {<BR>
+            <A HREF="../struct/macro.htm#ATTRIBUTE"><I>ATTRIBUTE</I></A>( <A HREF="../struct/constenm.htm#Single_Plane"><I>Single_Plane</I></A>, <A HREF="../struct/constenm.htm#SORT_MIN"><I>SORT_MIN</I></A>, <A HREF="../struct/constspr.htm#No_Texture"><I>No_Texture</I></A>, <A HREF="../struct/const.htm#CD_MediumGreen"><I>CD_MediumGreen</I></A>,<BR>
+                      <A HREF="../struct/constspr.htm#No_Gouraud"><I>No_Gouraud</I></A>, <A HREF="../struct/constspr.htm#Window_In"><I>Window_In</I></A>, <A HREF="../struct/constspr.htm#sprPolygon"><I>sprPolygon</I></A>, <A HREF="../struct/constspr.htm#UseLight"><I>UseLight</I></A> ),<BR>
+            <A HREF="../struct/macro.htm#ATTRIBUTE"><I>ATTRIBUTE</I></A>( <A HREF="../struct/constenm.htm#Single_Plane"><I>Single_Plane</I></A>, <A HREF="../struct/constenm.htm#SORT_MIN"><I>SORT_MIN</I></A>, <A HREF="../struct/constspr.htm#No_Texture"><I>No_Texture</I></A>, <A HREF="../struct/const.htm#CD_MediumBlue"><I>CD_MediumBlue</I></A>,<BR>
+                      <A HREF="../struct/constspr.htm#No_Gouraud"><I>No_Gouraud</I></A>, <A HREF="../struct/constspr.htm#Window_In"><I>Window_In</I></A>, <A HREF="../struct/constspr.htm#sprPolygon"><I>sprPolygon</I></A>, <A HREF="../struct/constspr.htm#UseLight"><I>UseLight</I></A> ),<BR>
+            <A HREF="../struct/macro.htm#ATTRIBUTE"><I>ATTRIBUTE</I></A>( <A HREF="../struct/constenm.htm#Single_Plane"><I>Single_Plane</I></A>, <A HREF="../struct/constenm.htm#SORT_MIN"><I>SORT_MIN</I></A>, <A HREF="../struct/constspr.htm#No_Texture"><I>No_Texture</I></A>, <A HREF="../struct/const.htm#CD_MediumMagenta"><I>CD_MediumMagenta</I></A>,<BR>
+                      <A HREF="../struct/constspr.htm#No_Gouraud"><I>No_Gouraud</I></A>, <A HREF="../struct/constspr.htm#Window_In"><I>Window_In</I></A>, <A HREF="../struct/constspr.htm#sprPolygon"><I>sprPolygon</I></A>, <A HREF="../struct/constspr.htm#UseLight"><I>UseLight</I></A> ),<BR>
+            <A HREF="../struct/macro.htm#ATTRIBUTE"><I>ATTRIBUTE</I></A>( <A HREF="../struct/constenm.htm#Single_Plane"><I>Single_Plane</I></A>, <A HREF="../struct/constenm.htm#SORT_MIN"><I>SORT_MIN</I></A>, <A HREF="../struct/constspr.htm#No_Texture"><I>No_Texture</I></A>, <A HREF="../struct/const.htm#CD_MediumWhite"><I>CD_MediumWhite</I></A>,<BR>
+                      <A HREF="../struct/constspr.htm#No_Gouraud"><I>No_Gouraud</I></A>, <A HREF="../struct/constspr.htm#Window_In"><I>Window_In</I></A>, <A HREF="../struct/constspr.htm#sprPolygon"><I>sprPolygon</I></A>, <A HREF="../struct/constspr.htm#UseLight"><I>UseLight</I></A> ),<BR>
+            <A HREF="../struct/macro.htm#ATTRIBUTE"><I>ATTRIBUTE</I></A>( <A HREF="../struct/constenm.htm#Single_Plane"><I>Single_Plane</I></A>, <A HREF="../struct/constenm.htm#SORT_MIN"><I>SORT_MIN</I></A>, <A HREF="../struct/constspr.htm#No_Texture"><I>No_Texture</I></A>, <A HREF="../struct/const.htm#CD_MediumYellow"><I>CD_MediumYellow</I></A>,<BR>
+                      <A HREF="../struct/constspr.htm#No_Gouraud"><I>No_Gouraud</I></A>, <A HREF="../struct/constspr.htm#Window_In"><I>Window_In</I></A>, <A HREF="../struct/constspr.htm#sprPolygon"><I>sprPolygon</I></A>, <A HREF="../struct/constspr.htm#UseLight"><I>UseLight</I></A> ),<BR>
+            <A HREF="../struct/macro.htm#ATTRIBUTE"><I>ATTRIBUTE</I></A>( <A HREF="../struct/constenm.htm#Single_Plane"><I>Single_Plane</I></A>, <A HREF="../struct/constenm.htm#SORT_MIN"><I>SORT_MIN</I></A>, <A HREF="../struct/constspr.htm#No_Texture"><I>No_Texture</I></A>, <A HREF="../struct/const.htm#CD_MediumRed"><I>CD_MediumRed</I></A>,<BR>
+                      <A HREF="../struct/constspr.htm#No_Gouraud"><I>No_Gouraud</I></A>, <A HREF="../struct/constspr.htm#Window_In"><I>Window_In</I></A>, <A HREF="../struct/constspr.htm#sprPolygon"><I>sprPolygon</I></A>, <A HREF="../struct/constspr.htm#UseLight"><I>UseLight</I></A> )<BR>
+        };<BR>
+<BR>
+◎ スプライト表示関数用のアトリビュートについて<BR>
+<BR>
+  <A HREF="../func/sprite.htm#slPutSprite"><I>slPutSprite</I></A>() 、<A HREF="../func/sprite.htm#slDispSprite"><I>slDispSprite</I></A>() で使用するアトリビュートテーブルは、上記のポ<BR>
+  リゴン用のものとほぼ同じですが、先頭の2つのデータがなくなっています。<BR>
+    C言語でこのテーブルを作成する場合、<A HREF="../struct/types.htm#SPR_ATTR"><I>SPR_ATTR</I></A>型が宣言されており、<BR>
+  <A HREF="../struct/macro.htm#SPR_ATTRIBUTE"><I>SPR_ATTRIBUTE</I></A>マクロを使用することができます。<BR>
+  例)<BR>
+        <A HREF="../struct/types.htm#SPR_ATTR"><I>SPR_ATTR</I></A> attr_AM2Logo = {<BR>
+            <A HREF="../struct/macro.htm#SPR_ATTRIBUTE"><I>SPR_ATTRIBUTE</I></A>(PN_AM2_Logo,CL_AM2_Logo,<A HREF="../struct/constspr.htm#No_Gouraud"><I>No_Gouraud</I></A>,<A HREF="../struct/constspr.htm#Window_In"><I>Window_In</I></A>|<A HREF="../struct/constspr.htm#ECdis"><I>ECdis</I></A>,<BR>
+                <A HREF="../struct/constspr.htm#sprNoflip"><I>sprNoflip</I></A>|<A HREF="../struct/constspr.htm#_ZmCB"><I>_ZmCB</I></A>)<BR>
+        } ;<BR>
+<BR>
+        <A HREF="../struct/constspr.htm#_ZmCB"><I>_ZmCB</I></A> はポジションがスプライトのどの位置を指すかを指定するもので、<BR>
+        以下の9つが定義されています。<BR>
+<BR>
+        <A HREF="../struct/constspr.htm#_ZmLT"><I>_ZmLT</I></A>        <A HREF="../struct/constspr.htm#_ZmCT"><I>_ZmCT</I></A>        <A HREF="../struct/constspr.htm#_ZmRT"><I>_ZmRT</I></A><BR>
+           +-------+-------+<BR>
+           |       |       |<BR>
+     <A HREF="../struct/constspr.htm#_ZmLC"><I>_ZmLC</I></A> +----<A HREF="../struct/constspr.htm#_ZmCC"><I>_ZmCC</I></A>------+ <A HREF="../struct/constspr.htm#_ZmRC"><I>_ZmRC</I></A><BR>
+           |       |       |<BR>
+           +-------+-------+<BR>
+        <A HREF="../struct/constspr.htm#_ZmLB"><I>_ZmLB</I></A>        <A HREF="../struct/constspr.htm#_ZmCB"><I>_ZmCB</I></A>        <A HREF="../struct/constspr.htm#_ZmRB"><I>_ZmRB</I></A><BR>
+<BR>
+◎ スプライト表示サンプル<BR>
+<BR>
+ #define        CGtop                 0x10000<BR>
+ #define        <A HREF="../struct/macro.htm#TEXTBL"><I>TEXTBL</I></A>(hs,vs,cga)     {hs , vs , (cga)>>3 , ((hs)&0x1f8)<<5|(vs)}<BR>
+ #define        <A HREF="../struct/macro.htm#AdjCG"><I>AdjCG</I></A>(cga,hs,vs,col)  ((cga + (((hs)*(vs)*4)>>(col)) + 0x1f) & 0x7ffe0)<BR>
+ #define        <A HREF="../struct/macro.htm#PICTBL"><I>PICTBL</I></A>(txno,cmod,cga) {txno , cmod , cga}<BR>
+ #define        CL_Triangle           0x00<BR>
+<BR>
+ static const Uint16 triangle[] = {<BR>
+   0x0000,0x0001,0x1000,0x0000,        /* スプライトのキャラクタデータ */<BR>
+   0x0000,0x0012,0x2100,0x0000,<BR>
+   0x0000,0x0123,0x3210,0x0000,<BR>
+   0x0000,0x1234,0x4321,0x0000,<BR>
+   0x0001,0x2344,0x4432,0x1000,<BR>
+   0x0012,0x3333,0x3333,0x2100,<BR>
+   0x0122,0x2222,0x2222,0x2210,<BR>
+   0x1111,0x1111,0x1111,0x1111<BR>
+ };<BR>
+<BR>
+ enum patn {<BR>
+   PN_Triangle,                        /* スプライトパターンナンバー */<BR>
+   Max_Texture,                        /* 総パターン数               */<BR>
+   Max_Picture = Max_Texture           /* 総キャラクタ数             */<BR>
+ };<BR>
+<BR>
+ enum cga {                                /* キャラクタアドレス */<BR>
+   CG_Triangle = CGtop,<BR>
+   CG_Next = AdjCG( CG_Triangle, 16, 8, <A HREF="../struct/constspr.htm#COL_16"><I>COL_16</I></A> )<BR>
+ };<BR>
+<BR>
+ <A HREF="../struct/types.htm#TEXTURE"><I>TEXTURE</I></A> form_tbl[] = {         /* パターンサイズデータ */<BR>
+   <A HREF="../struct/macro.htm#TEXTBL"><I>TEXTBL</I></A>( 16, 8, CG_Triangle )<BR>
+ };<BR>
+<BR>
+ <A HREF="../struct/types.htm#PICTURE"><I>PICTURE</I></A> pic_tbl[] = {                          /* キャラクタ定義テーブル */<BR>
+   PICTBL( PN_Triangle, <A HREF="../struct/constspr.htm#COL_16"><I>COL_16</I></A>, triangle )<BR>
+ };<BR>
+<BR>
+ static const <A HREF="../struct/types.htm#Sint16"><I>Sint16</I></A> Triangle_Color[] = {                   /* カラーデータ */<BR>
+                    <A HREF="../struct/macro.htm#RGB"><I>RGB</I></A>( 0, 0,31), <A HREF="../struct/macro.htm#RGB"><I>RGB</I></A>( 0, 0, 29 ), <A HREF="../struct/macro.htm#RGB"><I>RGB</I></A>( 0, 0, 27 ),<BR>
+   <A HREF="../struct/macro.htm#RGB"><I>RGB</I></A>( 0, 0, 25 ), <A HREF="../struct/macro.htm#RGB"><I>RGB</I></A>( 0, 0,23), <A HREF="../struct/macro.htm#RGB"><I>RGB</I></A>( 0, 0, 21 ), <A HREF="../struct/macro.htm#RGB"><I>RGB</I></A>( 0, 0, 19 ),<BR>
+   <A HREF="../struct/macro.htm#RGB"><I>RGB</I></A>( 0, 0, 17 ), <A HREF="../struct/macro.htm#RGB"><I>RGB</I></A>( 0, 0,15), <A HREF="../struct/macro.htm#RGB"><I>RGB</I></A>( 0, 0, 13 ), <A HREF="../struct/macro.htm#RGB"><I>RGB</I></A>( 0, 0, 11 ),<BR>
+   <A HREF="../struct/macro.htm#RGB"><I>RGB</I></A>( 0, 0, 9  ), <A HREF="../struct/macro.htm#RGB"><I>RGB</I></A>( 0, 0,7),  <A HREF="../struct/macro.htm#RGB"><I>RGB</I></A>( 0, 0, 5 ),  <A HREF="../struct/macro.htm#RGB"><I>RGB</I></A>( 0, 0, 3 )<BR>
+ };<BR>
+<BR>
+ typedef struct{                        /* カラー定義用構造体 */<BR>
+   <A HREF="../struct/types.htm#Sint16"><I>Sint16</I></A> *src;<BR>
+   void   *dst;<BR>
+   <A HREF="../struct/types.htm#Sint16"><I>Sint16</I></A>  size;<BR>
+ } COLMAP;<BR>
+<BR>
+ static const COLMAP ctrns_list[] = {  /* カラー定義テーブル */<BR>
+   { Triangle_Color,<BR>
+     ( void* )( <A HREF="../struct/constscl.htm#VDP2_COLRAM"><I>VDP2_COLRAM</I></A> + ( CL_Triangle + 1 ) * 2 ),<BR>
+     sizeof( Triangle_Color )<BR>
+   }<BR>
+ };<BR>
+<BR>
+ extern <A HREF="../struct/types.htm#TEXTURE"><I>TEXTURE</I></A> * <A HREF="../mem/system01.htm#FormTbl"><I>FormTbl</I></A> ;<BR>
+<BR>
+ /*                                                */<BR>
+ /*  キャラクタデータ転送                          */<BR>
+ /*                                                */<BR>
+<BR>
+ void SetTexture( <A HREF="../struct/types.htm#PICTURE"><I>PICTURE</I></A> *pcptr, <A HREF="../struct/types.htm#Uint32"><I>Uint32</I></A> NbPicture ) {<BR>
+   <A HREF="../struct/types.htm#TEXTURE"><I>TEXTURE</I></A> *txptr;<BR>
+<BR>
+   for( ; NbPicture-- > 0 ; pcptr++ ) {<BR>
+     txptr = <A HREF="../mem/system01.htm#FormTbl"><I>FormTbl</I></A> + pcptr->texno ;<BR>
+     <A HREF="../func/dma.htm#slDMACopy"><I>slDMACopy</I></A>( pcptr->pcsrc,<BR>
+                ( void * )( <A HREF="../struct/constspr.htm#SpriteVRAM"><I>SpriteVRAM</I></A> + ( ( txptr->CGadr ) << 3 ) ),<BR>
+                ( txptr->Hsize * txptr->Vsize * 4 ) >> ( pcptr->cmode ) );<BR>
+   }<BR>
+ }<BR>
+<BR>
+ /*                                                */<BR>
+ /*  カラーデータ転送                              */<BR>
+ /*                                                */<BR>
+<BR>
+ void SetColor(){<BR>
+   COLMAP      *cmptr ;<BR>
+   <A HREF="../struct/types.htm#Sint16"><I>Sint16</I></A>       cnt ;<BR>
+<BR>
+   <A HREF="../func/scroll.htm#slTVOff"><I>slTVOff</I></A>() ;<BR>
+   cmptr= ctrns_list ;<BR>
+   for ( cnt = sizeof( ctrns_list ) / sizeof( COLMAP ) ; cnt-- > 0 ; cmptr++ ){<BR>
+    <A HREF="../func/dma.htm#slDMACopy"><I>slDMACopy</I></A>( cmptr->src, cmptr->dst, cmptr->size );<BR>
+   }<BR>
+   <A HREF="../func/scroll.htm#slTVOn"><I>slTVOn</I></A>();<BR>
+ }<BR>
+<BR>
+ /*  サンプルキャラクタ表示位置 */<BR>
+   <A HREF="../struct/types.htm#FIXED"><I>FIXED</I></A> tpos[] = { <A HREF="../struct/macro.htm#toFIXED"><I>toFIXED</I></A>(1.0), <A HREF="../struct/macro.htm#toFIXED"><I>toFIXED</I></A>(2.0), <A HREF="../struct/macro.htm#toFIXED"><I>toFIXED</I></A>(2.0), <A HREF="../struct/macro.htm#toFIXED"><I>toFIXED</I></A>(4.0)};<BR>
+ /*                 |             |             |             |_ 表示スケール*/<BR>
+ /*                 X位置         Y位置         Y位置 (等倍なら<A HREF="../struct/macro.htm#toFIXED"><I>toFIXED</I></A>(<A HREF="../struct/constspr.htm#ORIGINAL"><I>ORIGINAL</I></A>)<BR>
+                                                        を指定のこと) */<BR>
+<BR>
+ /*  サンプルキャラクタデータ */<BR>
+   <A HREF="../struct/types.htm#SPR_ATTR"><I>SPR_ATTR</I></A> tattr = <A HREF="../struct/macro.htm#SPR_ATTRIBUTE"><I>SPR_ATTRIBUTE</I></A>(PN_Triangle,CL_Triangle,<A HREF="../struct/constspr.htm#No_Gouraud"><I>No_Gouraud</I></A>,<A HREF="../struct/constspr.htm#CL16Bnk"><I>CL16Bnk</I></A>,<A HREF="../struct/constspr.htm#sprNoflip"><I>sprNoflip</I></A>|<A HREF="../struct/constspr.htm#_ZmCC"><I>_ZmCC</I></A>);<BR>
+ /*                               |           |           |          |       |         |__ 回転中心位置 */<BR>
+ /*                               |           |           |          |       |__ キャラクタ反転はなし */<BR>
+ /*                               |           |           |          |__ 16色カラーバンクモード  */<BR>
+ /*                               |           |           |___ グーローシェーディングは使用しない */<BR>
+ /*                        パターンナンバー  カラーバンクナンバー */<BR>
+<BR>
+ main() {<BR>
+   <A HREF="../struct/types.htm#ANGLE"><I>ANGLE</I></A>        ang = DEGtoANG (0.0);<BR>
+<BR>
+   *( <A HREF="../struct/types.htm#Uint32"><I>Uint32</I></A> * )( 0x06002500 ) = ( <A HREF="../struct/types.htm#Uint32"><I>Uint32</I></A> )( 0x060007f0 );<BR>
+<BR>
+   <A HREF="../func/init.htm#slInitSystem"><I>slInitSystem</I></A>( <A HREF="../struct/constenm.htm#TV_320x224"><I>TV_320x224</I></A>, form_tbl, 1 ); /* システム初期化 */<BR>
+   SetTexture( pic_tbl, Max_Picture );      /* キャラクタデータのセット */<BR>
+   SetColor();                              /* カラーデータのセット */<BR>
+   while( -1 ) {<BR>
+     <A HREF="../func/sprite.htm#slDispSprite"><I>slDispSprite</I></A>( tpos, &tattr, ang );     /* スプライトの登録 */<BR>
+     ang += <A HREF="../struct/macro.htm#DEGtoANG"><I>DEGtoANG</I></A> ( 3.0 );<BR>
+     <A HREF="../func/int.htm#slSynch"><I>slSynch</I></A>();                             /* 画面表示への同期との<BR>
+                                              スプライト出力 */<BR>
+   }<BR>
+ }<BR>
+<BR>
+<BR>
+◎リアルタイムグーロー使用手順<BR>
+　リアルタイムグーローを実現するには以下の4つの処理が必要です。<BR>
+<BR>
+ (1)アトリビュートテーブルに以下の3つを加えます。<BR>
+ 　(a) MODEに「<A HREF="../struct/constspr.htm#CL_Gouraud"><I>CL_Gouraud</I></A>」を指定。<BR>
+　 (b) GOURAUDにグローテーブルの格納位置の指定。<BR>
+   (c) OPTIONに「<A HREF="../struct/constspr.htm#UseGouraud"><I>UseGouraud</I></A>」を指定。<BR>
+<BR>
+   <例><BR>
+     ATTRIBUTE(<A HREF="../struct/constenm.htm#Single_Plane"><I>Single_Plane</I></A>, <A HREF="../struct/constenm.htm#SORT_CEN"><I>SORT_CEN</I></A>, 0, 0xffa0, 0xe000,<BR>
+            <A HREF="../struct/constspr.htm#CL16Look"><I>CL16Look</I></A>|<A HREF="../struct/constspr.htm#MESHoff"><I>MESHoff</I></A>|<A HREF="../struct/constspr.htm#CL_Gouraud"><I>CL_Gouraud</I></A>, <A HREF="../struct/constspr.htm#sprNoflip"><I>sprNoflip</I></A>, <A HREF="../struct/constspr.htm#UseGouraud"><I>UseGouraud</I></A> )<BR>
+           <BR>
+ (2)法線ベクトルの指定<BR>
+　 各頂点の法線ベクトルと「<A HREF="../struct/types.htm#XPDATA"><I>XPDATA</I></A>」というポリゴンモデルデータテーブルを指定<BR>
+   <例><BR>
+         <A HREF="../struct/types.htm#VECTOR"><I>VECTOR</I></A>        gr_point[] = {              /* 頂点法線ベクトルデータ */<BR>
+           <A HREF="../struct/macro.htm#toFIXED"><I>toFIXED</I></A>(-0.873),<A HREF="../struct/macro.htm#toFIXED"><I>toFIXED</I></A>( 0.436),<A HREF="../struct/macro.htm#toFIXED"><I>toFIXED</I></A>( 0.217),<BR>
+           <A HREF="../struct/macro.htm#toFIXED"><I>toFIXED</I></A>(-0.873),<A HREF="../struct/macro.htm#toFIXED"><I>toFIXED</I></A>(-0.436),<A HREF="../struct/macro.htm#toFIXED"><I>toFIXED</I></A>( 0.217),<BR>
+                                :<BR>
+                                :<BR>
+         };<BR>
+         <A HREF="../struct/types.htm#XPDATA"><I>XPDATA</I></A> PD_BOX = {                          /* モデルテーブル指定    */<BR>
+           point_BOX,                               /* 頂点の位置データ<BR>
+                                                                  テーブル   */<BR>
+           sizeof( point_BOX ) / sizeof( <A HREF="../struct/types.htm#POINT"><I>POINT</I></A> ),   /* 頂点の数              */<BR>
+           polygon_BOX,                             /* ポリゴン定義テーブル  */<BR>
+           sizeof( polygon_BOX ) /sizeof( <A HREF="../struct/types.htm#POLYGON"><I>POLYGON</I></A> ),/* ポリゴンの数          */<BR>
+           attribute_BOX2,                          /* ポリゴンの<BR>
+                                                     アトリビュートテーブル  */<BR>
+           gr_point                                 /*頂点法線ベクトルデータ */<BR>
+         };<BR>
+        <BR>
+ (3)リアルタイムグーロープログラムの初期化<BR>
+   (a) 使用するグーローテーブルの位置大きさを指定<BR>
+     <例><BR>
+       <A HREF="../func/polygon.htm#slInitGouraud"><I>slInitGouraud</I></A>( ( <A HREF="../struct/types.htm#GOURAUDTBL"><I>GOURAUDTBL</I></A> * )gr_tab, ( <A HREF="../struct/types.htm#Uint32"><I>Uint32</I></A> )300, 0xe000, addr );<BR>
+   (b) グーロープログラムをVブランクに登録<BR>
+     <例><BR>
+       <A HREF="../func/int.htm#slIntFunction"><I>slIntFunction</I></A>( <A HREF="../func/polygon.htm#slGouraudTblCopy"><I>slGouraudTblCopy</I></A> );<BR>
+<BR>
+ (4)光源ベクトルの指定<BR>
+     <例><BR>
+         <A HREF="../struct/types.htm#FIXED"><I>FIXED</I></A>      light[<A HREF="../struct/constenm.htm#XYZ"><I>XYZ</I></A>];<BR>
+         light[<A HREF="../struct/constenm.htm#X"><I>X</I></A>] = <A HREF="../struct/macro.htm#toFIXED"><I>toFIXED</I></A>( 1.0 );<BR>
+         light[<A HREF="../struct/constenm.htm#Y"><I>Y</I></A>] = <A HREF="../struct/macro.htm#toFIXED"><I>toFIXED</I></A>( 0.0 );<BR>
+         light[<A HREF="../struct/constenm.htm#Z"><I>Z</I></A>] = <A HREF="../struct/macro.htm#toFIXED"><I>toFIXED</I></A>( 0.0 );<BR>
+         <A HREF="../func/polygon.htm#slPutPolygonX"><I>slPutPolygonX</I></A>( &PD_BOX, ( <A HREF="../struct/types.htm#FIXED"><I>FIXED</I></A> * )light );<BR>
+<BR>
+ (5)実際のプログラム使用例<BR>
+    <例><BR>
+ static <A HREF="../struct/types.htm#GOURAUDTBL"><I>GOURAUDTBL</I></A> gr_tab[300];<BR>
+<BR>
+ void ss_main( void )<BR>
+ {<BR>
+   FIXED light[<A HREF="../struct/constenm.htm#XYZ"><I>XYZ</I></A>];<BR>
+          :<BR>
+   /* リアルタイムグロープログラムの初期化 */<BR>
+   <A HREF="../func/polygon.htm#slInitGouraud"><I>slInitGouraud</I></A>( ( <A HREF="../struct/types.htm#GOURAUDTBL"><I>GOURAUDTBL</I></A> * )gr_tab, ( <A HREF="../struct/types.htm#Uint32"><I>Uint32</I></A> )300, 0xe000, addr );<BR>
+   <A HREF="../func/polygon.htm#slGouraudTblCopy"><I>slGouraudTblCopy</I></A>();<BR>
+   <A HREF="../func/int.htm#slSynch"><I>slSynch</I></A>();<BR>
+               :<BR>
+   light[<A HREF="../struct/constenm.htm#X"><I>X</I></A>] = <A HREF="../struct/macro.htm#toFIXED"><I>toFIXED</I></A>( 1.0 );<BR>
+   light[<A HREF="../struct/constenm.htm#Y"><I>Y</I></A>] = <A HREF="../struct/macro.htm#toFIXED"><I>toFIXED</I></A>( 0.0 );<BR>
+   light[<A HREF="../struct/constenm.htm#Z"><I>Z</I></A>] = <A HREF="../struct/macro.htm#toFIXED"><I>toFIXED</I></A>( 0.0 );<BR>
+   while( 1 )<BR>
+   {<BR>
+           :<BR>
+     <A HREF="../func/matrix.htm#slPushMatrix"><I>slPushMatrix</I></A>();<BR>
+     {<BR>
+        :<BR>
+       /**/<BR>
+       <A HREF="../func/polygon.htm#slPutPolygonX"><I>slPutPolygonX</I></A>( &PD_BOX, ( <A HREF="../struct/types.htm#FIXED"><I>FIXED</I></A> * )light );<BR>
+     }<BR>
+     <A HREF="../func/matrix.htm#slPopMatrix"><I>slPopMatrix</I></A>();<BR>
+     <A HREF="../func/int.htm#slSynch"><I>slSynch</I></A>();<BR>
+   }<BR>
+ }<BR>
+<BR>
+◎ニアクリッピング<BR>
+   アトリビュートテーブルのOPTIONに「<A HREF="../struct/constspr.htm#UseNearClip"><I>UseNearClip</I></A>」を指定するとニアクリッピング<BR>
+   処理をします。「<A HREF="../struct/constspr.htm#UseClip"><I>UseClip</I></A>」はVer3.0から同機能追加により「<A HREF="../struct/constspr.htm#UseNearClip"><I>UseNearClip</I></A>」に<BR>
+   置き換わりました。<BR>
+ <例><BR>
+   <A HREF="../struct/macro.htm#ATTRIBUTE"><I>ATTRIBUTE</I></A>( <A HREF="../struct/constenm.htm#Single_Plane"><I>Single_Plane</I></A>, <A HREF="../struct/constenm.htm#SORT_CEN"><I>SORT_CEN</I></A>, 1, <A HREF="../struct/constspr.htm#No_Palet"><I>No_Palet</I></A>, <A HREF="../struct/constspr.htm#No_Gouraud"><I>No_Gouraud</I></A>, <BR>
+              <A HREF="../struct/constspr.htm#CL32KRGB"><I>CL32KRGB</I></A>|<A HREF="../struct/constspr.htm#MESHoff"><I>MESHoff</I></A>,<A HREF="../struct/constspr.htm#sprNoflip"><I>sprNoflip</I></A>, <A HREF="../struct/constspr.htm#UseNearClip"><I>UseNearClip</I></A> );<BR>
+<BR>
+ ◎SGL Ver2.1xとSGL Ver3.00の相違点<BR>
+   (1)フラットシェーディングの光源計算方法の変更<BR>
+      フラットシェーディングの光源計算方法が以下のように変更になっています。<BR>
+      <Ver2.1xまでの光源計算方法><BR>
+      光源と面の角度<BR>
+              0------45------90-----135-----180<BR>
+              31-----16-------0-------0-------0<BR>
+      グーローテーブル<BR>
+<BR>
+                   ↓<BR>
+<BR>
+　    <Ver3.0 からの光源計算方法><BR>
+      光源と面の角度<BR>
+              0------45------90-----135-----180<BR>
+              31-----24------16-------8-------0<BR>
+      グーローテーブル<BR>
+<BR>
+   (2)光源の影響による発色データテーブルのサイズ変更<BR>
+  　  光源処理に機能追加したことにより、発色データテーブル(CLOfsfBuf)領域を<BR>
+      確保するサイズが、<BR>
+        32×32 (0x400)から32×32×3 (0xC00)<BR>
+      に変更になりました。<BR>
+      よって、初期値が設定されていたsaturn/sgl/libディレクトリのsglarea.o<BR>
+      の変更と、ユーザカスタム用の<BR>
+        saturn\sgl\sample\workarea<BR>
+      ディレクトリにあるworkarea.cなどのファイルも計算部分に変更が加えられて<BR>
+      います。SGL Ver2.1xからの移行時には必ず変更するようにしてください。<BR>
+ <BR>
+   (3)UseClipオプションの削除<BR>
+      アトリビュートオプション<A HREF="../struct/constspr.htm#UseClip"><I>UseClip</I></A>が、SGL Ver3.0の機能追加により<A HREF="../struct/constspr.htm#UseNearClip"><I>UseNearClip</I></A><BR>
+      に置き換わりました。<BR>
+<BR>
+</PRE>
+<!-------------------------------------------------------------------------------->
+<HR NOSHADE>
+<A HREF=../index.htm>戻る</A><ADDRESS>Copyright SEGA ENTERPRISES, LTD., 1997</ADDRESS>
+</HEAD>
+</HTML>
