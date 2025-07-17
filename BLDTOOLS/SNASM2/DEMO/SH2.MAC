@@ -1,0 +1,27 @@
+
+
+push	macro	reg
+
+	if "\reg" <> "pr"
+	mov.l	\reg,@-r15
+	else
+	sts.l	pr,@-r15	; save return address
+	endif
+
+	endm
+
+
+pop	macro	reg
+	mov.l	@r15+,\reg
+	endm
+
+call	macro	func
+	mov.l	#\func,r0
+	jsr	@r0
+	nop
+	endm
+
+
+.align 	macro   pad
+       	cnop	0,\pad,0x00090009
+	endm

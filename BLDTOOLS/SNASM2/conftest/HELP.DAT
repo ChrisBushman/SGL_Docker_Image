@@ -1,0 +1,903 @@
+# This is the on-line help file for HSITOOL32
+#
+# Written by:    Geoff Caras
+#                The Igneous Group
+#                Santa Cruz, CA
+#                408.475.8194 (Voice)
+#                408.475.8193 (FAX)
+#                igneous@netcom.com
+#
+# There are only a few special characters for the help file:
+# '#' is a comment character, the line is ignored
+# '*' is the end of page indicator, the rest of this line is ignored
+# '!' is the command description start point
+# '.' is the command to end the '!' command block text
+# these characters must the first on the line, the first
+# character on each line is NEVER printed....
+#
+# Tips:
+# keep screens under 22 lines (bounded by * commands) for
+# best looking output.
+# put the . command on the last displayed line of a command description.
+#
+#
+ HSITOOL32: Sega CARTDEV/Game    Written by The Igneous Group, Geoff Caras.
+
+ >>> Press the ESC key to exit help at any time. <<<
+
+
+        Command        Description
+  ___________________________________________________________________________
+        //             Comment, the rest of the line is ignored.
+        ?              Displays this help message
+        @              Redirects input to a file
+        audioread      Reads Digital Audio Data into a file.
+        abort          Aborts the last SCSI command (experimental)
+        batch          Allows for control of flow when running a script.
+        buffconfig     Displays the CARTDEV buffer configuration.
+        cmpdpr         Compares DPR memory to internal buffers.
+        compare        Compares Game memory.
+        configbuf      Allows setting CARTDEV buffer config table entries.
+        controlgm      Issues a control game command to the CARTDEV.
+        delay          Delays command processing.
+        download       Downloads the monitor to the GAME.
+        dump           Displays Game memory.
+        enter          Edits memory
+        exit           Exits HSITOOL32.
+*
+        Command        Description
+  ___________________________________________________________________________
+
+        fill           Fills Game memory with a value.
+        flash          Flash programming of the CARTDEV Flash EEPROM.
+        fromaddr       Gets data from CARTDEV memory.
+        fromdpr        Gets data from CARTDEV DPR memory and puts into buffer.
+        gameint        Enables or disables the interrupts to the GAME.
+        go             Sends the GO command to a target processor.
+        help           Displays this message text.
+        inquiry        Displays SCSI inquiry data.
+        lastsense      Prints the SCSI sense data for the last SCSI command.
+        loopback       Runs a loopback test to the GAME system.
+        memtest        Runs the monitor memory test.
+        move           Moves Game memory.
+        quit           Exits HSITOOL32.
+        readb          Reads GAME memory as bytes.
+        readl          Reads GAME memory as long words.
+        readw          Reads GAME memory as words.
+        register       Displays the GAMES systems' processor registers.
+        reqsense       Sends a SCSI Request Sense command to CARTDEV.
+*
+        Command        Description
+  ___________________________________________________________________________
+        reset          Controls the reset lines to the GAME.
+        satstatus      Displays the Status of the Saturn CARTDEV.
+        scsireset      Issues a SCSI device reset command.
+        set            Sets one of the variables or state flags in HSITOOL32.
+        shell          Executes a DOS command interpreter.
+        show           Shows one of the variables or state flags in HSITOOL32.
+        status         Displays the status info of the GAME target processor.
+        step           Sends the STEP command to a target processor.
+        stop           Sends the STOP command to a target processor.
+        toaddr         Sends data to CARTDEV memory.
+        todpr          Sends buffer to CARTDEV DPR buffer.
+        tunr           Sends a SCSI Test Unit Ready command to CARTDEV.
+        vdp1           Saturn VDP1 specific commands.
+        version        Displays the version information.
+        writeb         Writes GAME memory as bytes.
+        writel         Writes GAME memory as long words.
+        writew         Writes GAME memory as words.
+        xit            Exits HSITOOL32.
+*
+
+!       Help for HSITOOL32 is in this file HELP.DAT, it must be in the
+        directory that HSITL32.EXE is run in or the environment variable
+        HSIHPL can be set to the complete pathname and filename of the
+        help file to use.
+
+*
+
+!       Command line processing features:
+
+        Version 33.0 added the ability to enter HSI Tool commands on the
+        DOS command line. You can type any valid HSI Tool command, including
+        executing a script. For example:
+
+            HSITL32 @startup exit
+
+        Will execute the commands in the file startup and then exit the
+        HSI Tool utility.
+
+        HSITL32 will also search for a script file HSISTART.SCR, if it 
+        finds this file in the current directory it will execute commands
+        from that file prior to displaying the command line prompt or 
+        executing command line arguments.
+
+        HSITL32 has a command queue, similar to that of DOSKEY. It has
+        completion and allows flexible editing of the command line.
+
+        The command queue is accessed by the arrow keys, the UP Arrow key
+        scans backward in the queue, the DOWN Arrow key scans forwards in
+        the command queue.
+
+        As the queue fills the oldest commands are overwritten.
+        
+        Once a command line has been selected via the command queue or by
+        typing in text you can edit the command line with the following 
+        keystrokes:
+
+         ESCAPE      Erases the entire line.
+         DELETE      Deletes the character under the cursor.
+         BACKSPACE   Deletes the character to the left of the cursor.
+         INSERT      Toggles INSERT and OVERSTRIKE mode. When in INSERT mode
+                     text is entered in the current cursor position.
+                     OVERSTRIKE mode replaces text on the command line.
+                     The default is OVERSTRIKE.
+         RightArrow  Moves the cursor one character to the right.
+         LeftArrow   Moves the cursor one character to the left.
+         HOME        Positions the cursor at the beginning of the line.
+         END         Positions the cursor at the end of the line.
+         ^TAB        Moves the cursor over 8 characters toward the right.
+         ^RightArrow Moves the cursor over 1 word toward the right. Whitespace
+                     delimeted.
+         ^LeftArrow  Moves the cursor over 1 word toward the left. Whitespace
+                     delimeted.
+         UpArrow     Command queue scan, display forward in the queue.
+         DownArrow   Command queue scan, display backward in the queue.
+
+         TAB         Searches the command history for a command that starts
+                     with the text you have entered, if one is found the
+                     command appears on the command line with the cursor at
+                     the end of the line.
+
+         ENTER       The enter key may be pressed from any position on the 
+                     command line. When the enter key has been pressed HSITL32
+.                    will begin interpreting the command line.
+*
+
+!       abort     ABORT
+                  The ABORT command sends an ASPI abort SRB to the ASPI
+                  driver.
+                  
+                  This will abort the ASPI command in progress. Note if there
+                  are two ASPI commands pending only the last one issued will
+                  be aborted.
+
+                  If used improperly this command can make the ASPI/SCSI driver
+                  unstable, USE THE ABORT COMMAND carefully!
+.
+*
+
+!       audioread AUDIOREAD LENGTH FILENAME
+                  Reads Digital Audio Data from the CartDev for LENGTH bytes
+                  into FILENAME. 
+
+                  The LENGTH is a 32 bit number. If LENGTH is 0 (zero) then 
+                  reading will be terminated by a timeout or by pressing the
+                  ESCAPE key.
+
+                  FILENAME is any valid DOS filename (in 8.3 format). To
+                  create a file on another drive or directory enclose the 
+                  complete FILENAME in quotes. If FILENAME exists it will be
+                  over-written with the new data.
+
+                  The AUDIOREAD command uses the currently SET timeout value,
+                  DPR inbuff number, Audio Read buffer size, and does not 
+                  reconfigure the DPR buffers. The SET command can be used to
+                  configure the DPR buffers, to change the timeout value and 
+                  to configure the size of the buffers used for each SCSI 
+                  AUDIO READ command issued. See the SET help by typing: 
+                  HELP SET.
+.
+*
+
+!       batch     BATCH OPTION
+                  The BATCH command allows for control of how a script
+                  operates.
+
+                  Valid OPTIONS are:
+                     rewind count   Executes a script count + 1 times.
+                     sample         Terminates the rewind count if ESCAPE pressed.
+                  
+                  The REWIND option restarts the currently operating script
+                  by setting the file pointers back to the beginning. The
+                  optional COUNT argument will scan the script COUNT additional
+                  times. 
+
+                  After the COUNT parameter is exhausted processing will
+                  begin on the next line following the BATCH line in
+                  the script file.
+
+                  The SAMPLE option samples the keyboard, if you have pressed
+                  the escape key the count used for the REWIND option will
+                  be set to 0. 
+.
+*
+
+!       bp        BP Address
+                  --- NOT IMPLEMENTED ---
+                  The bp command sets breakpoints.
+.
+*
+
+!       buffconfig BUFFCONFIG [BUFF_ID]
+                  The BUFFCONFIG command displays the configuration of the
+                  CARTDEV buffers.
+                  The optional BUFF_ID allows you to display the
+                  configuration of a specific buffer number.
+
+                  When the BUFF_ID parameter is omitted the configuration
+                  of all of the buffers is displayed.
+.
+*
+
+!       cmpdpr    CMPDPR BUFFER_NUMBER LENGTH
+                  The CMPDPR command reads DPR memory and compares it to 
+                  the internal buffer for the last TODPR command.
+
+                  The two buffers are compared and if there is a buffer
+                  miscompare the CMPDPR command will stop and print a
+                  message.
+
+                  If the buffers compared OK, nothing is printed. This allows
+                  for repetitive testing of the DPR memory buffers.
+
+                  When a TODPR command is issued the HSITOOL32 uses a staging
+                  buffer that is 16K. Because the buffer would be over
+                  written in longer transfers you should issue a TODPR of
+                  less than 16K, and a CMPDPR of whatever size the TODPR
+                  command was or less.
+
+.
+*
+
+!       configbuf CONFIGBUF BUFF_ID PARAMETER VALUE  
+                  The CONFIGBUF command allow you to set specific values
+                  in the CARTDEV buffer configuration table.
+
+                  The BUFF_ID parameter is required and determined which
+                  buffer entry will be modified.
+
+                  The PARAMETER option is required and must be one of the
+                  following:
+                     address        The Address of the buffer in CARTDEV.
+                     size           The size of the buffer.
+                     xfersize       The SCSI transfer size.
+                     semaphore0     Buffer full & buffer full mask flags.
+                     semaphore1     Same as above, used if Ping-Pong-ing.
+                     pingpong       Enables Ping-Pong buffering.
+                     ppingpong      Last accessed half of Ping-Pong buffer.
+                     gameint        Interrupt TO the GAME from CARTDEV.
+                     cartdevint     Interrupt TO the CARTDEV from the GAME.
+                     direction      Direction of buffer.
+                     dummy          Not currently used.
+
+
+                  The specifics of this command require a hardware
+                  specification to determine the correct values and
+                  polarities.
+
+.
+*
+!       compare   COMPARE FROM_ADDR_START FROM_ADDR_END TO_ADDR_START
+                  Compares memory starting at FROM_ADDR_START to
+                  TO_ADDR_START for FROM_ADDR_END - FROM_ADDR_START bytes.
+                  Only if there is a miscompare is an error printed.
+                  Memory is compared 32 bits at a time, and longword
+.                 alignment of starting addresses is enforced.
+*
+
+!       controlgm CONTROLGM COMMAND COMMAND_SPECIFIER
+                  The CONTROLGM command issues the special control game
+                  command to the CARTDEV.
+                  The COMMAND and COMMAND_SPECIFIER parameters are both
+                  required, and are 8 bit values.
+                  The specifics of this command require a hardware
+                  specification to determine the correct values an polarities.
+
+.
+*
+
+!       delay     DELAY TIMEVAL     
+                  Delays for TIMEVAL number of 100ths of a second.
+.
+*
+
+!       download  DOWNLOAD FILE_SPEC
+                  The DOWNLOAD command downloads the file FILE_SPEC to the
+                  GAME via CARTDEV. The file must contain contiguous SRecords.
+                  If the FILE_SPEC is not in the current directory, the 
+                  complete pathname must be quoted.
+.
+*
+
+!       dump      DUMP [[ADDR] [LEN]]
+                  NOT TESTED YET!
+                  The DUMP command displays CartDev memory.
+                  
+                  Memory will be displayed in the currently set radix
+                  and base.
+                  
+.
+*
+
+!       enter     ENTER ADDR [byte, byte, byte...]
+
+                  NOT TESTED YET!
+                  Edits Game memory.
+
+                  Allows you to modify Game memory a byte at a time.
+                  If only the ADDR is specified on the command line, the
+                  input will be taken from the keyboard and memory will
+                  be edited interactively.
+
+                  If one or more bytes are specified on the command line they
+                  will be put into Game memory in the order that they appear
+                  on the command line, starting at ADDR.
+
+                  Input to the interactive mode and the command line should
+                  be in hexadecimal bytes.
+                     
+.
+*
+
+!       exit      EXIT
+                  The EXIT command terminates the current HSITOOL32 session.
+
+                  HSITOOL32 will exit in a orderly fashion, the logfile will
+                  be closed and all other pending operations will be
+                  terminated.
+
+.                 QUIT, EXIT and XIT are identical.
+*
+
+!       flash     FLASH FileName
+
+                  Flash programs the CARTDEV Flash EEPROM. The FileName is a
+                  Motorola S-Record image of the ROM code.
+
+                  The ROM is programmed in pages. The total image can be up
+                  to 128K in size. 
+
+                  The flash command sends the data to the CARTDEV, verifies
+                  the data, instructs CARTDEV to verify the checksum, and then
+                  instructs the CARTDEV to program the block. This process 
+                  is repeated until the entire EEPROM is programmed.
+*
+
+!       fill      FILL From_Start From_End Pattern
+
+                  NOT TESTED YET!
+                  The memory between From_Start and From_End is filled with
+                  Pattern.
+
+                  Pattern is a 32 bit value.
+
+                  The parameters From_Start, From_End and To_Start
+                  should all be DWORD aligned addresses within the
+                  Game address space.
+
+                  Alignment will be enforced by the FILL command and
+                  appropriate diagnostic messages will be printed if 
+.                 the alignment is incorrect.
+*
+
+!       fromaddr  FROMADDR ADDRESS LENGTH [@ FILESPEC]
+                  Gets data from the CARTDEV memory at ADDRESS. Data is
+                  acquired using the READ_BUFFER command to the CARTDEV.
+
+                  The ADDRESS is not processed and must match a valid 
+                  address range in the CARTDEV address space.
+
+                  The length is a 32 bit number and represents data typed
+                  on the command line. 
+                  
+                  You can optionally have FROMADDR write a file with the
+                  memory starting at ADDRESS. The memory will be read in
+                  multiple transactions until the LENGTH parameter is
+                  exhausted. If the LENGTH parameter is omitted an error
+                  message will be printed.
+
+                  The syntax for this form is:
+
+                     FROMADDR ADDRESS LENGTH @FILESPEC
+
+                  FILESPEC is any valid DOS file name. NO error checking is
+                  done on the file name. If the file is not in the current
+.                 directory, enclose the complete DOS filespec in quotes.
+*
+
+!       fromdpr   FROMDPR BUFFER_NUMBER LENGTH
+                  Gets data from the CARTDEV BUFFER_NUMBER. Data is
+                  sent using the WRITE_BUFFER command to the CARTDEV.
+
+                  The BUFFER_NUMBER is not processed and must match
+                  whatever the CARTDEV firmware expects.
+
+                  The length is a 32 bit number and can exceed the size
+                  of physical DPR memory. If the command is sent with
+                  a LENGTH parameter greater than the size of the
+                  available DPR memory, AND there is no provider of 
+                  memory to the CARTDEV, the system can deadlock!
+                  
+                  You can optionally have FROMDPR write the data read
+                  into a file.
+
+                  The syntax for this form is:
+
+                     FROMDPR BUFFER_NUMBER LENGTH @FILESPEC
+
+                  FILESPEC is any valid DOS file name. NO error checking
+                  is done on the file name. 
+.
+*
+
+!       gameint   GAMEINT PARAMETER VALUE
+                  The GAMEINT command enables, disables or sets the interrupt
+                  to occur only one time.
+
+                  The PARAMETER is one of the GAME interrupts:
+                     AIRQ0          AIRQ1          AIRQ2          AIRQ3
+                     AIRQ4          AIRQ5          AIRQ6          AIRQ7
+                     AIRQ8          AIRQ9          AIRQA          AIRQB
+                     AIRQC          AIRQD          AIRQE          AIRQF
+                     NMISH2Main     NMISH2Sub      Sound          NMISH2Both
+                     NMIAll
+
+                  The value parameter can have one of three values:
+                     0  The selected interrupt is disabled.
+                     1  The selected interrupt is enabled for 1 interrupt.
+.                    2  The selected interrupt is enabled.
+*
+
+!       go        GO [PROCESSOR]
+                  The GO command sends the GO message to the GAME.
+                  The target processor may be set on the command line, if
+                  this parameter is missing the default processor is used.
+.
+*
+
+!       help      HELP [command]
+                  Help displays information about the commands in HSITOOL32.
+                  
+                  If no argument is given on the help command line help
+                  will display all of the help text available.
+                  
+                  Help is not case sensitive and will take the argument
+                  or any partial command name in lower or upper case.
+
+                  At any time during the help display you may press the
+                  escape key, usually marked ESCAPE, to stop help.
+
+                  ? is identical to typing HELP.
+.
+*
+
+!       inquiry   INQUIRY [SCSI_ID]
+                  Displays the SCSI Inquiry data for SCSI target SCSI_ID.
+                  
+                  If the parameter SCSI_ID is omitted then the inquiry data
+.                 is shown for all targets.
+
+*
+
+!       lastsense LASTSENSE 
+                  Prints the sense data from the last SCSI command.
+.
+*
+
+!       loopback  LOOPBACK [VERBOSE] [COUNT [MAXBUFFSIZE [FORCESIZE]]]
+                  Loopback sends a random length buffer, up to MAXBUFFSIZE
+                  of random data to the monitor. The data is read back and
+                  verified. This continues for COUNT passes or 100 if count
+                  is omitted.
+
+                  If the string VERBOSE is found on the command line, the HSI 
+                  library loopback call is made with a count of 1 and then a
+                  diagnostic is printed to the screen, this continues until
+                  COUNT is exhausted.
+
+                  To use the FORCESIZE parameter, both COUNT and MAXBUFFSIZE
+                  must be specified. The FORCESIZE fixes the size of the
+                  buffers sent to the monitor, instead of the default random
+                  length. 
+
+                  The data sent will be random regardless of the
+.                 FORCESIZE setting.
+*
+
+!       memtest   MEMTEST SIZE COUNT From_Address To_Address
+
+                  Issues a memory test command the Saturn Monitor.
+
+                  Valid options for the SIZE parameter are:
+                    BYTE      Test using bytes reads/writes.
+                    WORD      Test using word reads/writes.
+                    DWORD     Test using dword reads/writes.
+                    ALL       Test using byte, word and dword reads/writes.
+
+                  COUNT is the number of iterations to perform.
+
+                  From_Address is the inclusive starting point to begin
+                  testing at. To_Address is the end of the test range.
+
+                  Each iteration performs a number of different memory tests
+.                 for each size selected.
+*
+
+!       move      MOVE From_Start From_End To_Start
+
+                  NOT TESTED YET!
+                  The data at the address From_Start is moved to the
+                  address To_Start.
+
+                  Data is moved 32 bits at a time.
+
+                  The parameters From_Start, From_End and To_Start
+                  should all be DWORD aligned addresses within the
+                  Game address space.
+
+                  Alignment will be enforced by the MOVE command and
+                  appropriate diagnostic messages will be printed if 
+.                 the alignment is incorrect.
+*
+
+!       quit      QUIT
+                  The QUIT command terminates the current HSITOOL32 session.
+
+                  HSITOOL32 will exit in a orderly fashion, the logfile will
+                  be closed and all other pending operations will be
+                  terminated.
+
+.                 QUIT, EXIT and XIT are identical.
+*
+
+!       readb     READB [PROCESSOR]  ADDR LENGTH [@TO_FILE]  
+                  Reads GAME memory with the given size. Starting at ADDR for
+                  LENGTH bytes. 
+                  
+                  If the @TO_FILE argument is present, the output is 
+.                 re-directed to that file.
+*
+
+!       readl     READL [PROCESSOR]  ADDR LENGTH [@TO_FILE]  
+                  Reads GAME memory with the given size. Starting at ADDR for
+                  LENGTH bytes. 
+                  
+                  If the @TO_FILE argument is present, the output is 
+.                 re-directed to that file.
+*
+
+!       readw     READW [PROCESSOR]  ADDR LENGTH [@TO_FILE]  
+                  Reads GAME memory with the given size. Starting at ADDR for
+                  LENGTH bytes. 
+                  
+                  If the @TO_FILE argument is present, the output is 
+.                 re-directed to that file.
+*
+
+!       register  REGISTER [PROCESSOR]
+                  Displays the GAME systems' processor registers.
+.
+*
+
+!       reqsense  REQSENSE [SCSI_ID LUN]
+                  Issues a SCSI Request Sense command to the CARTDEV.
+
+                  If SCSI_ID and LUN are not specified the default SCSI_ID
+                  will be used and a LUN of 0.
+.
+*
+
+!       reset     RESET SCSI_ID
+
+                  Reset the target device on ID SCSI_ID.
+.
+*
+
+!       search    SEARCH FROM TO PATTERN
+                  Searches memory for pattern.
+
+.                 Not tested! 
+*
+
+!       set       SET [OPTION] [VALUE]
+
+                  The SET command allows you to configure the operation of
+                  the HSITOOL32.
+
+                  Current options:
+
+                    audioreadsize Sets the request size for each SCSI audio 
+                              read request.
+
+                    channel   Sets the channel ID to VALUE.
+
+                    debug     Sets internal HSI Tool debugging flags.
+
+                    dump      Sets the size memory will be dumped in.
+                              valid VALUE parameters are:
+                                 byte     dump as bytes
+                                 word     dump as words
+                                 dword    dump as dwords
+                                 radix    dump in the current radix
+
+                    F1        Sets the function key F1 to a string.
+                    F2        Sets the function key F2 to a string.
+                    F3        Sets the function key F3 to a string.
+                    F4        Sets the function key F4 to a string.
+                    F5        Sets the function key F5 to a string.
+                    F6        Sets the function key F6 to a string.
+                    F7        Sets the function key F7 to a string.
+                    F8        Sets the function key F8 to a string.
+                    F9        Sets the function key F9 to a string.
+                    F10       Sets the function key F10 to a string.
+                    F11       Sets the function key F11 to a string.
+                    F12       Sets the function key F12 to a string.
+
+                    inbuff    Sets the DPR buffer for HSITOOL32 to receive
+                              commands from the GAME.
+
+                    logfile   Sets the filename to use a logfile. The VALUE
+                              parameter contains the DOS filename. If the
+                              VALUE parameter is absent the current logfile
+                              will be closed.
+
+                    outbuff   Sets the DPR buffer for HSITOOL32 to send
+                              commands to the GAME.
+
+                    processor Sets the default processor for commands sent
+                              to the monitor. Valid processors are:
+                                SH2_Main
+                                SH2_Sub
+                                68000
+
+                    radix     Sets the radix to use as the default for
+                              numeric arguments. Valid VALUE parameter values
+                              are:
+                                 2        base 2  -- binary
+                                 8        base 8  -- octal
+                                 10       base 10 -- decimal
+                                 16       base 16 -- hexidecimal
+                              Note: All numeric arguments (including the
+                              RADIX!) are subject to the current radix.
+                              
+                              You may over-ride the base of a numeric
+                              argument with explicit base specifiers. eg:
+                                 0x1234   hex
+                                 0o177    octal
+                                 0d999    decimal
+                                 0b010101 binary
+
+                    retrycount Sets the number of retries HSI Tool will allow
+                              before printing an error messages. This applies
+                              for commands that are interpreted by the target
+                              monitor, and the AUDIOREAD command.
+
+                    symbols   To set a symbol to a value use the following
+                              syntax:
+
+                              SET $name = value
+
+                              A symbol can be used anywhere a numeric value is 
+                              required.
+
+                    timeout   Sets the timeout value used by the HSI library when
+                              issuing command to the CartDev. If a command takes
+                              longer that the timeout value a timeout error will
+                              be returned by the HSI library.
+
+                              The timeout value is in 100'ths of a second. The 
+.                             library default is 500 or 5 seconds.
+*
+
+!       shell     SHELL
+                  SHELL allows you to exit to DOS from within HSITOOL32.
+
+                  After typing SHELL, you will see a DOS prompt. To
+.                 return to HSITOOL32 type exit.
+*
+
+!       show      SHOW OPTION
+                  SHOW displays the configuration information that is 
+                  SET-able. See the description in SET also.
+
+                  Current options:
+
+                    binaryout   When commands dump data to a file eg: fromaddr, 
+                              the output will be binary instead of a hex dump.
+
+                    audioreadsize Diplays the request size for each SCSI audio 
+                              read request.
+
+                    channel   Displays the current channel ID.
+
+                    debug     Displays the internal HSI Tool debugging flag.
+
+                    dump      Displays the size memory will be dumped in.
+
+                    F1        Displays the current text assigned to function
+                              key F1.
+                    F2        Displays the current text assigned to function
+                              key  F2.
+                    F3        Displays the current text assigned to function
+                              key  F3.
+                    F4        Displays the current text assigned to function
+                              key  F4.
+                    F5        Displays the current text assigned to function
+                              key  F5.
+                    F6        Displays the current text assigned to function
+                              key  F6.
+                    F7        Displays the current text assigned to function
+                              key  F7.
+                    F8        Displays the current text assigned to function
+                              key  F8.
+                    F9        Displays the current text assigned to function
+                              key  F9.
+                    F10       Displays the current text assigned to function
+                              key  F10.
+                    F11       Displays the current text assigned to function
+                              key  F11.
+                    F12       Displays the current text assigned to function
+                              key  F12.
+
+                    inbuff    Displays the DPR buffer set to receive commands
+                              from the Monitor or other software running on
+                              the target.
+
+                    logfile   Displays the state of logging. 
+
+                    outbuff   Displays the DPR buffer set for HSITOOL32 to
+                              send commands to the GAME.
+
+                    processor Displays the current setting of the default 
+                              processor used in commands to the Monitor or
+                              other software running on the target.
+
+                    radix     Displays the current RADIX.
+
+                    retrycount Displays the number of retries HSI Tool 
+                              will allow before printing an error messages.
+                              
+                    symbols   Displays the contents of the symbol table.
+                              You can also display the contents of each symbol
+                              individually by typing:
+                                SHOW $SymbolName
+                              where SymbolName is the requested symbol.
+
+
+                    timeout   Displays the timeout value used by the HSI 
+                              library when issuing commands to the CartDev.
+*
+
+!       step      STEP [PROCESSOR]
+                  The STEP command sends the STEP message to the GAME.
+                  The target processor may be set on the command line, if
+.                 this parameter is missing the default processor is used.
+
+*
+
+!       toaddr    TOADDR ADDRESS [[LENGTH DATA...] | @ FILESPEC]
+                  Sends data to the CARTDEV memory at ADDRESS. Data is
+                  sent using the WRITE_BUFFER command to the CARTDEV.
+
+                  The ADDRESS is not processed and must match a valid 
+                  address range in the CARTDEV address space.
+
+                  The length is a 32 bit number and represents data typed
+                  on the command line. Since the command line is limited to
+                  to 80 characters, the number of entries that can be
+                  represented is the upper limit of the LENGTH parameter.
+
+                  You can optionally have TOADDR read a file into the
+                  memory starting at ADDRESS. The file will be read in
+                  multiple transactions until the LENGTH parameter is
+                  exhausted. If the LENGTH parameter is omitted the length
+                  of the file is used.
+                
+                  The syntax for this form is:
+
+                     TOADDR ADDRESS [LENGTH] @FILESPEC
+
+                  FILESPEC is any valid DOS file name. NO error checking is
+                  done on the file name. If the file is not in the current
+.                 directory, enclose the complete DOS filespec in quotes.
+*
+
+!       todpr     TODPR BUFFER_NUMBER LENGTH [[+]PATTERN]
+                  Sends data to the CARTDEV BUFFER_NUMBER. Data is
+                  sent using the WRITE_BUFFER command to the CARTDEV.
+
+                  The BUFFER_NUMBER is not processed and must match
+                  whatever the CARTDEV firmware expects.
+
+                  The length is a 32 bit number and can exceed the size
+                  of physical DPR memory. If the command is sent with
+                  a LENGTH parameter greater than the size of the
+                  available DPR memory, AND there is no consumer of the
+                  memory from the CARTDEV the system can deadlock!
+                  
+                  If the PATTERN parameter is present the internal
+                  buffer will be filled with PATTERN, the optional '+'
+                  preceding the PATTERN parameter will increment the
+                  PATTERN data in the internal buffer. The first value
+                  will be PATTERN.
+
+                  If PATTERN is a 32 bit number the PATTERN will be
+                  replicated 32 bits at a time, and incremented 32 bits
+                  at a time. If the PATTERN is a 16 bit number it will
+                  be replicated 16 bits at a time. If PATTERN is an 8
+                  bit number it will be replicated byte by byte. If
+                  the '+' is present the PATTERN will be incremented
+                  based on its size.
+
+                  You can optionally have TODPR read a file into the
+                  internal buffer. The file will be read repeatedly
+                  until the internal buffer is full. The syntax for
+                  this form is:
+
+                     TODPR BUFFER_NUMBER LENGTH @FILESPEC
+
+                  FILESPEC is any valid DOS file name. NO error checking
+                  is done on the file name. If the file is not in the
+                  current directory, enclose the complete DOS filespec in
+                  quotes.
+.
+*
+
+!       tunr      TUNR [SCSI_ID LUN]
+                  Sends a SCSI Test Unit Ready command to the CARTDEV.
+                  If SCSI_ID and LUN are not specified the default SCSI_ID
+                  will be used and a LUN of 0.
+.
+*
+
+!       vdp1      VDP1 OPTION PARAM...
+                  Communicates with the monitor to affect the VDP1 in the
+                  Saturn. These options are mainly used for monitor debugging.
+
+                  Valid OPTIONs are:
+                    clear       Clear the Saturn display and re-initialize 
+                                the VDP1.
+                    init        Initialize the VDP1.
+                    modr        Prints the contents of the MODR register.
+                    pctrl       Controls whether successive print options 
+                                clear the Saturn display or not.
+                    print       Prints text on the Saturn display.
+.
+*
+
+!       version   VERSION [ALL]
+                  The VERSION command displays the current version 
+                  information for HSITOOL32.
+
+                  If the optional text ALL (case insensitive) is found
+                  all of the component files and their compilation dates and
+.                 times will be printed.
+*
+
+!       writeb    WRITEB [PROCESSOR] ADDR [data... | @FROM_FILE]
+                  Writes GAME memory with the given size. Starting at ADDR,
+                  the length of the write is determined by the data on the
+.                 command line, or the size of the optional FROM_FILE.
+*
+
+!       writel    WRITEL [PROCESSOR] ADDR [data... | @FROM_FILE]
+                  Writes GAME memory with the given size. Starting at ADDR,
+                  the length of the write is determined by the data on the
+.                 command line, or the size of the optional FROM_FILE.
+*
+
+!       writew    WRITEW [PROCESSOR] ADDR [data... | @FROM_FILE]
+                  Writes GAME memory with the given size. Starting at ADDR,
+                  the length of the write is determined by the data on the
+.                 command line, or the size of the optional FROM_FILE.
+*
+
+!       xit       XIT
+                  The XIT command terminates the current HSITOOL32 session.
+
+                  HSITOOL32 will exit in a orderly fashion, the logfile will
+                  be closed and all other pending operations will be
+                  terminated.
+
+.                 QUIT, EXIT and XIT are identical.

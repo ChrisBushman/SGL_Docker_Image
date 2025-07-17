@@ -1,0 +1,194 @@
+/*
+ * Copyright (c) 1995 Cross Products Ltd.
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms are permitted
+ * provided that the above copyright notice and this paragraph are
+ * duplicated in all such forms and that any documentation,
+ * advertising materials, and other materials related to such
+ * distribution and use acknowledge that the software was developed
+ * by the Cross Products Ltd, 23 The Calls, Leeds, LS2 7EH UK.  The
+ * name of the company may not be used to endorse or promote products
+ * derived from this software without specific prior written permission.
+ * THIS SOFTWARE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ * examp.cpp	9/01/96
+ *
+ * Authors:: Gary Ellison & Tam Roberts
+ */
+
+//
+// Basic C++ program for use with SNBUGSAT
+//
+// The progam is aimed at demonstrating some of the C++ support
+// within the SNBUGSAT debugger.
+//
+
+//
+// Include header files for the sega graphics library
+// (note the requirement to define all sgl functions as external "C")
+//
+
+//#ifdef __cplusplus
+//extern "C" {
+//#endif
+
+#include	<sgl.h>
+//#include	<ss_scrol.h>
+//#include	<ss_akira.h>
+//#include	<cstdlib>
+//#include <string.h>
+
+//#ifdef __cplusplus
+//}
+//#endif
+
+// include io library for printf
+#include <stdio.h>
+//
+// base class
+//
+
+class BaseClass {
+	int   m_nXInc;
+	int   m_nYInc;
+protected:
+	int		m_nXPos;
+	int		m_nYPos;
+
+	int		m_nOldXPos;
+	int		m_nOldYPos;
+
+	float	m_fAngle;
+public:
+	BaseClass() ;
+	virtual ~BaseClass() {};
+
+	virtual void Display(void);
+
+	void Move(void);
+} ;
+
+// constructor
+BaseClass::BaseClass()
+{
+	m_nXInc  = 1;
+	m_nXInc  = 1;
+
+	m_nOldXPos = m_nXPos  = 1;
+	m_nOldYPos = m_nYPos  = 1;
+	m_fAngle = 100.01;
+}
+
+// display function
+void BaseClass::Display(void)
+{
+	printf("Base Class:: pos = (%d, %d) angle = %f\n",
+	       m_nXPos, m_nYPos, m_fAngle);
+//	printf("Base Class:: this = %08lx\n",(long int)this);
+}
+
+void BaseClass::Move(void)
+{
+	// save the current pos
+	m_nOldXPos = m_nXPos;
+	m_nOldYPos = m_nYPos;
+
+	// update the position
+	m_nXPos += m_nXInc;
+	m_nYPos += m_nYInc;
+
+	// apply limits to movement
+	if (m_nXPos >= 30)
+		m_nXInc  = -1;
+	if (m_nXPos <= 1)
+		m_nXInc  = 1;
+
+	if (m_nYPos >= 24)
+		m_nYInc  = -1;
+	if (m_nYPos <= 1)
+		m_nYInc  = 1;
+}
+
+//
+// derived class
+//
+
+class DerClass : public BaseClass {
+	char *m_spzName;
+public:
+	DerClass(char *name);
+	~DerClass();
+	void Display();
+};
+
+// constructor
+DerClass::DerClass(char *name)
+{
+	// alocate memory
+	m_spzName = new char[strlen(name) + 1];
+
+	// copy string
+	strcpy(m_spzName, name);
+}
+
+// destructor
+DerClass::~DerClass()
+{
+	// free memory
+	delete m_spzName ;
+}
+
+// display function
+void DerClass::Display(void)
+{
+	printf("Dev Class:: %s\n", m_spzName);
+	BaseClass::Display();
+
+	slPrint("                ", slLocate(m_nOldXPos,m_nOldYPos));
+	slPrint(m_spzName,slLocate(m_nXPos,m_nYPos));
+
+//	printf("Dev Class:: this = %08lx\n \n",(long int)this);
+
+}
+
+
+//
+// block of memory for crosslib heap
+//
+
+static char mem_space[64*1024];
+
+//
+// Main routine
+//
+
+int main()
+{
+	BaseClass *base;
+
+	// initialse a tempory heap for the fileserver
+	initialise_heap((int)mem_space, sizeof(mem_space));
+
+	base = new DerClass ("Hello world");
+
+	// initialise the SGL graphics system
+	slInitSystem(TV_320x224, NULL, 1);
+
+
+	// loop forever
+	while (-1)
+		{
+		// display the string
+		base->Display();
+
+		// move it around the screen
+		base->Move();
+
+		// swap the screen buffers
+		slSynch();
+		}
+}
+
