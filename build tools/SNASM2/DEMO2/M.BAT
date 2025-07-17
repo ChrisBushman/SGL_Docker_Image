@@ -1,1 +1,0 @@
-snmake /p main.prj

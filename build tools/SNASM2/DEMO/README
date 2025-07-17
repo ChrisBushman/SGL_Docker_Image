@@ -1,9 +1,0 @@
-To make the demo type:
-
-snmake /p demo
-
-to load the demo code onto your saturn type the following
-
-snbug32x /t1:main.cof /t2n:main.cof
-
-
